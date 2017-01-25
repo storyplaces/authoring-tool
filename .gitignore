@@ -1,3 +1,11 @@
 node_modules
+coverage
+scripts
 .idea
 .DS_STORE
+src/config/config.ts
+src/config/Config.ts
+css/bootstrap*
+fonts/glyphicons-halflings-regular*
+*.js
+dist/

@@ -33,8 +33,6 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {FrameworkConfiguration} from 'aurelia-framework';
+export class HelpCustomElement {
 
-export function configure(config: FrameworkConfiguration) {
-  //config.globalResources([]);
 }

@@ -44,7 +44,8 @@
     "elements": "src/resources/elements",
     "attributes": "src/resources/attributes",
     "valueConverters": "src/resources/value-converters",
-    "bindingBehaviors": "src/resources/binding-behaviors"
+    "bindingBehaviors": "src/resources/binding-behaviors",
+    "bootstrapRoot": "node_modules/bootstrap/dist"
   },
   "testFramework": {
     "id": "jasmine",
@@ -90,7 +91,8 @@
         "name": "vendor-bundle.js",
         "prepend": [
           "node_modules/bluebird/js/browser/bluebird.core.js",
-          "node_modules/requirejs/require.js"
+          "node_modules/requirejs/require.js",
+          "node_modules/whatwg-fetch/fetch.js"
         ],
         "dependencies": [
           "aurelia-binding",
@@ -115,6 +117,7 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "text",
+          "moment",
           {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
@@ -130,9 +133,32 @@
             "path": "../node_modules/aurelia-testing/dist/amd",
             "main": "aurelia-testing",
             "env": "dev"
+          },
+          "jquery",
+          {
+            "name": "bootstrap",
+            "path": "../node_modules/bootstrap/dist",
+            "main": "js/bootstrap",
+            "deps": ["jquery"],
+            "exports": "$"
+          },
+          {
+            "name": "leaflet",
+            "path": "../node_modules/leaflet/dist",
+            "main": "leaflet-src.js",
+            "exports": "L"
           }
         ]
       }
+    ]
+  },
+  "dist": {
+    "output": "dist",
+    "sources": [
+      "./scripts/**/*",
+      "./fonts/**/*",
+      "./images/**/*",
+      "./index.html"
     ]
   }
 }
