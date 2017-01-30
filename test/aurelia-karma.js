@@ -3,11 +3,14 @@
   var requirejs = global.requirejs
   var locationPathname = global.location.pathname;
   var root = 'src';
-  karma.config.args.forEach(function(value, index) {
-    if (value === 'aurelia-root') {
-      root = karma.config.args[index + 1];
-    }
-  });
+
+  if (karma.config.args) {
+      karma.config.args.forEach(function (value, index) {
+          if (value === 'aurelia-root') {
+              root = karma.config.args[index + 1];
+          }
+      });
+  }
 
   if (!karma || !requirejs) {
     return;
