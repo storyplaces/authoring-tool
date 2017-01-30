@@ -9,3 +9,4 @@ css/bootstrap*
 fonts/glyphicons-halflings-regular*
 *.js
 dist/
+src/environment.ts
