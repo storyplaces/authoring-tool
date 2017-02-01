@@ -1420,13 +1420,13 @@ declare namespace protractor {
          *
          * @view
          * <span>{{person.name}}</span>
-         * <span ng-bind="person.content"></span>
+         * <span ng-bind="person.email"></span>
          *
          * @example
          * var span1 = element(by.binding('person.name'));
          * expect(span1.getText()).toBe('Foo');
          *
-         * var span2 = element(by.binding('person.content'));
+         * var span2 = element(by.binding('person.email'));
          * expect(span2.getText()).toBe('foo@bar.com');
          *
          * @param {string} bindingDescriptor
@@ -1439,12 +1439,12 @@ declare namespace protractor {
          *
          * @view
          * <span>{{ person.name }}</span>
-         * <span ng-bind="person-content"></span>
+         * <span ng-bind="person-email"></span>
          * <span>{{person_phone|uppercase}}</span>
          *
          * @example
          * expect(element(by.exactBinding('person.name')).isPresent()).toBe(true);
-         * expect(element(by.exactBinding('person-content')).isPresent()).toBe(true);
+         * expect(element(by.exactBinding('person-email')).isPresent()).toBe(true);
          * expect(element(by.exactBinding('person')).isPresent()).toBe(false);
          * expect(element(by.exactBinding('person_phone')).isPresent()).toBe(true);
          * expect(element(by.exactBinding('person_phone|uppercase')).isPresent()).toBe(true);
