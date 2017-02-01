@@ -73,7 +73,13 @@ export class AuthoringStory extends BaseModel {
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
+
         this.fromObject(data);
+
+        if (this.createdDate == undefined) {
+            this.createdDate = new Date();
+            this.modifiedDate = this.createdDate;
+        }
     }
 
     public fromObject(data = {
@@ -93,8 +99,8 @@ export class AuthoringStory extends BaseModel {
         this.id = data.id;
         this.title = data.title;
         this.description = data.description;
-        this.createdDate = data.createdDate;
-        this.modifiedDate = data.modifiedDate;
+        this.createdDate = new Date(data.createdDate);
+        this.modifiedDate = new Date(data.modifiedDate);
         this.audience = data.audience;
         this.authors = this.authoringUserCollectionFactory(data.authors);
         this.chapters = this.authoringChapterCollectionFactory(data.chapters);
@@ -109,8 +115,8 @@ export class AuthoringStory extends BaseModel {
             id: this.id,
             title: this.title,
             description: this.description,
-            createdDate: this.createdDate,
-            modifiedDate: this.modifiedDate,
+            createdDate: this.createdDate.toISOString,
+            modifiedDate: this.modifiedDate.toISOString,
             audience: this.audience,
             authors: this.authors,
             chapters: this.chapters,
