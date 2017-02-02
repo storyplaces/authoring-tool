@@ -6,26 +6,31 @@ import {HttpClient} from 'aurelia-fetch-client';
 import {autoinject} from 'aurelia-framework';
 import {Identifiable} from "../interfaces/Identifiable";
 import {Config} from "../../config/Config";
+import {Authenticator} from "../auth/Authenticator";
 
 @autoinject()
 export class StoryPlacesAPI {
     protected _path;
 
-    constructor(protected client: HttpClient, protected config: Config) {
+    constructor(protected client: HttpClient, protected config: Config, private authenticator: Authenticator) {
+        this.configure()
+    }
+
+    private configure() {
         let headers = {};
 
         headers['Content-Type'] = "application/json";
         headers['Accept'] = "application/json";
+        headers['AuthToBeWorkedOut'] = this.authenticator.jwt;
 
         this.client.configure(config => {
-            // TODO: Put these in a config file
             config
                 .withBaseUrl(this.config.read('server'))
                 .withDefaults({
                     headers: headers
                 })
                 .useStandardConfiguration();
-        })
+        });
     }
 
     set path(path: string) {

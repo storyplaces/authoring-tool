@@ -36,46 +36,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringStory} from "../models/AuthoringStory";
-import {Authenticator} from "../auth/Authenticator";
 
-@inject(Factory.of(AuthoringStory), Authenticator)
-export class AuthoringStoryFactory {
+export class Authenticator {
+    private _userId = "ABCDEF1234";
+    private _jwt = "ThisIsARubbishJWT";
 
-    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private authenticator: Authenticator) {
+    get userId() {
+        return this._userId;
     }
 
-    create(): AuthoringStory {
-        return this.authoringStoryFactory(this.defaultStory());
-    }
-
-    private defaultStory(): Object {
-        let now = new Date().toISOString();
-
-        return {
-            title: "New Story",
-            description: "",
-            audience: "general",
-            createdDate: now,
-            modifiedDate: now,
-            authorIds: [this.authenticator.userId],
-            tags: [],
-            pages: [],
-            chapters: [
-                {
-                    "id": "loosePages",
-                    "name": "Loose Pages",
-                    "colour": "blue",
-                    "pageIds": [],
-                    "unlockedByPageIds": [],
-                    "unlockedByPageOperator": "and",
-                    "locksAllOtherChapters": true,
-                    "locksChapterIds": []
-                }
-            ],
-            locations: [],
-            version: 1
-        }
+    get jwt() {
+        return this._jwt;
     }
 }
