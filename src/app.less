@@ -129,9 +129,9 @@ html, body {
 }
 
 .up-arrow {
- position: fixed;
+  position: fixed;
   width: 1em;
-  right:0.5em;
+  right: 0.5em;
   z-index: 1;
   padding-top: 0.25em;
 }
@@ -177,9 +177,9 @@ html, body {
   height: inherit;
   text-align: right;
   margin-top: 0.5em;
-  .btn{
+  .btn {
     width: 6em;
-      margin-top: 0.7em;
+    margin-top: 0.7em;
   }
 }
 
@@ -199,3 +199,22 @@ html, body {
   display: inline-block;
 
 }
+
+@colours: aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow;
+
+// mixin to iterate over colors and create CSS class for each one
+.make-colour-classes(@i: length(@colours)) when (@i > 0) {
+  .make-colour-classes(@i - 1);
+  @colour: extract(@colours, @i);
+  .chapter-symbol-@{colour} {
+    background-color: @colour;
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    border-radius: 0.5em;
+    border: 1px solid black;
+    vertical-align: baseline;
+  }
+}
+
+.make-colour-classes(); // run the mixin

@@ -42,7 +42,7 @@
         <div class="page-list-item">
             <div class="grab-bar"></div>
             <div class="page-list-item-text">
-                <h4>${page.name}</h4>
+                <h4>${page.name} <span repeat.for="chapter of chapters" class="chapter-symbol-${chapter.colour}"></span> </h4>
                 <p>${page.content}</p>
             </div>
             <div class="page-list-item-buttons">

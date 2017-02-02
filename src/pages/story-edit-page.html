@@ -39,8 +39,14 @@
 
 <template>
     <require from="../components/story/story-page-list"></require>
-    <div class="container">
-        <h4>StoryPlaces Authoring Story View</h4>
-        <story-page-list story.bind="story"></story-page-list>
+    <div class="row content-full">
+        <div class="col-xs-12 col-md-7 map-component">
+            <map class="content-full" reading-manager.bind="readingManager"></map>
+        </div>
+        <div class="col-xs-12 col-md-5 pages-list-component" ref="pageList">
+            <div class="up-arrow" if.bind="showUpArrow"><span class="glyphicon glyphicon-arrow-up"></span></div>
+            <story-page-list story.bind="story"></story-page-list>
+            <div class="down-arrow" if.bind="showDownArrow"><span class="glyphicon glyphicon-arrow-down"></span></div>
+        </div>
     </div>
 </template>
