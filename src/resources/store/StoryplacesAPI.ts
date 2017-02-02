@@ -21,7 +21,7 @@ export class StoryPlacesAPI {
 
         headers['Content-Type'] = "application/json";
         headers['Accept'] = "application/json";
-        headers['AuthToBeWorkedOut'] = this.authenticator.jwt;
+        //headers['AuthToBeWorkedOut'] = this.authenticator.jwt;
 
         this.client.configure(config => {
             config

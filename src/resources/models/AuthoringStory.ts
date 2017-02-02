@@ -53,7 +53,6 @@ import {AuthoringLocationCollection} from "../collections/AuthoringLocationColle
 )
 export class AuthoringStory extends BaseModel {
 
-
     private _title: String;
     private _description: String;
     private _createdDate: Date;
