@@ -54,8 +54,8 @@ export interface hasModifiedDate {
 
 @inject(NewInstance.of(AuthoringStoryCollection), AuthoringStoryFactory, NewInstance.of(StoryPlacesAPI))
 export class AuthoringStoryConnector {
-    private dirtyAuthoringStoryIds: Array<string> = [];
-    private conflictingAuthoringStoryIds: Array<string> = [];
+    private dirtyAuthoringStoryIds: Set<string> = new Set();
+    private conflictingAuthoringStoryIds: Set<string> = new Set();
     private numberOfNetworkConnections: number = 0;
 
     constructor(private authoringStoryCollection: AuthoringStoryCollection, private authoringStoryFactory: AuthoringStoryFactory, private api: StoryPlacesAPI) {
@@ -69,12 +69,12 @@ export class AuthoringStoryConnector {
 
     @computedFrom('dirtyAuthoringStoryIds')
     get hasUnSyncedStories(): boolean {
-        return this.dirtyAuthoringStoryIds.length != 0;
+        return this.dirtyAuthoringStoryIds.size != 0;
     }
 
     @computedFrom('conflictingAuthoringStoryIds')
     get hasConflictingStories(): boolean {
-        return this.conflictingAuthoringStoryIds.length != 0;
+        return this.conflictingAuthoringStoryIds.size != 0;
     }
 
     get all(): Array<AuthoringStory> {
@@ -92,39 +92,23 @@ export class AuthoringStoryConnector {
         return this.syncDirty();
     }
 
-    private addToDirtyList(authoringStoryId: string) {
-        if (this.dirtyAuthoringStoryIds.indexOf(authoringStoryId) != -1) {
-            this.dirtyAuthoringStoryIds.push(authoringStoryId);
-        }
-    }
-
-    private addToConflictList(authoringStoryId: string) {
-        if (this.conflictingAuthoringStoryIds.indexOf(authoringStoryId) != -1) {
-            this.conflictingAuthoringStoryIds.push(authoringStoryId);
-        }
-    }
-
-    private removeFromDirtyList(authoringStoryId: string) {
-        let foundIndex = this.dirtyAuthoringStoryIds.indexOf(authoringStoryId);
-        if (foundIndex != -1) {
-            this.dirtyAuthoringStoryIds.splice(foundIndex, 1);
-        }
-    }
-
-    private inDirtyList(authoringStoryId: string) {
-        return this.dirtyAuthoringStoryIds.indexOf(authoringStoryId) != -1;
-    }
-
-    newAuthoringStory(): Promise<boolean> {
+    newAuthoringStory(): Promise<AuthoringStory> {
         let defaultAuthoringStory = this.authoringStoryFactory.create();
 
         return this.sendStoryToServer(defaultAuthoringStory)
             .then(json => {
                 this.authoringStoryCollection.save(json);
+                return this.authoringStoryCollection.get(json.id);
             })
-            .then(() => true, (error) => {
+            .catch((error) => {
                 throw error
-            })
+            });
+    }
+
+    sync(): Promise<undefined> {
+        return this
+            .syncDirty()
+            .then(() => this.fetchAll());
     }
 
     syncDirty() {
@@ -135,6 +119,7 @@ export class AuthoringStoryConnector {
                 return this.sendStoryToServer(this.authoringStoryCollection.get(authoringStoryId))
                     .then(authoringStory => {
                         this.removeFromDirtyList(authoringStory.id);
+                        this.removeFromConflictingList(authoringStory.id);
                     })
                     .catch(error => {
                         console.error(error);
@@ -145,12 +130,7 @@ export class AuthoringStoryConnector {
         return sequence;
     }
 
-    sync() : Promise<undefined>{
-        return this.syncDirty()
-            .then(() => this.fetchAllAuthoringStoriesFromServer());
-    }
-
-    private fetchAllAuthoringStoriesFromServer(): Promise<undefined> {
+    fetchAll(): Promise<undefined> {
         return this.api
             .getAll()
             .then(response => response.json() as any)
@@ -161,7 +141,11 @@ export class AuthoringStoryConnector {
                         let local = this.authoringStoryCollection.get(authoringStory.id);
 
                         if (!local || local.modifiedDate < serverModified) {
-                            this.authoringStoryCollection.save(authoringStory);
+                            if (this.inConflictingList(authoringStory.id) || this.inDirtyList(authoringStory.id)) {
+                                this.addToConflictList(authoringStory.id);
+                            } else {
+                                this.authoringStoryCollection.save(authoringStory);
+                            }
                         }
                     })
             })
@@ -177,7 +161,7 @@ export class AuthoringStoryConnector {
             .catch(error => {
                 this.numberOfNetworkConnections--;
 
-                if (error.response == 409) {
+                if (error instanceof Response && error.status == 409) {
                     this.addToConflictList(authoringStory.id);
                     throw new Error("Conflict detected");
                 }
@@ -191,4 +175,27 @@ export class AuthoringStoryConnector {
             });
     }
 
+    private addToDirtyList(authoringStoryId: string) {
+        this.dirtyAuthoringStoryIds.add(authoringStoryId);
+    }
+
+    private addToConflictList(authoringStoryId: string) {
+        this.conflictingAuthoringStoryIds.add(authoringStoryId);
+    };
+
+    private removeFromDirtyList(authoringStoryId: string) {
+        this.dirtyAuthoringStoryIds.delete(authoringStoryId);
+    }
+
+    private removeFromConflictingList(authoringStoryId: string) {
+        this.conflictingAuthoringStoryIds.delete(authoringStoryId);
+    }
+
+    private inDirtyList(authoringStoryId: string): boolean {
+        return this.dirtyAuthoringStoryIds.has(authoringStoryId);
+    }
+
+    private inConflictingList(authoringStoryId: string): boolean {
+        return this.conflictingAuthoringStoryIds.has(authoringStoryId);
+    }
 }
