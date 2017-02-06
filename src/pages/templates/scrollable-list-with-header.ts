@@ -36,15 +36,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless} from "aurelia-framework";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
-/**
- * Created by andy on 28/11/16.
- */
 
-export class StoryPageList {
+export class ScrollableListWithHeaderCustomElement{
+    listElement: HTMLElement;
+    showUpArrow: boolean = false;
+    showDownArrow: boolean = false;
+    fudge: number = 5;
 
-    @bindable story: AuthoringStory;
+    attached() {
+        this.listElement.onscroll = () => { this.calculateArrows();}
+        this.calculateArrows();
+    }
 
-
+    calculateArrows() {
+        this.showUpArrow = (this.listElement.scrollTop > this.fudge);
+        this.showDownArrow = ((this.listElement.scrollTop + this.fudge) < (this.listElement.scrollHeight - this.listElement.offsetHeight));
+    }
 }

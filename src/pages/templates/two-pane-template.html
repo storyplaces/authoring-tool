@@ -38,23 +38,12 @@
   -->
 
 <template>
-    <require from="../components/story/story-page-list"></require>
-    <require from="./templates/two-pane-template.html"></require>
-    <require from="./templates/scrollable-list-with-header"></require>
-
-    <two-pane-template>
-        <div slot="map-pane" class="fill-space">
-            <map reading-manager.bind="readingManager"></map>
+    <div class="fill-space">
+        <div class="map-pane">
+            <slot name="map-pane"></slot>
         </div>
-        <div slot="content-pane" class="fill-space">
-            <scrollable-list-with-header>
-                <div slot="heading">
-                    <button class="btn btn-primary">Create new page</button>
-                </div>
-                <div slot="content">
-                    <story-page-list story.bind="story"></story-page-list>
-                </div>
-            </scrollable-list-with-header>
+        <div class="content-pane">
+            <slot name="content-pane"></slot>
         </div>
-    </two-pane-template>
+    </div>
 </template>

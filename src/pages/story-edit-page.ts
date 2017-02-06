@@ -58,4 +58,6 @@ export class StoryEditPage {
         this.storyId = params.storyId;
         this.storyConnector.sync().then(()=> {return});
     }
+
+
 }
