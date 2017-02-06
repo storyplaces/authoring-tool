@@ -53,16 +53,17 @@ import {AuthoringLocationCollection} from "../collections/AuthoringLocationColle
 )
 export class AuthoringStory extends BaseModel {
 
-    private _title: String;
-    private _description: String;
+
+    private _title: string;
+    private _description: string;
     private _createdDate: Date;
     private _modifiedDate: Date;
-    private _audience: String;
+    private _audience: string;
     private _authors: AuthoringUserCollection;
     private _chapters: AuthoringChapterCollection;
     private _pages: AuthoringPageCollection;
     private _locations: AuthoringLocationCollection;
-    private _tags: Array<String>;
+    private _tags: Array<string>;
 
 
     constructor(private authoringUserCollectionFactory: (any?) => AuthoringUserCollection,
@@ -125,11 +126,11 @@ export class AuthoringStory extends BaseModel {
         }
     }
 
-    get tags(): Array<String> {
+    get tags(): Array<string> {
         return this._tags;
     }
 
-    set tags(value: Array<String>) {
+    set tags(value: Array<string>) {
         this._tags = value;
     }
 
@@ -169,11 +170,11 @@ export class AuthoringStory extends BaseModel {
         this._authors = value;
     }
 
-    get audience(): String {
+    get audience(): string {
         return this._audience;
     }
 
-    set audience(value: String) {
+    set audience(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Audience', value);
         this._audience = value;
     }
@@ -183,6 +184,10 @@ export class AuthoringStory extends BaseModel {
     }
 
     set modifiedDate(value: Date) {
+        if (isNaN(value.getTime())){
+            this._modifiedDate = undefined;
+            return;
+        }
         this._modifiedDate = value;
     }
 
@@ -191,23 +196,27 @@ export class AuthoringStory extends BaseModel {
     }
 
     set createdDate(value: Date) {
+        if (isNaN(value.getTime())){
+            this._createdDate = undefined;
+            return;
+        }
         this._createdDate = value;
     }
 
-    get description(): String {
+    get description(): string {
         return this._description;
     }
 
-    set description(value: String) {
+    set description(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Description', value);
         this._description = value;
     }
 
-    get title(): String {
+    get title(): string {
         return this._title;
     }
 
-    set title(value: String) {
+    set title(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Title', value);
         this._title = value;
     }
