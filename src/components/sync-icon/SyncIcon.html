@@ -1,0 +1,17 @@
+<template>
+    <button type="button" class="btn btn-success navbar-btn" if.bind="sync.OK" click.delegate="sync.sync()">
+        <span class="glyphicon glyphicon-ok"></span>
+    </button>
+    <button type="button" class="btn btn-info navbar-btn" if.bind="sync.syncing">
+        <span class="glyphicon glyphicon-refresh"></span>
+    </button>
+    <button type="button" class="btn btn-warning navbar-btn" if.bind="sync.hasUnSyncedStories" click.delegate="sync.sync()">
+        ${sync.numberOfUnSyncedStories}
+    </button>
+    <button type="button" class="btn btn-danger navbar-btn" if.bind="sync.hasConflictingStories" click.delegate="sync.sync()">
+        <span class="glyphicon glyphicon-alert"></span> ${sync.numberOfConflictingStories}
+    </button>
+    <button type="button" class="btn btn-danger navbar-btn" if.bind="!sync.serverOK" click.delegate="sync.sync()">
+        Unable to contact server
+    </button>
+</template>
