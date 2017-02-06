@@ -107,7 +107,6 @@ html, body {
 
 .pages-list-component {
   height: 100%;
-  overflow-y: auto;
   border-left: solid lightgray 1px;
   border-top: none;
   padding: 0;
@@ -215,6 +214,23 @@ html, body {
     border: 1px solid black;
     vertical-align: text-top;
   }
+}
+
+@heightOfPagesListComponentFooter: 3.5em;
+
+.pages-list-component-body {
+  height: calc(~"100% - " @heightOfPagesListComponentFooter);
+  overflow-y: auto;
+}
+
+.pages-list-component-footer {
+  height: @heightOfPagesListComponentFooter;
+  padding-top: 0.75em;
+  text-align: center;
+}
+
+.status-btn {
+  margin-left: 1em;
 }
 
 .make-colour-classes(); // run the mixin
