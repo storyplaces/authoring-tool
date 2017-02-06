@@ -36,27 +36,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject, computedFrom, customAttribute} from "aurelia-framework";
-import {AuthoringPage} from "../../resources/models/AuthoringPage";
-import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
-import {StoryLookup} from "../../resources/utilities/StoryLookup";
-/**
- * Created by andy on 28/11/16.
- */
+import {customAttribute, inject} from "aurelia-framework";
+import "bootstrap";
 
+@customAttribute('bootstrap-tooltip')
+@inject(Element)
+export class BootstrapTooltip {
+    $element: any;
 
-@autoinject()
-@containerless()
-export class PageListItem {
-
-    @bindable page: AuthoringPage;
-    @bindable storyId: string;
-
-    constructor(private storyLookup: StoryLookup){}
-
-    @computedFrom("storyId")
-    get chapters()  : Array<AuthoringChapter> {
-        return this.storyLookup.getChaptersForPageId(this.storyId, this.page.id);
+    constructor(element) {
+        this.$element = $(element);
     }
 
+    bind() {
+        this.$element.tooltip();
+    }
+
+    unbind() {
+        this.$element.tooltip('destroy');
+    }
 }
