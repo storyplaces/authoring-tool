@@ -142,7 +142,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(true);
                 expect(storyPlacesAPI.save).toHaveBeenCalled();
                 done();
             });
@@ -167,7 +166,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(true);
                 expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
                 done();
             });
@@ -192,7 +190,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true);
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(false);
                 expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
                 done();
             });
@@ -227,7 +224,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true);
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(false);
                 expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
             })
             .then(() => {
@@ -239,7 +235,6 @@ describe("AuthoringStoryConnector", () => {
                         expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
                         expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
                         expect(authoringStoryConnector.syncing).toEqual(false);
-                        expect(authoringStoryConnector.serverOK).toEqual(true);
                         expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
                         done();
                     });
@@ -275,7 +270,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true, "Test sync after failure");
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(true, "Test conflicting after failure");
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(true);
                 expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
             })
             .then(() => {
@@ -287,7 +281,6 @@ describe("AuthoringStoryConnector", () => {
                         expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false, "Test sync after success");
                         expect(authoringStoryConnector.hasConflictingStories).toEqual(false, "Test conflicting after success");
                         expect(authoringStoryConnector.syncing).toEqual(false);
-                        expect(authoringStoryConnector.serverOK).toEqual(true);
                         expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
                         done();
                     });
@@ -313,7 +306,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true);
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(true);
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(true);
                 expect(storyPlacesAPI.save).toHaveBeenCalledWith(authoringStory);
                 done();
             });
@@ -345,7 +337,6 @@ describe("AuthoringStoryConnector", () => {
             expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
             expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
             expect(authoringStoryConnector.syncing).toEqual(false);
-            expect(authoringStoryConnector.serverOK).toEqual(true);
             expect(storyPlacesAPI.getAll).toHaveBeenCalled();
             done();
         });
@@ -379,7 +370,6 @@ describe("AuthoringStoryConnector", () => {
             expect(authoringStoryConnector.byId("123").title).toEqual("Remote");
             expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
             expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
-            expect(authoringStoryConnector.serverOK).toEqual(true);
             expect(authoringStoryConnector.syncing).toEqual(false);
             done();
         });
@@ -413,7 +403,6 @@ describe("AuthoringStoryConnector", () => {
                 expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true, "Test sync status after fetch");
                 expect(authoringStoryConnector.hasConflictingStories).toEqual(true, "Test conflicting status after fetch");
                 expect(authoringStoryConnector.syncing).toEqual(false);
-                expect(authoringStoryConnector.serverOK).toEqual(true);
                 done();
             });
         });
@@ -445,7 +434,6 @@ describe("AuthoringStoryConnector", () => {
             expect(authoringStoryConnector.hasUnSyncedStories).toEqual(false);
             expect(authoringStoryConnector.hasConflictingStories).toEqual(false);
             expect(authoringStoryConnector.syncing).toEqual(false);
-            expect(authoringStoryConnector.serverOK).toEqual(true);
             done();
         });
     });

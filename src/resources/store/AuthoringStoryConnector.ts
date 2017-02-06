@@ -57,15 +57,14 @@ export class AuthoringStoryConnector {
     private dirtyAuthoringStoryIds: Set<string> = new Set();
     private conflictingAuthoringStoryIds: Set<string> = new Set();
     private numberOfNetworkConnections: number = 0;
-    private _serverOK: boolean = true;
 
     constructor(private authoringStoryCollection: AuthoringStoryCollection, private authoringStoryFactory: AuthoringStoryFactory, private api: StoryPlacesAPI) {
         api.path = "/authoring/story/";
     }
 
-    @computedFrom('serverOK', 'numberOfNetworkConnections', 'dirtyAuthoringStoryIds.size', 'conflictingAuthoringStoryIds.size')
+    @computedFrom('numberOfNetworkConnections', 'dirtyAuthoringStoryIds.size', 'conflictingAuthoringStoryIds.size')
     get OK(): boolean {
-        return this._serverOK && !this.syncing && !this.hasUnSyncedStories && !this.hasConflictingStories;
+        return  !this.syncing && !this.hasUnSyncedStories && !this.hasConflictingStories;
     }
 
     @computedFrom('numberOfNetworkConnections')
@@ -91,11 +90,6 @@ export class AuthoringStoryConnector {
     @computedFrom('conflictingAuthoringStoryIds')
     get numberOfConflictingStories() : number {
         return this.conflictingAuthoringStoryIds.size;
-    }
-
-    @computedFrom('_serverOK')
-    get serverOK() : boolean {
-        return this._serverOK;
     }
 
     get all(): Array<AuthoringStory> {
@@ -155,14 +149,12 @@ export class AuthoringStoryConnector {
         return this.api
             .getAll()
             .catch(reject => {
-                this._serverOK = false;
                 throw reject;
             })
             .then(response => response.json() as any)
             .then(jsonArray => {
                 (jsonArray as Array<Identifiable & hasModifiedDate>)
                     .forEach(authoringStory => {
-                        this._serverOK = true;
                         let serverModified = new Date(authoringStory.modifiedDate);
                         let local = this.authoringStoryCollection.get(authoringStory.id);
 
@@ -189,17 +181,14 @@ export class AuthoringStoryConnector {
 
                 if (error instanceof Response && error.status == 409) {
                     this.addToConflictList(authoringStory.id);
-                    this._serverOK = true;
                     throw new Error("Conflict detected");
                 }
 
-                this._serverOK = false;
                 throw new Error("Unable to save story");
             })
             .then(response => response.json() as any)
             .then(jsonObject => {
                 this.numberOfNetworkConnections--;
-                this._serverOK = true;
                 return (jsonObject as AuthoringStoryWriteResponse).object;
             });
     }
