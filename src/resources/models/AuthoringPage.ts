@@ -47,13 +47,13 @@ import {TypeChecker} from "../utilities/TypeChecker";
 export class AuthoringPage extends BaseModel {
 
 
-    private _name: String;
-    private _content: String;
-    private _pageHint: String;
-    private _locationId: String;
+    private _name: string;
+    private _content: string;
+    private _pageHint: string;
+    private _locationId: string;
     private _allowMultipleReadings: Boolean;
-    private _unlockedByPageIds: Array<String>;
-    private _unlockedByPagesOperator: String;
+    private _unlockedByPageIds: Array<string>;
+    private _unlockedByPagesOperator: string;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -96,46 +96,51 @@ export class AuthoringPage extends BaseModel {
         }
     }
 
-    get pageHint(): String {
+    get pageHint(): string {
         return this._pageHint;
     }
 
-    set pageHint(value: String) {
+    set pageHint(value: string) {
         this.typeChecker.validateAsStringOrUndefined('PageHint', value);
         this._pageHint = value;
     }
 
-    get name(): String {
+    get name(): string {
         return this._name;
     }
 
-    set name(value: String) {
+    set name(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Name', value);
         this._name = value;
     }
 
-    get content(): String {
+    get content(): string {
         return this._content;
     }
 
-    set content(value: String) {
+    set content(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Colour', value);
         this._content = value;
     }
 
-    get unlockedByPagesOperator(): String {
+    get unlockedByPagesOperator(): string {
         return this._unlockedByPagesOperator;
     }
 
-    set unlockedByPagesOperator(value: String) {
+    set unlockedByPagesOperator(value: string) {
         this.typeChecker.validateAsStringOrUndefined('UnlockedByPagesOperator', value);
+
+        if (value != 'and' && value != 'or' && value != undefined) {
+            throw new TypeError("Unlocked by pages operator must be either and or or");
+        }
+
         this._unlockedByPagesOperator = value;
     }
-    get unlockedByPageIds(): Array<String> {
+    get unlockedByPageIds(): Array<string> {
         return this._unlockedByPageIds;
     }
 
-    set unlockedByPageIds(value: Array<String>) {
+    set unlockedByPageIds(value: Array<string>) {
         this._unlockedByPageIds = value;
     }
     get allowMultipleReadings(): Boolean {
@@ -146,11 +151,11 @@ export class AuthoringPage extends BaseModel {
         this.typeChecker.validateAsBooleanOrUndefined('AllowMultipleReadings', value);
         this._allowMultipleReadings = value;
     }
-    get locationId(): String {
+    get locationId(): string {
         return this._locationId;
     }
 
-    set locationId(value: String) {
+    set locationId(value: string) {
         this.typeChecker.validateAsStringOrUndefined('LocationId', value);
         this._locationId = value;
     }

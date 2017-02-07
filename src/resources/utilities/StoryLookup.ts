@@ -36,19 +36,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 import {autoinject} from "aurelia-framework";
+import {AuthoringLocation} from "../models/AuthoringLocation";
 /**
  * Created by andy on 02/02/17.
  */
 
 @autoinject()
-export class StoryLookup{
+export class StoryLookup {
 
-    constructor(private storyConnector: AuthoringStoryConnector){}
+    constructor(private storyConnector: AuthoringStoryConnector) {
+    }
 
-    public getChaptersForPageId(storyId: string, pageId: string){
+    public getChaptersForPageId(storyId: string, pageId: string) {
         let story = this.storyConnector.byId(storyId);
         if (!story) {
             return [];
@@ -57,5 +58,19 @@ export class StoryLookup{
         return story.chapters.all.filter(chapter => {
             return chapter.pageIds.indexOf(pageId) != -1;
         });
+    }
+
+    public getLocationForPageId(storyId: string, pageId: string) : AuthoringLocation{
+        let story = this.storyConnector.byId(storyId);
+        if (!story) {
+            return undefined;
+        }
+
+        let page = story.pages.get(pageId);
+        if (!page) {
+            return undefined;
+        }
+
+        return story.locations.get(page.locationId);
     }
 }

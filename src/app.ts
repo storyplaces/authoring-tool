@@ -34,9 +34,15 @@
  */
 
 import {Router, RouterConfiguration} from "aurelia-router";
+import {autoinject} from "aurelia-framework";
+import {AuthoringStoryConnector} from "./resources/store/AuthoringStoryConnector";
 
+@autoinject()
 export class App {
     router: Router;
+
+    constructor(private storyConnector: AuthoringStoryConnector) {
+    }
 
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'StoryPlaces';
@@ -49,9 +55,17 @@ export class App {
 
             {route: '/story', moduleId: 'pages/story-list-page', title: 'Stories', name: 'story-list'},
             {route: '/story/:storyId', moduleId: 'pages/story-edit-page', title: 'Story', name: 'story-edit'},
+
+            {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
+            {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
         ]);
 
         this.router = router;
         console.log(this.router);
     }
+
+    attached() {
+        this.storyConnector.sync();
+    }
+
 }

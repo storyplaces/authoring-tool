@@ -45,6 +45,8 @@ export class AuthoringChapterCollection extends BaseCollection<AuthoringChapter>
     constructor(private factory: (any?) => AuthoringChapter, data?: any[]) {
         super();
 
+        data = this.checkIfCollection(data);
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }

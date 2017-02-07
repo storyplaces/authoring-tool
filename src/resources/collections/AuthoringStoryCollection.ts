@@ -46,6 +46,8 @@ export class AuthoringStoryCollection extends BaseCollection<AuthoringStory> {
     constructor(private factory: (any?) => AuthoringStory, data?: any[]) {
         super();
 
+        data = this.checkIfCollection(data);
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }

@@ -46,7 +46,7 @@ export class StoryEditPage {
 
     private storyId: string;
 
-    @computedFrom('storyId')
+    @computedFrom('storyId', 'this.storyConnector.all')
     get story(): AuthoringStory {
         return this.storyConnector.byId(this.storyId);
     }
@@ -54,10 +54,19 @@ export class StoryEditPage {
     constructor(private storyConnector: AuthoringStoryConnector) {
     }
 
-    activate(params) {
+    canActivate(params) {
         this.storyId = params.storyId;
-        this.storyConnector.sync().then(()=> {return});
+
+        if(this.hasData()) {
+            return true;
+        }
+
+        return this.storyConnector.sync().then(() => {
+            return this.hasData();
+        });
     }
 
-
+    private hasData(): boolean {
+        return this.story !== undefined;
+    }
 }

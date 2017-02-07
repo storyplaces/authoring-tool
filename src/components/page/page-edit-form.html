@@ -1,0 +1,156 @@
+<!--
+  ~ ------------
+  ~ StoryPlaces
+  ~ ------------
+  ~ This application was developed as part of the Leverhulme Trust funded
+  ~ StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+  ~ Copyright (c) 2017 University of Southampton
+  ~
+  ~ David Millard, dem.soton.ac.uk
+  ~ Andy Day, a.r.day.soton.ac.uk
+  ~ Kevin Puplett, k.e.puplett.soton.ac.uk
+  ~ Charlie Hargood, chargood.bournemouth.ac.uk
+  ~ David Pepper, d.pepper.soton.ac.uk
+  ~
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without
+  ~ modification, are permitted provided that the following conditions are met:
+  ~ - Redistributions of source code must retain the above copyright
+  ~   notice, this list of conditions and the following disclaimer.
+  ~ - Redistributions in binary form must reproduce the above copyright
+  ~   notice, this list of conditions and the following disclaimer in the
+  ~   documentation and/or other materials provided with the distribution.
+  ~ - The name of the University of Southampton nor the name of its
+  ~   contributors may be used to endorse or promote products derived from
+  ~   this software without specific prior written permission.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  ~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  ~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  ~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<template>
+
+    <require from="../icons/information-icon.html"></require>
+    <require from="resources/value-converters/FloatToString"></require>
+    <require from="resources/value-converters/IntToString"></require>
+
+    <form>
+        <div class="padding">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Page Details
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="name">Page Name:
+                            <information-icon help-text="The title of the page"></information-icon>
+                        </label>
+                        <input type="text" class="form-control" id="name" value.bind="page.name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Page Content:
+                            <information-icon help-text="The content of the page"></information-icon>
+                        </label>
+                        <textarea class="form-control" id="content" rows="5" value.bind="page.content"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hint-text">Hint text:
+                            <information-icon help-text="A hint to the reader shown in the list of pages"></information-icon>
+                        </label>
+                        <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint">
+                    </div>
+
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Narrative Constraints
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input id="read-multiple" type="checkbox" checked.bind="page.allowMultipleReadings">
+                                Allow Multiple Readings:
+                                <information-icon help-text="Is the reader allowed to read this page more than once?"></information-icon>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="form-group">
+                                <label for="unlocked-by">Unlocked By:
+                                    <information-icon help-text="Pages which unlock this page"></information-icon>
+                                </label>
+                                <select class="form-control" value.bind="page.unlockedByPagesOperator">
+                                    <option value="or">Any of:</option>
+                                    <option value="and">All of:</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <label for="chapters">Member of chapters:
+                                <information-icon help-text="The chapters which this page is a member of"></information-icon>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Location Constraint
+                </div>
+                <div class="panel-body" if.bind="location === undefined">
+                    <button class="btn btn-success" click.delegate="addLocation()"><span class="glyphicon glyphicon-plus"></span> Add Location</button>
+                </div>
+                <div class="panel-body" if.bind="location !== undefined">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="lat">Latitude:
+                                    <information-icon help-text="The latitude of the location of the page"></information-icon>
+                                </label>
+                                <input type="text" class="form-control" id="lat" value.bind="location.lat | floatToString">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="lat">Longitude:
+                                    <information-icon help-text="The longitude of the location of the page"></information-icon>
+                                </label>
+                                <input type="text" class="form-control" id="long" value.bind="location.long | floatToString">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-4">
+                            <div class="form-group">
+                                <label for="radius">Radius(m):
+                                    <information-icon help-text="The radius within which the page is valid."></information-icon>
+                                </label>
+                                <input type="text" class="form-control" id="radius" value.bind="location.radius | intToString">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary"><span class="glyphicon glyphicon-record"></span> Set location on map</button>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <button class="btn btn-danger" click.delegate="removeLocation()"><span class="glyphicon glyphicon-trash"></span> Remove Location</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</template>

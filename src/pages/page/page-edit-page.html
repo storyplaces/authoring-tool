@@ -38,21 +38,24 @@
   -->
 
 <template>
-    <require from="../attributes/bootstrap-tooltip"></require>
+    <require from="../templates/two-pane-template.html"></require>
+    <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
+    <require from="../../components/page/page-edit-form"></require>
 
-    <li class="list-group-item page-list-item-li">
-        <div class="page-list-item">
-            <div class="grab-bar"></div>
-            <div class="page-list-item-text">
-                <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
-                                       class="chapter-symbol-${chapter.colour}" title="${chapter.name}"
-                                       data-toggle="tooltip" data-placement="bottom"></span></h4>
-                <p>${page.content}</p>
-            </div>
-            <div class="page-list-item-buttons">
-                <a class="btn btn-primary" route-href="route: page-edit; params.bind: {storyId: storyId, pageId: page.id}"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                <button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-            </div>
+    <two-pane-template>
+        <div slot="map-pane" class="fill-space">
+            <map reading-manager.bind="readingManager"></map>
         </div>
-    </li>
+        <div slot="content-pane" class="fill-space">
+            <scrollable-list-with-header>
+                <div slot="heading">
+                    <button class="btn btn-success" click.delegate="save()"><span class="glyphicon glyphicon-save"></span> Save</button>
+                    <button class="btn btn-danger" click.delegate="clone()"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                </div>
+                <div slot="content">
+                    <page-edit-form story.one-way="story" page.one-way="page" location.one-way="location"></page-edit-form>
+                </div>
+            </scrollable-list-with-header>
+        </div>
+    </two-pane-template>
 </template>

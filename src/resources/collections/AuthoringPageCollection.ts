@@ -45,6 +45,8 @@ export class AuthoringPageCollection extends BaseCollection<AuthoringPage> {
     constructor(private factory: (any?) => AuthoringPage, data?: any[]) {
         super();
 
+        data = this.checkIfCollection(data);
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }

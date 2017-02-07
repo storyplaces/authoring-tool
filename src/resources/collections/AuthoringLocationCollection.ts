@@ -45,6 +45,8 @@ export class AuthoringLocationCollection extends BaseCollection<AuthoringLocatio
     constructor(private factory: (any?) => AuthoringLocation, data?: any[]) {
         super();
 
+        data = this.checkIfCollection(data);
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }

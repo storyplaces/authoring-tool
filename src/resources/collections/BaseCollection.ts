@@ -117,4 +117,12 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
     protected itemFromObject(item: any): DATA_TYPE {
         return item as DATA_TYPE;
     }
+
+    protected checkIfCollection(data: any) {
+        if (data instanceof BaseCollection) {
+            return data.toArray();
+        }
+
+        return data;
+    }
 }
