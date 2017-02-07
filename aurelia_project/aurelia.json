@@ -148,6 +148,11 @@
             "path": "../node_modules/leaflet/dist",
             "main": "leaflet-src.js",
             "exports": "L"
+          },
+          {
+            "name": "aurelia-dialog",
+            "path": "../node_modules/aurelia-dialog/dist/amd",
+            "main": "aurelia-dialog"
           }
         ]
       }

@@ -60,4 +60,14 @@ export class AuthoringChapterCollection extends BaseCollection<AuthoringChapter>
 
         return this.factory(item);
     }
+
+    removeReferencesToPage(pageId: string) {
+        this.all.forEach(chapter => {
+            var index = chapter.pageIds.indexOf(pageId);
+            if (index > -1) {
+                chapter.pageIds.splice(index, 1);
+            }
+        });
+
+    }
 }

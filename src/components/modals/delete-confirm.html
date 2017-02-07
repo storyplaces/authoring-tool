@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
   ~ ------------
   ~ StoryPlaces
@@ -38,21 +39,15 @@
   -->
 
 <template>
-    <require from="../attributes/bootstrap-tooltip"></require>
+    <ai-dialog>
+        <ai-dialog-body>
+            <h2>${message}</h2>
+        </ai-dialog-body>
 
-    <li class="list-group-item page-list-item-li">
-        <div class="page-list-item">
-            <div class="grab-bar"></div>
-            <div class="page-list-item-text">
-                <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
-                                       class="chapter-symbol-${chapter.colour}" title="${chapter.name}"
-                                       data-toggle="tooltip" data-placement="bottom"></span></h4>
-                <p>${page.content}</p>
-            </div>
-            <div class="page-list-item-buttons">
-                <a class="btn btn-primary" route-href="route: page-edit; params.bind: {storyId: storyId, pageId: page.id}"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                <button class="btn btn-danger" click.delegate="delete()"><span class="glyphicon glyphicon-remove" ></span> Delete</button>
-            </div>
-        </div>
-    </li>
+        <ai-dialog-footer>
+            <button click.trigger="dialogController.cancel()">Cancel</button>
+            <button click.trigger="dialogController.ok(message)">Ok</button>
+        </ai-dialog-footer>
+
+    </ai-dialog>
 </template>

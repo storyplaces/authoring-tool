@@ -36,10 +36,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject, computedFrom, customAttribute} from "aurelia-framework";
+import {bindable, containerless, autoinject, computedFrom} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../modals/delete-confirm";
 /**
  * Created by andy on 28/11/16.
  */
@@ -52,11 +54,21 @@ export class PageListItem {
     @bindable page: AuthoringPage;
     @bindable storyId: string;
 
-    constructor(private storyLookup: StoryLookup){}
+    constructor(private storyLookup: StoryLookup, public dialogService: DialogService) {
+    }
 
     @computedFrom("storyId")
-    get chapters()  : Array<AuthoringChapter> {
+    get chapters(): Array<AuthoringChapter> {
         return this.storyLookup.getChaptersForPageId(this.storyId, this.page.id);
+    }
+
+    delete(): void {
+        let question = "Are you sure you wish to delete the page " + this.page.name + "?";
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+            if (!response.wasCancelled) {
+                this.storyLookup.deletePageFromStory(this.storyId, this.page.id);
+            }
+        });
     }
 
 }

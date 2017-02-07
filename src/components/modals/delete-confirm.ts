@@ -37,54 +37,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
-import {autoinject} from "aurelia-framework";
-import {AuthoringLocation} from "../models/AuthoringLocation";
-/**
- * Created by andy on 02/02/17.
- */
+import {inject} from 'aurelia-framework';
+import {DialogController} from 'aurelia-dialog';
 
-@autoinject()
-export class StoryLookup {
+@inject(DialogController)
 
-    constructor(private storyConnector: AuthoringStoryConnector) {
+export class DeleteConfirm {
+
+    answer: boolean;
+    message: string;
+
+    constructor(private dialogController: DialogController){
+        this.answer = null;
+
+        this.dialogController.settings.centerHorizontalOnly = true;
     }
 
-    // Returns an array of AuthoringChapters which contain the given page Id (in the specified story)
-    public getChaptersForPageId(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            return [];
-        }
-
-        return story.chapters.all.filter(chapter => {
-            return chapter.pageIds.indexOf(pageId) != -1;
-        });
-    }
-
-    public getLocationForPageId(storyId: string, pageId: string) : AuthoringLocation{
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            return undefined;
-        }
-
-        let page = story.pages.get(pageId);
-        if (!page) {
-            return undefined;
-        }
-
-        return story.locations.get(page.locationId);
-    }
-
-    // Remove a page from the story
-    // Also remove the page Id from all chapters in the story
-    public deletePageFromStory(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            throw Error("Story with id " + storyId + " does not exist.");
-        }
-        story.pages.remove(pageId);
-        story.chapters.removeReferencesToPage(pageId);
-        this.storyConnector.save(story);
+    activate(message: string) {
+        this.message = message;
     }
 }
