@@ -42,10 +42,10 @@ export class App {
         config.title = 'StoryPlaces';
 
         config.map([
-            {route: '/', name: 'home', moduleId: 'pages/home', title: 'Home'},
+            {route: '/', name: 'home', moduleId: 'pages/static/home', title: 'Home'},
 
-            {route: '/help', name: 'help', moduleId: 'pages/help', title: 'Help'},
-            {route: '/about', name: 'about', moduleId: 'pages/about', title: 'About'},
+            {route: '/help', name: 'help', moduleId: 'pages/static/help', title: 'Help'},
+            {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
 
             {route: '/story', moduleId: 'pages/story-list-page', title: 'Stories', name: 'story-list'},
             {route: '/story/:storyId', moduleId: 'pages/story-edit-page', title: 'Story', name: 'story-edit'},
