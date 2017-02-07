@@ -36,36 +36,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCollection} from "./BaseCollection";
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringChapter} from "../models/AuthoringChapter";
 
-@inject(Factory.of(AuthoringChapter))
-export class AuthoringChapterCollection extends BaseCollection<AuthoringChapter> {
-    constructor(private factory: (any?) => AuthoringChapter, data?: any[]) {
-        super();
+import {inject} from 'aurelia-framework';
+import {DialogController} from 'aurelia-dialog';
 
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+@inject(DialogController)
+
+export class DeleteConfirm {
+
+    answer: boolean;
+    message: string;
+
+    constructor(private dialogController: DialogController){
+        this.answer = null;
+
+        this.dialogController.settings.centerHorizontalOnly = true;
     }
 
-    protected itemFromObject(item: any): AuthoringChapter {
-
-        if (item instanceof AuthoringChapter) {
-            return item;
-        }
-
-        return this.factory(item);
-    }
-
-    removeReferencesToPage(pageId: string) {
-        this.all.forEach(chapter => {
-            var index = chapter.pageIds.indexOf(pageId);
-            if (index > -1) {
-                chapter.pageIds.splice(index, 1);
-            }
-        });
-
+    activate(message: string) {
+        this.message = message;
     }
 }

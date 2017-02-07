@@ -36,7 +36,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 import {autoinject} from "aurelia-framework";
 /**
@@ -44,11 +43,13 @@ import {autoinject} from "aurelia-framework";
  */
 
 @autoinject()
-export class StoryLookup{
+export class StoryLookup {
 
-    constructor(private storyConnector: AuthoringStoryConnector){}
+    constructor(private storyConnector: AuthoringStoryConnector) {
+    }
 
-    public getChaptersForPageId(storyId: string, pageId: string){
+    // Returns an array of AuthoringChapters which contain the given page Id (in the specified story)
+    public getChaptersForPageId(storyId: string, pageId: string) {
         let story = this.storyConnector.byId(storyId);
         if (!story) {
             return [];
@@ -57,5 +58,17 @@ export class StoryLookup{
         return story.chapters.all.filter(chapter => {
             return chapter.pageIds.indexOf(pageId) != -1;
         });
+    }
+
+    // Remove a page from the story
+    // Also remove the page Id from all chapters in the story
+    public deletePageFromStory(storyId: string, pageId: string) {
+        let story = this.storyConnector.byId(storyId);
+        if (!story) {
+            throw Error("Story with id " + storyId + " does not exist.");
+        }
+        story.pages.remove(pageId);
+        story.chapters.removeReferencesToPage(pageId);
+        this.storyConnector.save(story);
     }
 }
