@@ -32,9 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Identifiable} from '../interfaces/Identifiable';
-import {computedFrom} from 'aurelia-framework';
+import {Identifiable} from "../interfaces/Identifiable";
 
 export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
@@ -53,11 +51,11 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         return this._data.find(item => item.id == id)
     }
 
-    public getOrFail(id: string, type?: string) : DATA_TYPE {
+    public getOrFail(id: string, type?: string): DATA_TYPE {
         let item: DATA_TYPE = this.get(id);
 
         if (!item) {
-            throw Error("Unable to get " + type || "item"+ " with id " + id);
+            throw Error("Unable to get " + type || "item" + " with id " + id);
         }
 
         return item
@@ -67,7 +65,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         let item = this.itemFromObject(passedItem);
 
         if (item.id == undefined) {
-            throw Error("Unable to save object as it has no id set");
+            item.id = this.getNewUniqueId();
         }
 
         let foundIndex = this.findIndex(item);
@@ -78,6 +76,21 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         }
 
         this._data.push(item);
+    }
+
+    public getNewUniqueId() {
+        let guid = this.guid();
+        while (this.findIndexById(guid)!=undefined) {
+            guid = this.guid();
+        }
+        return guid;
+    }
+
+    public guid() {
+        let group = () => {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+        };
+        return (group() + group() + "-" + group() + "-4" + group().substr(0, 3) + "-" + group() + "-" + group() + group() + group()).toLowerCase();
     }
 
     private findIndex(item: DATA_TYPE): number|null {

@@ -49,7 +49,7 @@
         <div slot="content-pane" class="fill-space">
             <scrollable-list-with-header>
                 <div slot="heading">
-                    <button class="btn btn-primary">Create new page</button>
+                    <button class="btn btn-primary" click.delegate="new()">Create new page</button>
                 </div>
                 <div slot="content">
                     <story-page-list story.bind="story"></story-page-list>

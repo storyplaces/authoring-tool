@@ -36,8 +36,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {autoinject, computedFrom} from "aurelia-framework";
+import {Router} from "aurelia-router";
 import {AuthoringStory} from "../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../resources/store/AuthoringStoryConnector";
 
@@ -51,13 +51,14 @@ export class StoryEditPage {
         return this.storyConnector.byId(this.storyId);
     }
 
-    constructor(private storyConnector: AuthoringStoryConnector) {
+    constructor(private storyConnector: AuthoringStoryConnector,
+                private router: Router) {
     }
 
     canActivate(params) {
         this.storyId = params.storyId;
 
-        if(this.hasData()) {
+        if (this.hasData()) {
             return true;
         }
 
@@ -68,5 +69,9 @@ export class StoryEditPage {
 
     private hasData(): boolean {
         return this.story !== undefined;
+    }
+
+    private new(): void {
+        this.router.navigateToRoute('page-new', {storyId: this.story.id});
     }
 }

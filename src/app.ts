@@ -57,7 +57,7 @@ export class App {
             {route: '/story/:storyId', moduleId: 'pages/story-edit-page', title: 'Story', name: 'story-edit'},
 
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
-            {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
+            {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new'},
         ]);
 
         this.router = router;
