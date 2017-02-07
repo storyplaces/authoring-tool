@@ -37,13 +37,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {inject, Factory} from "aurelia-framework";
+import {Router} from "aurelia-router";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../../components/modals/delete-confirm";
 
-@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory))
+@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory), Router, DialogService)
 export class PageEditPage {
     private params: {storyId: string, pageId: string};
     private page: AuthoringPage;
@@ -57,7 +60,9 @@ export class PageEditPage {
                 private storyLookup: StoryLookup,
                 private pageFactory: (data?) => AuthoringPage,
                 private locationFactory: (data?) => AuthoringLocation,
-                private storyFactory: (data?) => AuthoringStory) {
+                private storyFactory: (data?) => AuthoringStory,
+                private router: Router,
+                private dialogService: DialogService) {
     }
 
     canActivate(params) {
@@ -97,7 +102,15 @@ export class PageEditPage {
     }
 
     canDeactivate() {
-        return !this.storyModified && !this.pageModified;
+        let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
+        if(this.storyModified || this.pageModified) {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+                if (!response.wasCancelled) {
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 
     private clone() {
@@ -108,13 +121,13 @@ export class PageEditPage {
 
     private cloneStory() {
         this.story = this.storyFactory(this.storyConnector.byId(this.params.storyId));
-        this.storyModified = false;
+        this.storyModified = true;
     }
 
     private clonePage() {
         let template = this.params.pageId ? this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId) : undefined;
         this.page = this.pageFactory(template);
-        this.pageModified = false;
+        this.pageModified = true;
     }
 
     private cloneLocation() {
@@ -131,7 +144,12 @@ export class PageEditPage {
         this.pageModified = false;
 
         this.storyConnector.save(this.story).then(() => {
-            this.storyModified = false
+            this.storyModified = false;
+            this.router.navigateToRoute("story-edit", {storyId: this.story.id});
         });
+    }
+
+    private cancel() {
+        this.router.navigateToRoute("story-edit", {storyId: this.story.id});
     }
 }
