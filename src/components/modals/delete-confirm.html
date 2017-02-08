@@ -41,12 +41,13 @@
 <template>
     <ai-dialog>
         <ai-dialog-body>
-            <h2>${message}</h2>
+            <h4>Warning:</h4>
+            ${message}
         </ai-dialog-body>
 
         <ai-dialog-footer>
-            <button click.trigger="dialogController.cancel()">Cancel</button>
-            <button click.trigger="dialogController.ok(message)">Ok</button>
+            <button class="btn btn-warning" click.trigger="dialogController.ok(message)">Ok</button>
+            <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
         </ai-dialog-footer>
 
     </ai-dialog>
