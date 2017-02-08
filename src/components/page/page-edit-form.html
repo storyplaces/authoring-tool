@@ -87,7 +87,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-md-6">
+                        <div class="col-xs-12 col-sm-6">
                             <div class="form-group">
                                 <label for="unlocked-by">Unlocked By:
                                     <information-icon help-text="Pages which unlock this page"></information-icon>
@@ -99,7 +99,7 @@
 
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6">
+                        <div class="col-xs-12 col-sm-6">
                             <label for="chapters">Member of chapters:
                                 <information-icon help-text="The chapters which this page is a member of"></information-icon>
                             </label>
@@ -110,13 +110,14 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Location Constraint
+                    <button class="btn btn-xs btn-danger pull-right" click.delegate="removeLocation()" if.bind="location"><span class="glyphicon glyphicon-trash"></span> Delete</button>
                 </div>
                 <div class="panel-body" if.bind="location === undefined">
                     <button class="btn btn-success" click.delegate="addLocation()"><span class="glyphicon glyphicon-plus"></span> Add Location</button>
                 </div>
                 <div class="panel-body" if.bind="location !== undefined">
                     <div class="row">
-                        <div class="col-xs-12 col-md-4">
+                        <div class="col-xs-12 col-sm-4">
                             <div class="form-group">
                                 <label for="lat">Latitude:
                                     <information-icon help-text="The latitude of the location of the page"></information-icon>
@@ -124,7 +125,7 @@
                                 <input type="text" class="form-control" id="lat" value.bind="location.lat | floatToString">
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-4">
+                        <div class="col-xs-12 col-sm-4">
                             <div class="form-group">
                                 <label for="lat">Longitude:
                                     <information-icon help-text="The longitude of the location of the page"></information-icon>
@@ -132,7 +133,7 @@
                                 <input type="text" class="form-control" id="long" value.bind="location.long | floatToString">
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-4">
+                        <div class="col-xs-12 col-sm-4">
                             <div class="form-group">
                                 <label for="radius">Radius(m):
                                     <information-icon help-text="The radius within which the page is valid."></information-icon>
@@ -142,11 +143,15 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6">
-                            <button class="btn btn-primary"><span class="glyphicon glyphicon-record"></span> Set location on map</button>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block"><span class="glyphicon glyphicon-map-marker"></span> Drop pin on map</button>
+                            </div>
                         </div>
-                        <div class="col-xs-6 text-right">
-                            <button class="btn btn-danger" click.delegate="removeLocation()"><span class="glyphicon glyphicon-trash"></span> Remove Location</button>
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block"><span class="glyphicon glyphicon-record"></span> Use current location</button>
+                            </div>
                         </div>
                     </div>
                 </div>
