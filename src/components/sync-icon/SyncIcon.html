@@ -1,14 +1,23 @@
 <template>
-    <button type="button" class="btn btn-default navbar-btn status-btn" if.bind="sync.OK" click.delegate="sync.sync()">
-        <span class="text-success"><span class="glyphicon glyphicon-ok"></span> Synced</span>
-    </button>
-    <button type="button" class="btn btn-default navbar-btn status-btn" if.bind="sync.syncing">
-        <span class="text-info"><span class="glyphicon glyphicon-refresh"></span> Syncing</span>
-    </button>
-    <button type="button" class="btn btn-warning navbar-btn status-btn" if.bind="sync.hasUnSyncedStories" click.delegate="sync.sync()">
-        ${sync.numberOfUnSyncedStories}
-    </button>
-    <button type="button" class="btn btn-danger navbar-btn status-btn" if.bind="sync.hasConflictingStories" click.delegate="sync.sync()">
-        <span class="glyphicon glyphicon-alert"></span> ${sync.numberOfConflictingStories}
-    </button>
+    <require from="../attributes/bootstrap-tooltip"></require>
+
+    <div class="btn-group status-btn-group">
+        <button type="button" class="btn btn-default navbar-btn status-btn" if.bind="sync.syncing">
+            <span class="text-info"><span class="glyphicon glyphicon-refresh"></span> Syncing</span>
+        </button>
+        <button type="button" class="btn btn-default navbar-btn status-btn" if.bind="!sync.syncing && sync.connectionOK" click.delegate="sync.sync()">
+            <span class="text-success"><span class="glyphicon glyphicon-ok"></span> Synced</span>
+        </button>
+        <button type="button" class="btn btn-default navbar-btn status-btn" if.bind="!sync.syncing && !sync.connectionOK" click.delegate="sync.sync()">
+            <span class="text-danger"><span class="glyphicon glyphicon-remove"></span> Offline</span>
+        </button>
+
+        <button type="button" class="btn btn-default navbar-btn" if.bind="sync.hasUnSyncedStories" title="There are stories which have not been uploaded to the server. Press the button to the left to try synchronising" bootstrap-tooltip data-placement="bottom">
+            <span class="text-warning"><span class="glyphicon glyphicon-floppy-remove"></span> ${sync.numberOfUnSyncedStories}</span>
+        </button>
+        <button type="button" class="btn btn-danger navbar-btn" if.bind="sync.hasConflictingStories" title="There are stories which are conflicting with stories on the server" bootstrap-tooltip data-placement="bottom">
+            <span class="glyphicon glyphicon-alert"></span> ${sync.numberOfConflictingStories}
+        </button>
+    </div>
+
 </template>

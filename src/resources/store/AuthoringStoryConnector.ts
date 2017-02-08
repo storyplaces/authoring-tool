@@ -57,14 +57,15 @@ export class AuthoringStoryConnector {
     private dirtyAuthoringStoryIds: Set<string> = new Set();
     private conflictingAuthoringStoryIds: Set<string> = new Set();
     private numberOfNetworkConnections: number = 0;
+    private serverOK: boolean = true;
 
     constructor(private authoringStoryCollection: AuthoringStoryCollection, private authoringStoryFactory: AuthoringStoryFactory, private api: StoryPlacesAPI) {
         api.path = "/authoring/story/";
     }
 
-    @computedFrom('numberOfNetworkConnections', 'dirtyAuthoringStoryIds.size', 'conflictingAuthoringStoryIds.size')
-    get OK(): boolean {
-        return  !this.syncing && !this.hasUnSyncedStories && !this.hasConflictingStories;
+    @computedFrom('serverOK')
+    get connectionOK(): boolean {
+        return this.serverOK;
     }
 
     @computedFrom('numberOfNetworkConnections')
@@ -72,22 +73,22 @@ export class AuthoringStoryConnector {
         return this.numberOfNetworkConnections != 0;
     }
 
-    @computedFrom('dirtyAuthoringStoryIds')
+    @computedFrom('dirtyAuthoringStoryIds.size')
     get hasUnSyncedStories(): boolean {
         return this.dirtyAuthoringStoryIds.size != 0;
     }
 
-    @computedFrom('dirtyAuthoringStoryIds')
+    @computedFrom('dirtyAuthoringStoryIds.size')
     get numberOfUnSyncedStories() {
         return this.dirtyAuthoringStoryIds.size;
     }
 
-    @computedFrom('conflictingAuthoringStoryIds')
+    @computedFrom('conflictingAuthoringStoryIds.size')
     get hasConflictingStories(): boolean {
         return this.conflictingAuthoringStoryIds.size != 0;
     }
 
-    @computedFrom('conflictingAuthoringStoryIds')
+    @computedFrom('conflictingAuthoringStoryIds.size')
     get numberOfConflictingStories() : number {
         return this.conflictingAuthoringStoryIds.size;
     }
@@ -146,15 +147,20 @@ export class AuthoringStoryConnector {
     }
 
     fetchAll(): Promise<undefined> {
+        this.numberOfNetworkConnections++;
         return this.api
             .getAll()
             .catch(reject => {
+                this.numberOfNetworkConnections--;
+                this.serverOK = false;
                 throw reject;
             })
             .then(response => response.json() as any)
             .then(jsonArray => {
+                this.numberOfNetworkConnections--;
                 (jsonArray as Array<Identifiable & hasModifiedDate>)
                     .forEach(authoringStory => {
+                        this.serverOK = true;
                         let serverModified = new Date(authoringStory.modifiedDate);
                         let local = this.authoringStoryCollection.get(authoringStory.id);
 
@@ -181,14 +187,17 @@ export class AuthoringStoryConnector {
 
                 if (error instanceof Response && error.status == 409) {
                     this.addToConflictList(authoringStory.id);
+                    this.serverOK = true;
                     throw new Error("Conflict detected");
                 }
 
+                this.serverOK = false;
                 throw new Error("Unable to save story");
             })
             .then(response => response.json() as any)
             .then(jsonObject => {
                 this.numberOfNetworkConnections--;
+                this.serverOK = true;
                 return (jsonObject as AuthoringStoryWriteResponse).object;
             });
     }
