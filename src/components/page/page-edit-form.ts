@@ -52,6 +52,7 @@ export class PageEditFormCustomElement {
     }
 
     removeLocation() {
+        this.story.locations.remove(this.location.id);
         this.location = undefined;
     }
 

@@ -103,7 +103,7 @@ export class PageEditPage {
 
     canDeactivate() {
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
-        if(this.storyModified || this.pageModified) {
+        if (this.storyModified || this.pageModified) {
             return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
                 if (!response.wasCancelled) {
                     return true;
@@ -134,12 +134,23 @@ export class PageEditPage {
         this.location = undefined;
 
         if (this.params.pageId) {
-            this.location = this.locationFactory(this.storyLookup.getLocationForPageId(this.params.storyId, this.params.pageId));
+            let currentLocation = this.storyLookup.getLocationForPageId(this.params.storyId, this.params.pageId);
+            if (currentLocation) {
+                this.location = this.locationFactory(currentLocation);
+            }
         }
+        console.log("initial location ", this.location);
     }
 
     private save() {
-        this.story.locations.save(this.location);
+        if (this.location) {
+            console.log("final location ", this.location);
+            let locationId = this.story.locations.save(this.location);
+            this.page.locationId = locationId;
+        } else {
+            console.log("location removed");
+            this.page.locationId = undefined;
+        }
         this.story.pages.save(this.page);
         this.pageModified = false;
 

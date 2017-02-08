@@ -37,7 +37,7 @@ import {Identifiable} from "../interfaces/Identifiable";
 export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
 
-    private _data: Array<DATA_TYPE> = [];
+    protected _data: Array<DATA_TYPE> = [];
 
     public length(): number {
         return this._data.length;
@@ -61,7 +61,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         return item
     }
 
-    public save(passedItem: any): void {
+    public save(passedItem: any): string {
         let item = this.itemFromObject(passedItem);
 
         if (item.id == undefined) {
@@ -72,10 +72,12 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
         if (foundIndex !== undefined) {
             this._data[foundIndex] = item;
-            return;
+            return item.id;
         }
 
         this._data.push(item);
+
+        return item.id;
     }
 
     public getNewUniqueId() {
@@ -93,7 +95,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         return (group() + group() + "-" + group() + "-4" + group().substr(0, 3) + "-" + group() + "-" + group() + group() + group()).toLowerCase();
     }
 
-    private findIndex(item: DATA_TYPE): number|null {
+    protected findIndex(item: DATA_TYPE): number|null {
         return this.findIndexById(item.id);
     }
 
