@@ -46,13 +46,13 @@ import {TypeChecker} from "../utilities/TypeChecker";
 )
 export class AuthoringChapter extends BaseModel {
 
-    private _name: String;
-    private _colour: String;
-    private _pageIds: Array<String>;
-    private _unlockedByPageIds: Array<String>;
-    private _unlockedByPagesOperator: String;
+    private _name: string;
+    private _colour: string;
+    private _pageIds: Array<string>;
+    private _unlockedByPageIds: Array<string>;
+    private _unlockedByPagesOperator: string;
     private _locksAllOtherChapters: Boolean;
-    private _locksChapters: Array<String>;
+    private _locksChapters: Array<string>;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -94,45 +94,45 @@ export class AuthoringChapter extends BaseModel {
         }
     }
 
-    get unlockedByPageIds(): Array<String> {
+    get unlockedByPageIds(): Array<string> {
         return this._unlockedByPageIds;
     }
 
-    set unlockedByPageIds(value: Array<String>) {
+    set unlockedByPageIds(value: Array<string>) {
         this._unlockedByPageIds = value;
     }
 
-    get pageIds(): Array<String> {
+    get pageIds(): Array<string> {
         return this._pageIds;
     }
 
-    set pageIds(value: Array<String>) {
+    set pageIds(value: Array<string>) {
         this._pageIds = value;
     }
 
-    get name(): String {
+    get name(): string {
         return this._name;
     }
 
-    set name(value: String) {
+    set name(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Name', value);
         this._name = value;
     }
 
-    get colour(): String {
+    get colour(): string {
         return this._colour;
     }
 
-    set colour(value: String) {
+    set colour(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Colour', value);
         this._colour = value;
     }
 
-    get unlockedByPagesOperator(): String {
+    get unlockedByPagesOperator(): string {
         return this._unlockedByPagesOperator;
     }
 
-    set unlockedByPagesOperator(value: String) {
+    set unlockedByPagesOperator(value: string) {
         this.typeChecker.validateAsStringOrUndefined('UnlockedByPagesOperator', value);
         this._unlockedByPagesOperator = value;
     }
@@ -146,11 +146,11 @@ export class AuthoringChapter extends BaseModel {
         this._locksAllOtherChapters = value;
     }
 
-    get locksChapters(): Array<String> {
+    get locksChapters(): Array<string> {
         return this._locksChapters;
     }
 
-    set locksChapters(value: Array<String>) {
+    set locksChapters(value: Array<string>) {
         this._locksChapters = value;
     }
 }

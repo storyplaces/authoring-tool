@@ -41,10 +41,12 @@
     <require from="../templates/two-pane-template.html"></require>
     <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
     <require from="../../components/page/page-edit-form"></require>
+    <require from="../../components/elements/mapping/map"></require>
+
 
     <two-pane-template>
         <div slot="map-pane" class="fill-space">
-            <map reading-manager.bind="readingManager"></map>
+            <map story.two-way="story" current-page.two-way="page" current-location.two-way="location"></map>
         </div>
         <div slot="content-pane" class="fill-space">
             <scrollable-list-with-header>
@@ -53,7 +55,7 @@
                     <button class="btn btn-danger" click.delegate="cancel()"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
                 </div>
                 <div slot="content">
-                    <page-edit-form story.one-way="story" page.one-way="page" location.one-way="location"></page-edit-form>
+                    <page-edit-form story.two-way="story" page.two-way="page" location.two-way="location"></page-edit-form>
                 </div>
             </scrollable-list-with-header>
         </div>

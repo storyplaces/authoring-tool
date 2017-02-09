@@ -46,9 +46,9 @@ import {TypeChecker} from "../utilities/TypeChecker";
 )
 export class AuthoringLocation extends BaseModel {
 
-    private _lat: Number;
-    private _long: Number;
-    private _radius: Number;
+    private _lat: number;
+    private _long: number;
+    private _radius: number;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -79,27 +79,27 @@ export class AuthoringLocation extends BaseModel {
         }
     }
 
-    get radius(): Number {
+    get radius(): number {
         return this._radius;
     }
 
-    set radius(value: Number) {
+    set radius(value: number) {
         this.typeChecker.validateAsNumberOrUndefined("Radius", value);
         this._radius = value;
     }
-    get long(): Number {
+    get long(): number {
         return this._long;
     }
 
-    set long(value: Number) {
+    set long(value: number) {
         this.typeChecker.validateAsNumberOrUndefined("Long", value);
         this._long = value;
     }
-    get lat(): Number {
+    get lat(): number {
         return this._lat;
     }
 
-    set lat(value: Number) {
+    set lat(value: number) {
         this.typeChecker.validateAsNumberOrUndefined("Lat", value);
         this._lat = value;
     }
