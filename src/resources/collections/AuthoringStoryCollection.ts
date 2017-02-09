@@ -61,4 +61,23 @@ export class AuthoringStoryCollection extends BaseCollection<AuthoringStory> {
 
         return this.factory(item);
     }
+
+    public save(passedItem: any): string {
+        let item = this.itemFromObject(passedItem);
+
+        if (item.id == undefined) {
+            throw Error("Unable to save story as it has no id set");
+        }
+
+        let foundIndex = this.findIndex(item);
+
+        if (foundIndex !== undefined) {
+            this._data[foundIndex] = item;
+            return item.id;
+        }
+
+        this._data.push(item);
+
+        return item.id;
+    }
 }
