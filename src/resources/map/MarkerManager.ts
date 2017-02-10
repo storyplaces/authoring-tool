@@ -49,9 +49,9 @@ export class MarkerManager {
 
     private story: AuthoringStory;
     private selectedPage: AuthoringPage;
-    private selectedLocation: AuthoringLocation;
+    private _selectedLocation: AuthoringLocation;
     private markers: Array<AuthoringLocationMarker> = [];
-    private activePageIds: Array<string>;
+    private _activePageIds: Array<string>;
 
     private selectedPageMarker: AuthoringLocationMarker;
 
@@ -66,25 +66,27 @@ export class MarkerManager {
 
     attach(story: AuthoringStory, selectedPage: AuthoringPage, selectedLocation: AuthoringLocation, activePageIds: Array<string>) {
         this.story = story;
-        this.selectedPage = selectedPage;
-        this.selectedLocation = selectedLocation;
-        this.activePageIds = activePageIds;
+        this.selectedPage = selectedPage || {} as any;
+        console.log(activePageIds);
+        this._activePageIds = activePageIds;
         this.initMarkersForUnSelectedPages();
-        this.initMarkerForSelectedPage();
-
+        this.selectedLocation = selectedLocation;
     }
 
     detach() {
         this.story = undefined;
-        this.selectedLocation = undefined;
+        this._selectedLocation = undefined;
         this.selectedPage = undefined;
         this.markers.forEach(marker => marker.destroy());
         this.markers = [];
     }
 
 
-    private getLocation(locationId): AuthoringLocation {
-        return this.story.locations.get(locationId);
+    private getLocation(page: AuthoringPage): AuthoringLocation {
+        if (page.id == this.selectedPage.id) {
+            return this._selectedLocation;
+        }
+        return this.story.locations.get(page.locationId);
     }
 
     private initMarkersForUnSelectedPages() {
@@ -95,17 +97,54 @@ export class MarkerManager {
         });
     }
 
-    private initMarkerForSelectedPage() {
-        if (this.selectedPage) {
+    set activePageIds(newActivePageIds) {
+        this.markers.forEach(marker =>{
+           marker.active = newActivePageIds.indexOf(marker.pageId) != -1;
+        });
+    }
+
+    set selectedLocation(newLocation) {
+        console.log("setting location");
+
+        if (newLocation) {
+            this._selectedLocation = newLocation;
+            this.initSelectedLocationListeners();
             this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
-            this.selectedLocationLatSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'lat').subscribe(newLat => {this.selectedPageMarker.latitude = newLat || 0});
-            this.selectedLocationLongSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'long').subscribe(newLong => {this.selectedPageMarker.longitude = newLong || 0});
-            this.selectedLocationRadiusSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'radius').subscribe(newRadius => {this.selectedPageMarker.radius = newRadius || 0});
+            return
+        }
+
+        this.destroySelectedLocationListeners();
+        if (this.selectedPageMarker) {
+            this.mapCore.removeItem(this.selectedPageMarker);
+        }
+    }
+
+    private initSelectedLocationListeners() {
+        this.selectedLocationLatSub = this.bindingEngine.propertyObserver(this._selectedLocation, 'lat').subscribe(newLat => {
+            this.selectedPageMarker.latitude = newLat || 0
+        });
+        this.selectedLocationLongSub = this.bindingEngine.propertyObserver(this._selectedLocation, 'long').subscribe(newLong => {
+            this.selectedPageMarker.longitude = newLong || 0
+        });
+        this.selectedLocationRadiusSub = this.bindingEngine.propertyObserver(this._selectedLocation, 'radius').subscribe(newRadius => {
+            this.selectedPageMarker.radius = newRadius || 0
+        });
+    }
+
+    private destroySelectedLocationListeners() {
+        if (this.selectedLocationLatSub) {
+            this.selectedLocationLatSub.dispose();
+        }
+        if (this.selectedLocationLongSub) {
+            this.selectedLocationLongSub.dispose();
+        }
+        if (this.selectedLocationRadiusSub) {
+            this.selectedLocationRadiusSub.dispose();
         }
     }
 
     private pageIsActive(page: AuthoringPage) {
-        return this.activePageIds.indexOf(page.id) != -1;
+        return this._activePageIds.indexOf(page.id) != -1;
     }
 
     private pageIsSelected(page: AuthoringPage) {
@@ -113,13 +152,13 @@ export class MarkerManager {
     }
 
     private createMarkerForPage(page: AuthoringPage, active: boolean, selected: boolean): AuthoringLocationMarker {
-        let location = this.getLocation(page.locationId);
+        let location = this.getLocation(page);
         let marker: AuthoringLocationMarker;
 
         if (location instanceof AuthoringLocation) {
             let chapters = this.getChaptersForPage(page);
 
-            marker = this.authLocMarkerFactory(location.lat, location.long, active, selected, location.radius, this.makeMarkerPopupText(page), chapters, true);
+            marker = this.authLocMarkerFactory(location.lat || 0, location.long || 0, active, selected, location.radius || 0, this.makeMarkerPopupText(page), chapters, true);
             marker.pageId = page.id;
             this.markers.push(marker);
             this.mapCore.addItem(marker);

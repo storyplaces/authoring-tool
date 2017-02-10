@@ -80,6 +80,10 @@ export class AuthoringLocationMarker extends MapGroup {
         this.chapters = chapters
     }
 
+    set active(active: boolean){
+        this.mainMarker.active = active;
+    }
+
     set latitude(latitude: number) {
         this._latitude = latitude;
         if (this.radiusCircle) {
