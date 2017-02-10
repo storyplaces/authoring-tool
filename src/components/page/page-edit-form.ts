@@ -41,8 +41,13 @@ import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import "typeahead.js";
+import {EventAggregator} from "aurelia-event-aggregator";
+import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
+import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
+import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
 
-@inject(Factory.of(AuthoringLocation))
+
+@inject(Factory.of(AuthoringLocation), EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent)
 export class PageEditFormCustomElement {
     @bindable page: AuthoringPage;
     @bindable location: AuthoringLocation;
@@ -50,8 +55,18 @@ export class PageEditFormCustomElement {
 
     unlockedByAddField: string;
 
-    constructor(private locationFactory: () => AuthoringLocation) {
+    constructor(private locationFactory: () => AuthoringLocation,
+                private eventAggregator: EventAggregator,
+                private requestCurrentLocationEvent: RequestCurrentLocationEvent,
+                private requestPinDropEvent: RequestPinDropEvent) {
+        this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
+            this.location.lat = event.latitude;
+            this.location.long = event.longitude;
 
+            if (!this.location.radius) {
+                this.location.radius = 30;
+            }
+        });
     }
 
     removeLocation() {
@@ -96,7 +111,7 @@ export class PageEditFormCustomElement {
                 templates: {
                     empty: ['<div class="empty-message">',
                         'no pages matching your input.',
-                    '</div>'].join('\n'),
+                        '</div>'].join('\n'),
                     suggestion: (value: AuthoringPage) => "<div><strong>" + value.name + "</strong> - " + value.pageHint + "</div>"
                 },
                 source: (query, cb) => {
@@ -114,5 +129,13 @@ export class PageEditFormCustomElement {
             }
         )
 
+    }
+
+    useCurrentLocation() {
+        this.eventAggregator.publish(this.requestCurrentLocationEvent);
+    }
+
+    dropPinOnMap() {
+        this.eventAggregator.publish(this.requestPinDropEvent);
     }
 }

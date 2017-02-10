@@ -102,9 +102,11 @@
                                               page.bind="unlockedByPage"
                                               owner-page.two-way="page"></unlocked-by-page>
                             <div class="input-group">
-                                <input type="text" class="typeahead form-control" id="unlocked-by-text" value.bind="unlockedByAddField">
+                                <input type="text" class="typeahead form-control" id="unlocked-by-text"
+                                       value.bind="unlockedByAddField">
                                 <span class="input-group-btn">
-                                        <button class="btn btn-secondary typeahead" type="button" click.delegate="addUnlockedBy()">Add</button>
+                                        <button class="btn btn-secondary typeahead" type="button"
+                                                click.delegate="addUnlockedBy()">Add</button>
                                     </span>
                             </div>
                         </div>
@@ -166,14 +168,14 @@
                 <div class="row">
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
-                            <button class="btn btn-primary btn-block"><span
+                            <button class="btn btn-primary btn-block" click.delegate="dropPinOnMap()"><span
                                     class="glyphicon glyphicon-map-marker"></span> Drop pin on map
                             </button>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
-                            <button class="btn btn-primary btn-block"><span
+                            <button class="btn btn-primary btn-block" click.delegate="useCurrentLocation()"><span
                                     class="glyphicon glyphicon-record"></span> Use current location
                             </button>
                         </div>
