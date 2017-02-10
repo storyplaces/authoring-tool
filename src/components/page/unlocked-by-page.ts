@@ -36,57 +36,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
-import {autoinject} from "aurelia-framework";
-import {AuthoringLocation} from "../models/AuthoringLocation";
+import {bindable, containerless} from "aurelia-framework";
+import {AuthoringPage} from "../../resources/models/AuthoringPage";
 /**
- * Created by andy on 02/02/17.
+ * Created by andy on 28/11/16.
  */
 
-@autoinject()
-export class StoryLookup {
+@containerless()
+export class UnlockedByPage {
 
-    constructor(private storyConnector: AuthoringStoryConnector) {
+    @bindable page: AuthoringPage;
+    @bindable ownerPage: AuthoringPage;
+
+    constructor() {
     }
 
-    // Returns an array of AuthoringChapters which contain the given page Id (in the specified story)
-    public getChaptersForPageId(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            return [];
-        }
-
-        return story.chapters.all.filter(chapter => {
-            return chapter.pageIds.indexOf(pageId) != -1;
-        });
+    remove(){
+        var index = this.ownerPage.unlockedByPageIds.indexOf(this.page.id);
+        this.ownerPage.unlockedByPageIds.splice(index, 1);
     }
 
-    public getLocationForPageId(storyId: string, pageId: string) : AuthoringLocation{
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            return undefined;
-        }
-
-        let page = story.pages.get(pageId);
-        if (!page) {
-            return undefined;
-        }
-
-        return story.locations.get(page.locationId);
-    }
-
-    // Remove a page from the story
-    // Also remove the page Id from all chapters in the story
-    public deletePageFromStory(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
-        if (!story) {
-            throw Error("Story with id " + storyId + " does not exist.");
-        }
-        story.pages.remove(pageId);
-        story.chapters.removeReferencesToPage(pageId);
-        this.storyConnector.save(story);
-    }
-
-    // Return a list of pages given a list of page Ids
 }

@@ -140,7 +140,9 @@
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
             "main": "js/bootstrap",
-            "deps": ["jquery"],
+            "deps": [
+              "jquery"
+            ],
             "exports": "$"
           },
           {
@@ -153,6 +155,14 @@
             "name": "aurelia-dialog",
             "path": "../node_modules/aurelia-dialog/dist/amd",
             "main": "aurelia-dialog"
+          },
+          {
+            "name": "typeahead.js",
+            "path": "../node_modules/typeahead.js/dist",
+            "main": "typeahead.jquery",
+            "deps": [
+              "jquery"
+            ]
           }
         ]
       }

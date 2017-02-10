@@ -36,16 +36,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory} from "aurelia-framework";
+import {bindable, inject, Factory, computedFrom} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import "typeahead.js";
 
 @inject(Factory.of(AuthoringLocation))
 export class PageEditFormCustomElement {
     @bindable page: AuthoringPage;
     @bindable location: AuthoringLocation;
     @bindable story: AuthoringStory;
+
+    unlockedByAddField: string;
 
     constructor(private locationFactory: () => AuthoringLocation) {
 
@@ -60,4 +63,56 @@ export class PageEditFormCustomElement {
         this.location = this.locationFactory();
     }
 
+    @computedFrom('this.page.unlockedByPageIds')
+    get unlockedByPages(): Array<AuthoringPage> {
+        let pages = [];
+        this.page.unlockedByPageIds.forEach(pageId => {
+            pages.concat(this.story.pages.get(pageId));
+        });
+        return pages;
+    }
+
+    getAvailablePages(): Array<AuthoringPage> {
+        let matches = this.story.pages.all.filter((page) => {
+            return (this.unlockedByPages.indexOf(page) == -1) && (page.id != this.page.id);
+        });
+        return matches;
+    }
+
+    addUnlockedBy() {
+        console.log(this.unlockedByAddField);
+    }
+
+    attached() {
+
+        $('#unlocked-by-text').typeahead({
+                hint: false,
+                highlight: false,
+                minLength: 1
+            },
+            {
+                name: 'unlockedByPages',
+                display: 'name',
+                templates: {
+                    empty: ['<div class="empty-message">',
+                        'no pages matching your input.',
+                    '</div>'].join('\n'),
+                    suggestion: (value: AuthoringPage) => "<div><strong>" + value.name + "</strong> - " + value.pageHint + "</div>"
+                },
+                source: (query, cb) => {
+                    let matches = [];
+                    let substrRegex = new RegExp(query, 'i');
+
+                    this.getAvailablePages().forEach((page) => {
+                            if (substrRegex.test(page.name)) {
+                                matches.push(page);
+                            }
+                        }
+                    );
+                    cb(matches);
+                }
+            }
+        )
+
+    }
 }

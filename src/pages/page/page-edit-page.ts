@@ -139,16 +139,13 @@ export class PageEditPage {
                 this.location = this.locationFactory(currentLocation);
             }
         }
-        console.log("initial location ", this.location);
     }
 
     private save() {
         if (this.location) {
-            console.log("final location ", this.location);
             let locationId = this.story.locations.save(this.location);
             this.page.locationId = locationId;
         } else {
-            console.log("location removed");
             this.page.locationId = undefined;
         }
         this.story.pages.save(this.page);
