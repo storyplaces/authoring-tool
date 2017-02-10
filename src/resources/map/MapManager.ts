@@ -32,7 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, BindingEngine, NewInstance, Disposable} from "aurelia-framework";
+import {inject, BindingEngine, NewInstance, Factory, Disposable} from "aurelia-framework";
 import {CurrentLocationMarker} from "./markers/CurrentLocationMarker";
 import {MapMapLayer} from "./layers/MapMapLayer";
 import {MapCore} from "../mapping/MapCore";
@@ -40,6 +40,9 @@ import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
 import {CurrentMapLocation} from "./CurrentMapLocation";
+import {EventAggregator} from "aurelia-event-aggregator";
+import {RequestCurrentLocationEvent} from "../events/RequestCurrentLocationEvent";
+import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
 
 @inject(
     BindingEngine,
@@ -48,7 +51,9 @@ import {CurrentMapLocation} from "./CurrentMapLocation";
     LocationManager,
     CurrentMapLocation,
     NewInstance.of(CurrentLocationMarker),
-    NewInstance.of(RecenterControl)
+    NewInstance.of(RecenterControl),
+    EventAggregator,
+    Factory.of(LocationUpdateFromMapEvent)
 )
 export class MapManager {
 
@@ -63,7 +68,9 @@ export class MapManager {
                 private location: LocationManager,
                 private mapLocation: CurrentMapLocation,
                 private currentLocationMarker: CurrentLocationMarker,
-                private recenterControl: RecenterControl) {
+                private recenterControl: RecenterControl,
+                private eventAggregator: EventAggregator,
+                private locationUpdateFromMapEventFactory: (latitude: number, longitude: number) => LocationUpdateFromMapEvent) {
     }
 
     attach(mapElement: HTMLElement) {
@@ -89,6 +96,10 @@ export class MapManager {
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
         this.locationChanged(this.location.location);
         this.panTo(this.location.location);
+
+        this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
+            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(this.location.location.latitude, this.location.location.longitude));
+        });
     }
 
     detach() {

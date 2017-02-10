@@ -43,8 +43,12 @@ import {AuthoringLocation} from "../models/AuthoringLocation";
 import {AuthoringPage} from "../models/AuthoringPage";
 import {AuthoringLocationMarker} from "./markers/AuthoringLocationMarker";
 import {AuthoringChapter} from "../models/AuthoringChapter";
+import {EventAggregator} from "aurelia-event-aggregator";
+import {RequestPinDropEvent} from "../events/RequestPinDropEvent";
+import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
 
-@inject(MapCore, BindingEngine, Factory.of(AuthoringLocationMarker))
+
+@inject(MapCore, BindingEngine, EventAggregator, Factory.of(LocationUpdateFromMapEvent), Factory.of(AuthoringLocationMarker))
 export class MarkerManager {
 
     private story: AuthoringStory;
@@ -61,6 +65,8 @@ export class MarkerManager {
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
+                private eventAggregator: EventAggregator,
+                private locationUpdateFromMapEventFactory: (latitude: number, longitude: number) => LocationUpdateFromMapEvent,
                 private authLocMarkerFactory: (latitude: number, longitude: number, active: boolean, selected: boolean, radius: number, popupText: string, chapters: Array<AuthoringChapter>, unlockedBy: boolean) => AuthoringLocationMarker) {
     }
 
@@ -71,6 +77,10 @@ export class MarkerManager {
         this._activePageIds = activePageIds || [];
         this.initMarkersForUnSelectedPages();
         this.selectedLocation = selectedLocation;
+
+        this.eventAggregator.subscribe(RequestPinDropEvent, () => {
+            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(1,2));
+        });
     }
 
     detach() {
@@ -101,8 +111,8 @@ export class MarkerManager {
     set activePageIds(newActivePageIds) {
         this._activePageIds = newActivePageIds || [];
 
-        this.markers.forEach(marker =>{
-           marker.active = this._activePageIds.indexOf(marker.pageId) != -1;
+        this.markers.forEach(marker => {
+            marker.active = this._activePageIds.indexOf(marker.pageId) != -1;
         });
     }
 

@@ -36,51 +36,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../../resources/models/AuthoringPage";
-import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {EventAggregator} from "aurelia-event-aggregator";
-import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
-import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
-import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
 
-
-@inject(Factory.of(AuthoringLocation), EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent)
-export class PageEditFormCustomElement {
-    @bindable page: AuthoringPage;
-    @bindable location: AuthoringLocation;
-    @bindable story: AuthoringStory;
-
-    constructor(private locationFactory: () => AuthoringLocation,
-                private eventAggregator: EventAggregator,
-                private requestCurrentLocationEvent: RequestCurrentLocationEvent,
-                private requestPinDropEvent: RequestPinDropEvent) {
-        this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
-            this.location.lat = event.latitude;
-            this.location.long = event.longitude;
-
-            if (!this.location.radius) {
-                this.location.radius = 30;
-            }
-        });
-    }
-
-    removeLocation() {
-        this.story.locations.remove(this.location.id);
-        this.location = undefined;
-    }
-
-    addLocation() {
-        this.location = this.locationFactory();
-    }
-
-    useCurrentLocation() {
-        this.eventAggregator.publish(this.requestCurrentLocationEvent);
-    }
-
-    dropPinOnMap() {
-        this.eventAggregator.publish(this.requestPinDropEvent);
-    }
-
+export class RequestCurrentLocationEvent {
 }
