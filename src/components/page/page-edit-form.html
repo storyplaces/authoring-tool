@@ -42,120 +42,146 @@
     <require from="../icons/information-icon.html"></require>
     <require from="resources/value-converters/FloatToString"></require>
     <require from="resources/value-converters/IntToString"></require>
+    <require from="./unlocked-by-page"></require>
 
-    <form>
-        <div class="padding">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Page Details
+    <div class="padding">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Page Details
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="name">Page Name:
+                        <information-icon help-text="The title of the page"></information-icon>
+                    </label>
+                    <input type="text" class="form-control" id="name" value.bind="page.name">
                 </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label for="name">Page Name:
-                            <information-icon help-text="The title of the page"></information-icon>
-                        </label>
-                        <input type="text" class="form-control" id="name" value.bind="page.name">
-                    </div>
 
-                    <div class="form-group">
-                        <label for="content">Page Content:
-                            <information-icon help-text="The content of the page"></information-icon>
-                        </label>
-                        <textarea class="form-control" id="content" rows="5" value.bind="page.content"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="hint-text">Hint text:
-                            <information-icon help-text="A hint to the reader shown in the list of pages"></information-icon>
-                        </label>
-                        <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint">
-                    </div>
+                <div class="form-group">
+                    <label for="content">Page Content:
+                        <information-icon help-text="The content of the page"></information-icon>
+                    </label>
+                    <textarea class="form-control" id="content" rows="5" value.bind="page.content"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="hint-text">Hint text:
+                        <information-icon
+                                help-text="A hint to the reader shown in the list of pages"></information-icon>
+                    </label>
+                    <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint">
+                </div>
 
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Narrative Constraints
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input id="read-multiple" type="checkbox" checked.bind="page.allowMultipleReadings">
+                            Allow Multiple Readings:
+                        </label>
+                        <information-icon
+                                help-text="Is the reader allowed to read this page more than once?"></information-icon>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group">
+                            <label for="unlocked-by">Unlocked By:
+                                <information-icon help-text="Pages which unlock this page"></information-icon>
+                            </label>
+                            <select class="form-control" value.bind="page.unlockedByPagesOperator">
+                                <option value="or">Any of:</option>
+                                <option value="and">All of:</option>
+                            </select>
+                            <unlocked-by-page repeat.for="unlockedByPage of unlockedByPages"
+                                              page.bind="unlockedByPage"
+                                              owner-page.two-way="page"></unlocked-by-page>
+                            <div class="input-group">
+                                <input type="text" class="typeahead form-control" id="unlocked-by-text"
+                                       value.bind="unlockedByAddField">
+                                <span class="input-group-btn">
+                                        <button class="btn btn-secondary typeahead" type="button"
+                                                click.delegate="addUnlockedBy()">Add</button>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <label for="chapters">Member of chapters:
+                            <information-icon
+                                    help-text="The chapters which this page is a member of"></information-icon>
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Narrative Constraints
-                </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input id="read-multiple" type="checkbox" checked.bind="page.allowMultipleReadings">
-                                Allow Multiple Readings:
-                                <information-icon help-text="Is the reader allowed to read this page more than once?"></information-icon>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="form-group">
-                                <label for="unlocked-by">Unlocked By:
-                                    <information-icon help-text="Pages which unlock this page"></information-icon>
-                                </label>
-                                <select class="form-control" value.bind="page.unlockedByPagesOperator">
-                                    <option value="or">Any of:</option>
-                                    <option value="and">All of:</option>
-                                </select>
-
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <label for="chapters">Member of chapters:
-                                <information-icon help-text="The chapters which this page is a member of"></information-icon>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Location Constraint
+                <button class="btn btn-xs btn-danger pull-right" click.delegate="removeLocation()"
+                        if.bind="location"><span class="glyphicon glyphicon-trash"></span> Delete
+                </button>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Location Constraint
-                    <button class="btn btn-xs btn-danger pull-right" click.delegate="removeLocation()" if.bind="location"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-                </div>
-                <div class="panel-body" if.bind="location === undefined">
-                    <button class="btn btn-success" click.delegate="addLocation()"><span class="glyphicon glyphicon-plus"></span> Add Location</button>
-                </div>
-                <div class="panel-body" if.bind="location !== undefined">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-4">
-                            <div class="form-group">
-                                <label for="lat">Latitude:
-                                    <information-icon help-text="The latitude of the location of the page"></information-icon>
-                                </label>
-                                <input type="text" class="form-control" id="lat" value.bind="location.lat | floatToString">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <div class="form-group">
-                                <label for="lat">Longitude:
-                                    <information-icon help-text="The longitude of the location of the page"></information-icon>
-                                </label>
-                                <input type="text" class="form-control" id="long" value.bind="location.long | floatToString">
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <div class="form-group">
-                                <label for="radius">Radius(m):
-                                    <information-icon help-text="The radius within which the page is valid."></information-icon>
-                                </label>
-                                <input type="text" class="form-control" id="radius" value.bind="location.radius | intToString">
-                            </div>
+            <div class="panel-body" if.bind="location === undefined">
+                <button class="btn btn-success" click.delegate="addLocation()"><span
+                        class="glyphicon glyphicon-plus"></span> Add Location
+                </button>
+            </div>
+            <div class="panel-body" if.bind="location !== undefined">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label for="lat">Latitude:
+                                <information-icon
+                                        help-text="The latitude of the location of the page"></information-icon>
+                            </label>
+                            <input type="text" class="form-control" id="lat"
+                                   value.bind="location.lat | floatToString">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block" click.delegate="dropPinOnMap()"><span class="glyphicon glyphicon-map-marker"></span> Drop pin on map</button>
-                            </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label for="lat">Longitude:
+                                <information-icon
+                                        help-text="The longitude of the location of the page"></information-icon>
+                            </label>
+                            <input type="text" class="form-control" id="long"
+                                   value.bind="location.long | floatToString">
                         </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block" click.delegate="useCurrentLocation()"><span class="glyphicon glyphicon-record"></span> Use current location</button>
-                            </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label for="radius">Radius(m):
+                                <information-icon
+                                        help-text="The radius within which the page is valid."></information-icon>
+                            </label>
+                            <input type="text" class="form-control" id="radius"
+                                   value.bind="location.radius | intToString">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" click.delegate="dropPinOnMap()"><span
+                                    class="glyphicon glyphicon-map-marker"></span> Drop pin on map
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" click.delegate="useCurrentLocation()"><span
+                                    class="glyphicon glyphicon-record"></span> Use current location
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </template>
