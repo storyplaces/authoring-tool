@@ -41,7 +41,6 @@ import {MapGroup} from "../../mapping/layers/MapGroup";
 import {TriStateMarker} from "./TriStateMarker";
 import {MapCircle} from "../../mapping/markers/MapCircle";
 import {AuthoringChapter} from "../../models/AuthoringChapter";
-import {ChapterIcon} from "../icons/ChapterIcon";
 import {ChapterMarker} from "./ChapterMarker";
 
 @inject(Factory.of(MapCircle), Factory.of(TriStateMarker), Factory.of(ChapterMarker), NewInstance.of(MapGroup))
@@ -50,7 +49,9 @@ export class AuthoringLocationMarker extends MapGroup {
     public pageId: string;
 
     private mainMarker: TriStateMarker;
-    private circle: MapCircle;
+    private radiusCircle: MapCircle;
+
+    private chapterMarkers: Array<ChapterMarker> = [];
 
     private _latitude: number;
     private _longitude: number;
@@ -68,52 +69,83 @@ export class AuthoringLocationMarker extends MapGroup {
         this._radius = radius;
 
         this.mainMarker = markerFactory(latitude, longitude, active, selected, popupText);
-        this.circle = circleFactory(latitude, longitude, radius);
+        this.radiusCircle = circleFactory(latitude, longitude, radius);
 
-        this.addItem(this.circle);
+        if (selected || active) {
+            this.addItem(this.radiusCircle);
+            this.addItem(this.chapterMarkerGroup);
+        }
         this.addItem(this.mainMarker);
-        this.addItem(this.chapterMarkerGroup);
 
         this.chapters = chapters
     }
 
     set latitude(latitude: number) {
         this._latitude = latitude;
-        this.circle.latitude = latitude;
+        if (this.radiusCircle) {
+            this.radiusCircle.latitude = latitude;
+        }
+
+        if (this.chapterMarkers.length != 0) {
+            this.chapterMarkers.forEach(chapterMarker => {
+                chapterMarker.latitude = latitude
+            });
+        }
+
         this.mainMarker.latitude = latitude;
     }
 
     set longitude(longitude: number) {
         this._longitude = longitude;
-        this.circle.longitude = longitude;
+        if (this.radiusCircle) {
+            this.radiusCircle.longitude = longitude;
+        }
+
+        if (this.chapterMarkers.length != 0) {
+            this.chapterMarkers.forEach(chapterMarker => {
+                chapterMarker.longitude = longitude
+            });
+        }
+
         this.mainMarker.longitude = longitude;
     }
 
     set radius(radius: number) {
         this._radius = radius;
-        this.circle.radius = radius;
+        if (this.radiusCircle) {
+            this.radiusCircle.radius = radius;
+        }
     }
 
     set chapters(chapters: Array<AuthoringChapter>) {
-        this.chapterMarkerGroup.removeAllItems();
+        this.destroyChapterMarkers();
+
         for (let index = 0; index < chapters.length; index++) {
             let chapter = chapters[index];
             let marker = this.chapterMarkerFactory(this._latitude, this._longitude, chapter.colour, index, chapter.name);
             this.chapterMarkerGroup.addItem(marker);
+            this.chapterMarkers.push(marker);
         }
     }
 
-    private chapterMarkerLatitude(baseLatitude: number, index: number): number {
-        return baseLatitude + 0.0002;
-    }
-
-    private chapterMarkerLongitude(baseLongitude: number, index: number): number {
-        return baseLongitude + (0.0002 * (index + 1));
-    }
-
     public destroy() {
-        this.circle.destroy();
+        if (this.radiusCircle) {
+            this.radiusCircle.destroy();
+        }
+
+        if (this.chapterMarkers.length != 0) {
+            this.destroyChapterMarkers();
+        }
+
         this.mainMarker.destroy();
         super.destroy();
+    }
+
+    private destroyChapterMarkers() {
+        this.chapterMarkerGroup.removeAllItems();
+        this.chapterMarkers.forEach(chapter => {
+            chapter.destroy();
+        });
+        this.chapterMarkers = [];
     }
 }

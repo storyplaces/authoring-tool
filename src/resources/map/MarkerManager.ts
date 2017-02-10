@@ -37,42 +37,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapCore} from "../mapping/MapCore";
-import {inject, Factory, BindingEngine} from "aurelia-framework";
-import {MapMarker} from "../mapping/markers/MapMarker";
-import {PopupMarker} from "./interfaces/PopupMarker";
+import {inject, Factory, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringStory} from "../models/AuthoringStory";
 import {AuthoringLocation} from "../models/AuthoringLocation";
 import {AuthoringPage} from "../models/AuthoringPage";
 import {AuthoringLocationMarker} from "./markers/AuthoringLocationMarker";
-import {TriStateMarker} from "./markers/TriStateMarker";
-import {StoryLookup} from "../utilities/StoryLookup";
 import {AuthoringChapter} from "../models/AuthoringChapter";
 
 @inject(MapCore, BindingEngine, Factory.of(AuthoringLocationMarker))
 export class MarkerManager {
 
     private story: AuthoringStory;
-    private currentPage: AuthoringPage;
-    private currentLocation: AuthoringLocation;
+    private selectedPage: AuthoringPage;
+    private selectedLocation: AuthoringLocation;
     private markers: Array<AuthoringLocationMarker> = [];
+    private activePageIds: Array<string>;
+
+    private selectedPageMarker: AuthoringLocationMarker;
+
+    private selectedLocationLatSub: Disposable;
+    private selectedLocationLongSub: Disposable;
+    private selectedLocationRadiusSub: Disposable;
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
                 private authLocMarkerFactory: (latitude: number, longitude: number, active: boolean, selected: boolean, radius: number, popupText: string, chapters: Array<AuthoringChapter>, unlockedBy: boolean) => AuthoringLocationMarker) {
     }
 
-    attach(story: AuthoringStory, currentPage: AuthoringPage, currentLocation: AuthoringLocation) {
+    attach(story: AuthoringStory, selectedPage: AuthoringPage, selectedLocation: AuthoringLocation, activePageIds: Array<string>) {
         this.story = story;
-        this.currentPage = currentPage;
-        this.currentLocation = currentLocation;
-        this.initMarkers();
+        this.selectedPage = selectedPage;
+        this.selectedLocation = selectedLocation;
+        this.activePageIds = activePageIds;
+        this.initMarkersForUnSelectedPages();
+        this.initMarkerForSelectedPage();
+
     }
 
     detach() {
         this.story = undefined;
-        this.currentLocation = undefined;
-        this.currentPage = undefined;
-        //this.markers.forEach(marker => marker.destroy());
+        this.selectedLocation = undefined;
+        this.selectedPage = undefined;
+        this.markers.forEach(marker => marker.destroy());
         this.markers = [];
     }
 
@@ -81,31 +87,55 @@ export class MarkerManager {
         return this.story.locations.get(locationId);
     }
 
-    private initMarkers() {
+    private initMarkersForUnSelectedPages() {
         this.story.pages.forEach(page => {
-            let location = this.getLocation(page.locationId);
-            let marker: AuthoringLocationMarker;
-
-            if (location instanceof AuthoringLocation) {
-
-                let chapters = this.getChaptersForPage(page);
-
-                marker = this.authLocMarkerFactory(location.lat, location.long, true, true, location.radius, this.makeMarkerPopupText(page), chapters, true);
-                marker.pageId = page.id;
+            if (!this.pageIsSelected(page)) {
+                this.createMarkerForPage(page, this.pageIsActive(page), false);
             }
-
-            this.markers.push(marker);
-            this.mapCore.addItem(marker);
         });
     }
 
-    private getChaptersForPage(page: AuthoringPage) : Array<AuthoringChapter>{
+    private initMarkerForSelectedPage() {
+        if (this.selectedPage) {
+            this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
+            this.selectedLocationLatSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'lat').subscribe(newLat => {this.selectedPageMarker.latitude = newLat || 0});
+            this.selectedLocationLongSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'long').subscribe(newLong => {this.selectedPageMarker.longitude = newLong || 0});
+            this.selectedLocationRadiusSub = this.bindingEngine.propertyObserver(this.selectedLocation, 'radius').subscribe(newRadius => {this.selectedPageMarker.radius = newRadius || 0});
+        }
+    }
+
+    private pageIsActive(page: AuthoringPage) {
+        return this.activePageIds.indexOf(page.id) != -1;
+    }
+
+    private pageIsSelected(page: AuthoringPage) {
+        return page.id == this.selectedPage.id;
+    }
+
+    private createMarkerForPage(page: AuthoringPage, active: boolean, selected: boolean): AuthoringLocationMarker {
+        let location = this.getLocation(page.locationId);
+        let marker: AuthoringLocationMarker;
+
+        if (location instanceof AuthoringLocation) {
+            let chapters = this.getChaptersForPage(page);
+
+            marker = this.authLocMarkerFactory(location.lat, location.long, active, selected, location.radius, this.makeMarkerPopupText(page), chapters, true);
+            marker.pageId = page.id;
+            this.markers.push(marker);
+            this.mapCore.addItem(marker);
+        }
+
+        console.log(page, marker);
+        return marker
+    }
+
+    private getChaptersForPage(page: AuthoringPage): Array<AuthoringChapter> {
         let chapters: Array<AuthoringChapter> = [];
 
-        this.story.chapters.forEach(chapter=> {
-           if (chapter.pageIds.indexOf(page.id) != -1) {
-               chapters.push(chapter);
-           }
+        this.story.chapters.forEach(chapter => {
+            if (chapter.pageIds.indexOf(page.id) != -1) {
+                chapters.push(chapter);
+            }
         });
 
         return chapters;

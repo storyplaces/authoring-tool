@@ -60,7 +60,7 @@ export class MapCustomElement {
 
     attached() {
         this.mapManager.attach(this.mapElement);
-        this.markerManager.attach(this.story, this.currentPage, this.currentLocation);
+        this.markerManager.attach(this.story, this.currentPage, this.currentLocation, []);
     }
 
     detached() {
