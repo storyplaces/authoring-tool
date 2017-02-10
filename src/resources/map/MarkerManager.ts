@@ -68,7 +68,7 @@ export class MarkerManager {
         this.story = story;
         this.selectedPage = selectedPage || {} as any;
         console.log(activePageIds);
-        this._activePageIds = activePageIds;
+        this._activePageIds = activePageIds || [];
         this.initMarkersForUnSelectedPages();
         this.selectedLocation = selectedLocation;
     }
@@ -99,8 +99,10 @@ export class MarkerManager {
     }
 
     set activePageIds(newActivePageIds) {
+        this._activePageIds = newActivePageIds || [];
+
         this.markers.forEach(marker =>{
-           marker.active = newActivePageIds.indexOf(marker.pageId) != -1;
+           marker.active = this._activePageIds.indexOf(marker.pageId) != -1;
         });
     }
 
