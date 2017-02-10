@@ -40,7 +40,7 @@ import {bindable, inject, Factory} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {EventAggregator} from "aurelia-event-aggregator";
+import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
 import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
@@ -52,11 +52,19 @@ export class PageEditFormCustomElement {
     @bindable location: AuthoringLocation;
     @bindable story: AuthoringStory;
 
+    private eventSub: Subscription;
+
     constructor(private locationFactory: () => AuthoringLocation,
                 private eventAggregator: EventAggregator,
                 private requestCurrentLocationEvent: RequestCurrentLocationEvent,
                 private requestPinDropEvent: RequestPinDropEvent) {
-        this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
+
+    }
+
+    attached() {
+        this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
+            console.log("setting event from form");
+
             this.location.lat = event.latitude;
             this.location.long = event.longitude;
 
@@ -64,6 +72,14 @@ export class PageEditFormCustomElement {
                 this.location.radius = 30;
             }
         });
+    }
+
+    detached() {
+        console.log("detaching form");
+        if (this.eventSub) {
+            this.eventSub.dispose();
+            this.eventSub = undefined;
+        }
     }
 
     removeLocation() {

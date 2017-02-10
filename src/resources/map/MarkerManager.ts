@@ -43,7 +43,7 @@ import {AuthoringLocation} from "../models/AuthoringLocation";
 import {AuthoringPage} from "../models/AuthoringPage";
 import {AuthoringLocationMarker} from "./markers/AuthoringLocationMarker";
 import {AuthoringChapter} from "../models/AuthoringChapter";
-import {EventAggregator} from "aurelia-event-aggregator";
+import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestPinDropEvent} from "../events/RequestPinDropEvent";
 import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
 
@@ -63,6 +63,8 @@ export class MarkerManager {
     private selectedLocationLongSub: Disposable;
     private selectedLocationRadiusSub: Disposable;
 
+    private eventSub: Subscription;
+
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
                 private eventAggregator: EventAggregator,
@@ -78,8 +80,8 @@ export class MarkerManager {
         this.initMarkersForUnSelectedPages();
         this.selectedLocation = selectedLocation;
 
-        this.eventAggregator.subscribe(RequestPinDropEvent, () => {
-            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(1,2));
+        this.eventSub = this.eventAggregator.subscribe(RequestPinDropEvent, () => {
+            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(1, 2));
         });
     }
 
@@ -90,6 +92,10 @@ export class MarkerManager {
         this.markers.forEach(marker => marker.destroy());
         this.markers = [];
         this.destroySelectedLocationListeners();
+        if (this.eventSub) {
+            this.eventSub.dispose();
+            this.eventSub = undefined;
+        }
     }
 
 

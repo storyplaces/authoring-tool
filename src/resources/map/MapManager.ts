@@ -40,7 +40,7 @@ import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
 import {CurrentMapLocation} from "./CurrentMapLocation";
-import {EventAggregator} from "aurelia-event-aggregator";
+import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestCurrentLocationEvent} from "../events/RequestCurrentLocationEvent";
 import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
 
@@ -61,6 +61,8 @@ export class MapManager {
     private locationSub: Disposable;
 
     private trackingGPSLocation: boolean = true;
+
+    private eventSub: Subscription;
 
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
@@ -97,7 +99,7 @@ export class MapManager {
         this.locationChanged(this.location.location);
         this.panTo(this.location.location);
 
-        this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
+        this.eventSub = this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
             this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(this.location.location.latitude, this.location.location.longitude));
         });
     }
@@ -106,6 +108,11 @@ export class MapManager {
         if (this.locationSub) {
             this.locationSub.dispose();
             this.locationSub = undefined;
+        }
+
+        if (this.eventSub) {
+            this.eventSub.dispose();
+            this.eventSub = undefined;
         }
 
         this.mapCore.removeControl(this.recenterControl);
