@@ -79,6 +79,7 @@ export class MarkerManager {
         this.selectedPage = undefined;
         this.markers.forEach(marker => marker.destroy());
         this.markers = [];
+        this.destroySelectedLocationListeners();
     }
 
 
@@ -116,6 +117,7 @@ export class MarkerManager {
         this.destroySelectedLocationListeners();
         if (this.selectedPageMarker) {
             this.mapCore.removeItem(this.selectedPageMarker);
+            this.destroySelectedLocationListeners();
         }
     }
 
