@@ -228,15 +228,18 @@ html, body {
 .make-colour-classes(@i: length(@colours)) when (@i > 0) {
   .make-colour-classes(@i - 1);
   @colour: extract(@colours, @i);
-  .chapter-symbol-@{colour} {
+  .@{colour} {
     background-color: @colour;
-    display: inline-block;
-    height: 1em;
-    width: 1em;
-    border-radius: 0.5em;
-    border: 1px solid black;
-    vertical-align: text-top;
   }
+}
+.chapter-symbol {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  border-radius: 0.5em;
+  border: 1px solid black;
+  vertical-align: text-top;
+  margin-right: 0.25em;
 }
 
 .make-colour-classes(); // run the mixin
