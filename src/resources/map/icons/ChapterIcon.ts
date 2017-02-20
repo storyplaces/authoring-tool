@@ -40,7 +40,7 @@ import {MapIcon} from "../../mapping/icons/MapIcon";
 import PointTuple = L.PointTuple;
 
 export class ChapterIcon extends MapIcon {
-    constructor(colour: string, index: number,) {
+    constructor(colour: string, index: number) {
         super({
             iconUrl: '/authoring/images/icons/chapters/' + colour + '.png',
             iconRetinaUrl: '/authoring/images/icons/chapters/' + colour + '-2x.png',
@@ -48,7 +48,5 @@ export class ChapterIcon extends MapIcon {
             iconAnchor: [-20 - (25 * Math.floor(index / 2)) , 45 - (25 * (index % 2))] as PointTuple,
             popupAnchor: [30 + (25 * Math.floor(index / 2)) , -40 + (25 * (index % 2))] as PointTuple
         } as any, {} as any);
-
-        console.log(colour);
     }
 }
