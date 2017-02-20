@@ -146,4 +146,16 @@ export class MapCore {
         });
     }
 
+    setCrosshairCursor() {
+        return this.mapReady.then(map => {
+            map.getContainer().classList.add('crosshair-cursor');
+        });
+    }
+
+    unsetCrosshairCursor() {
+        return this.mapReady.then(map => {
+            map.getContainer().classList.remove('crosshair-cursor');
+        });
+    }
+
 }

@@ -80,9 +80,7 @@ export class MarkerManager {
         this.initMarkersForUnSelectedPages();
         this.selectedLocation = selectedLocation;
 
-        this.eventSub = this.eventAggregator.subscribe(RequestPinDropEvent, () => {
-            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(1, 2));
-        });
+
         this.selectEventSub = this.eventAggregator.subscribe('pageListItemSelected', response => {
             this.pageListItemSelected(response);
         });
@@ -95,10 +93,6 @@ export class MarkerManager {
         this.markers.forEach(marker => marker.destroy());
         this.markers = [];
         this.destroySelectedLocationListeners();
-        if (this.eventSub) {
-            this.eventSub.dispose();
-            this.eventSub = undefined;
-        }
         if (this.selectEventSub) {
             this.selectEventSub.dispose();
             this.selectEventSub = undefined;

@@ -43,6 +43,8 @@ import {CurrentMapLocation} from "./CurrentMapLocation";
 import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestCurrentLocationEvent} from "../events/RequestCurrentLocationEvent";
 import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
+import {RequestPinDropEvent} from "../events/RequestPinDropEvent";
+import {CancelPinDropEvent} from "../events/CancelPinDropEvent";
 
 @inject(
     BindingEngine,
@@ -62,8 +64,11 @@ export class MapManager {
 
     private trackingGPSLocation: boolean = true;
 
-    private eventSub: Subscription;
+    private requestLocationSub: Subscription;
     private pageSelectedSub: Subscription;
+    private dropPinSub: Subscription;
+    private cancelDropPinSub: Subscription;
+    private waitingForPinDrop: boolean;
 
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
@@ -89,6 +94,7 @@ export class MapManager {
         this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
         this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
         this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
+        this.mapCore.addEvent('click', (e) => this.sendDropPinClickEvent(e));
 
         this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
 
@@ -100,7 +106,7 @@ export class MapManager {
         this.locationChanged(this.location.location);
         this.panTo(this.location.location);
 
-        this.eventSub = this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
+        this.requestLocationSub = this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
             this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(this.location.location.latitude, this.location.location.longitude));
         });
 
@@ -109,23 +115,20 @@ export class MapManager {
                 this.enableRecenterControl();
             }
         });
+        this.dropPinSub = this.eventAggregator.subscribe(RequestPinDropEvent, () => {
+            this.enablePinDrop();
+        });
+        this.cancelDropPinSub = this.eventAggregator.subscribe(CancelPinDropEvent, () => {
+            this.disablePinDrop();
+        });
     }
 
     detach() {
-        if (this.locationSub) {
-            this.locationSub.dispose();
-            this.locationSub = undefined;
-        }
-
-        if (this.eventSub) {
-            this.eventSub.dispose();
-            this.eventSub = undefined;
-        }
-
-        if (this.pageSelectedSub) {
-            this.pageSelectedSub.dispose();
-            this.pageSelectedSub = undefined;
-        }
+        this.disposeOfSub(this.locationSub);
+        this.disposeOfSub(this.requestLocationSub);
+        this.disposeOfSub(this.pageSelectedSub);
+        this.disposeOfSub(this.dropPinSub);
+        this.disposeOfSub(this.cancelDropPinSub);
 
         this.mapCore.removeControl(this.recenterControl);
         this.mapCore.removeItem(this.baseLayer);
@@ -140,6 +143,12 @@ export class MapManager {
         this.mapCore.removeEvent('recenter-control-click');
 
         this.mapCore.detach();
+    }
+
+    private disposeOfSub(sub: Subscription) {
+        if (sub) {
+            sub.dispose();
+        }
     }
 
     private locationChanged(newLocation: LocationInformation) {
@@ -188,5 +197,22 @@ export class MapManager {
             this.trackingGPSLocation = false;
             this.recenterControl.enable();
         }
+    }
+
+    private sendDropPinClickEvent(event) {
+        if (this.waitingForPinDrop){
+            this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(event.latlng.lat, event.latlng.lng));
+            this.disablePinDrop();
+        }
+    }
+
+    private enablePinDrop() {
+        this.waitingForPinDrop = true;
+        this.mapCore.setCrosshairCursor();
+    }
+
+    private disablePinDrop() {
+        this.waitingForPinDrop = false;
+        this.mapCore.unsetCrosshairCursor();
     }
 }

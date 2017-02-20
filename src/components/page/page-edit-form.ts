@@ -48,9 +48,10 @@ import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
 import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
+import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
 
 
-@inject(Factory.of(AuthoringLocation), StoryLookup, EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent, BindingSignaler)
+@inject(Factory.of(AuthoringLocation), StoryLookup, EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent, CancelPinDropEvent, BindingSignaler)
 export class PageEditFormCustomElement {
     @bindable page: AuthoringPage;
     @bindable location: AuthoringLocation;
@@ -61,12 +62,14 @@ export class PageEditFormCustomElement {
     unlockedByAddField: string;
     unlockedByAddObject: AuthoringPage;
     unlockedByText: HTMLInputElement;
+    private droppingPin: boolean;
 
     constructor(private locationFactory: () => AuthoringLocation,
                 private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
                 private requestCurrentLocationEvent: RequestCurrentLocationEvent,
                 private requestPinDropEvent: RequestPinDropEvent,
+                private cancelPinDropEvent: CancelPinDropEvent,
                 private bindingSignaler: BindingSignaler) {
 
     }
@@ -81,6 +84,7 @@ export class PageEditFormCustomElement {
             if (!this.location.radius) {
                 this.location.radius = 30;
             }
+            this.droppingPin = false;
         });
 
         $(this.unlockedByText).typeahead({
@@ -171,6 +175,12 @@ export class PageEditFormCustomElement {
     }
 
     dropPinOnMap() {
+        if (this.droppingPin) {
+            this.droppingPin = false;
+            this.eventAggregator.publish(this.cancelPinDropEvent);
+            return;
+        }
+        this.droppingPin = true;
         this.eventAggregator.publish(this.requestPinDropEvent);
     }
 }
