@@ -50,6 +50,9 @@ export class MapIcon implements MapIconInterface {
     };
 
     destroy() {
-        this.marker.remove();
+        if (this.marker.remove) {
+            this.marker.remove();
+        }
+        this.marker = undefined;
     }
 }
