@@ -43,6 +43,7 @@
     <require from="resources/value-converters/FloatToString"></require>
     <require from="resources/value-converters/IntToString"></require>
     <require from="./unlocked-by-page"></require>
+    <require from="./chapter-in-page"></require>
 
     <div class="padding">
         <div class="panel panel-default">
@@ -98,17 +99,11 @@
                                 <option value="or">Any of:</option>
                                 <option value="and">All of:</option>
                             </select>
-                            <unlocked-by-page repeat.for="unlockedByPage of unlockedByPages"
+                            <unlocked-by-page repeat.for="unlockedByPage of unlockedByPages & signal:'unlockedByChanged'"
                                               page.bind="unlockedByPage"
                                               owner-page.two-way="page"></unlocked-by-page>
-                            <div class="input-group">
-                                <input type="text" class="typeahead form-control" id="unlocked-by-text"
-                                       value.bind="unlockedByAddField">
-                                <span class="input-group-btn">
-                                        <button class="btn btn-secondary typeahead" type="button"
-                                                click.delegate="addUnlockedBy()">Add</button>
-                                    </span>
-                            </div>
+                            <input type="text" class="typeahead form-control" ref="unlockedByText"
+                                   value.bind="unlockedByAddField" placeholder="Start typing a page name">
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
@@ -116,6 +111,9 @@
                             <information-icon
                                     help-text="The chapters which this page is a member of"></information-icon>
                         </label>
+                        <chapter-in-page repeat.for="chapter of pageChapters & signal:'chapterChanged'"
+                                          chapter.bind="chapter"
+                                          owner-page.two-way="page"></chapter-in-page>
                     </div>
                 </div>
             </div>

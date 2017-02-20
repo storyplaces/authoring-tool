@@ -80,7 +80,7 @@ export class AuthoringLocationMarker extends MapGroup {
         this.chapters = chapters
     }
 
-    set active(active: boolean){
+    set active(active: boolean) {
         this.mainMarker.active = active;
     }
 
@@ -97,6 +97,14 @@ export class AuthoringLocationMarker extends MapGroup {
         }
 
         this.mainMarker.latitude = latitude;
+    }
+
+    get longitude(): number {
+        return this._longitude;
+    }
+
+    get latitude(): number {
+        return this._latitude;
     }
 
     set longitude(longitude: number) {

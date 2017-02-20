@@ -46,5 +46,4 @@ export class StoryPageList {
 
     @bindable story: AuthoringStory;
 
-
 }

@@ -64,6 +64,7 @@ export class MarkerManager {
     private selectedLocationRadiusSub: Disposable;
 
     private eventSub: Subscription;
+    private selectEventSub: Subscription;
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
@@ -75,13 +76,15 @@ export class MarkerManager {
     attach(story: AuthoringStory, selectedPage: AuthoringPage, selectedLocation: AuthoringLocation, activePageIds: Array<string>) {
         this.story = story;
         this.selectedPage = selectedPage || {} as any;
-        console.log(activePageIds);
         this._activePageIds = activePageIds || [];
         this.initMarkersForUnSelectedPages();
         this.selectedLocation = selectedLocation;
 
         this.eventSub = this.eventAggregator.subscribe(RequestPinDropEvent, () => {
             this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(1, 2));
+        });
+        this.selectEventSub = this.eventAggregator.subscribe('pageListItemSelected', response => {
+            this.pageListItemSelected(response);
         });
     }
 
@@ -96,13 +99,23 @@ export class MarkerManager {
             this.eventSub.dispose();
             this.eventSub = undefined;
         }
+        if (this.selectEventSub) {
+            this.selectEventSub.dispose();
+            this.selectEventSub = undefined;
+        }
     }
 
+    private pageListItemSelected(response) {
+        if (response.selected) {
+            this.selectedPage = response.page;
+            this.selectedLocation = this.getLocation(response.page);
+        } else {
+            this.selectedPage = {} as any;
+            this.selectedLocation = undefined;
+        }
+    }
 
     private getLocation(page: AuthoringPage): AuthoringLocation {
-        if (page.id == this.selectedPage.id) {
-            return this._selectedLocation;
-        }
         return this.story.locations.get(page.locationId);
     }
 
@@ -123,20 +136,20 @@ export class MarkerManager {
     }
 
     set selectedLocation(newLocation) {
-        console.log("setting location");
-
-        if (newLocation) {
-            this._selectedLocation = newLocation;
-            this.initSelectedLocationListeners();
-            this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
-            return
-        }
 
         this.destroySelectedLocationListeners();
         if (this.selectedPageMarker) {
             this.mapCore.removeItem(this.selectedPageMarker);
-            this.destroySelectedLocationListeners();
         }
+        if (newLocation) {
+            this._selectedLocation = newLocation;
+            this.initSelectedLocationListeners();
+            this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
+            this.mapCore.panTo({lat: this.selectedPageMarker.latitude, lng: this.selectedPageMarker.longitude});
+            return;
+        }
+
+
     }
 
     private initSelectedLocationListeners() {
@@ -172,9 +185,8 @@ export class MarkerManager {
     }
 
     private createMarkerForPage(page: AuthoringPage, active: boolean, selected: boolean): AuthoringLocationMarker {
-        let location = this.getLocation(page);
+        let location = page.id == this.selectedPage.id ? this._selectedLocation : this.getLocation(page);
         let marker: AuthoringLocationMarker;
-
         if (location instanceof AuthoringLocation) {
             let chapters = this.getChaptersForPage(page);
 
@@ -184,7 +196,6 @@ export class MarkerManager {
             this.mapCore.addItem(marker);
         }
 
-        console.log(page, marker);
         return marker
     }
 

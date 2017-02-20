@@ -36,24 +36,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless} from "aurelia-framework";
+import {bindable, containerless, autoinject} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
+import {BindingSignaler} from "aurelia-templating-resources";
 /**
  * Created by andy on 28/11/16.
  */
 
 @containerless()
+@autoinject()
 export class UnlockedByPage {
 
     @bindable page: AuthoringPage;
     @bindable ownerPage: AuthoringPage;
 
-    constructor() {
+    constructor(private bindingSignaler: BindingSignaler) {
     }
 
     remove(){
         var index = this.ownerPage.unlockedByPageIds.indexOf(this.page.id);
         this.ownerPage.unlockedByPageIds.splice(index, 1);
+        this.bindingSignaler.signal('unlockedByChanged');
     }
 
 }

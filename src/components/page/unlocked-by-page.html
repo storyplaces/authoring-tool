@@ -38,8 +38,8 @@
   -->
 
 <template>
-    <li class="list-group-item page-list-item-li">
+    <li class="list-group-item">
         ${page.name}
-        <span class="glyphicon glyphicon-remove" click.delegate="remove()"></span>
+        <a click.delegate="remove()"><span class="glyphicon glyphicon-remove pull-right"></span></a>
     </li>
 </template>

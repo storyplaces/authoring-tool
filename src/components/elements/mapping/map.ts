@@ -54,7 +54,7 @@ export class MapCustomElement {
     @bindable story: AuthoringStory;
     @bindable currentPage: AuthoringPage;
     @bindable currentLocation: AuthoringLocation;
-    @bindable activePageIds: Array<string>
+    @bindable activePageIds: Array<string>;
 
     constructor(private mapManager: MapManager, private markerManager: MarkerManager, private bindingEngine: BindingEngine) {
     }

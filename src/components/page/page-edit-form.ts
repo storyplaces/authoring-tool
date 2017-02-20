@@ -45,9 +45,12 @@ import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
 import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
+import {BindingSignaler} from "aurelia-templating-resources";
+import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
+import {StoryLookup} from "../../resources/utilities/StoryLookup";
 
 
-@inject(Factory.of(AuthoringLocation), EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent)
+@inject(Factory.of(AuthoringLocation), StoryLookup, EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent, BindingSignaler)
 export class PageEditFormCustomElement {
     @bindable page: AuthoringPage;
     @bindable location: AuthoringLocation;
@@ -56,11 +59,15 @@ export class PageEditFormCustomElement {
     private eventSub: Subscription;
 
     unlockedByAddField: string;
+    unlockedByAddObject: AuthoringPage;
+    unlockedByText: HTMLInputElement;
 
     constructor(private locationFactory: () => AuthoringLocation,
+                private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
                 private requestCurrentLocationEvent: RequestCurrentLocationEvent,
-                private requestPinDropEvent: RequestPinDropEvent) {
+                private requestPinDropEvent: RequestPinDropEvent,
+                private bindingSignaler: BindingSignaler) {
 
     }
 
@@ -76,7 +83,7 @@ export class PageEditFormCustomElement {
             }
         });
 
-        $('#unlocked-by-text').typeahead({
+        $(this.unlockedByText).typeahead({
                 hint: false,
                 highlight: false,
                 minLength: 1
@@ -86,7 +93,7 @@ export class PageEditFormCustomElement {
                 display: 'name',
                 templates: {
                     empty: ['<div class="empty-message">',
-                        'no pages matching your input.',
+                        'No pages matching your input.',
                         '</div>'].join('\n'),
                     suggestion: (value: AuthoringPage) => "<div><strong>" + value.name + "</strong> - " + value.pageHint + "</div>"
                 },
@@ -103,7 +110,11 @@ export class PageEditFormCustomElement {
                     cb(matches);
                 }
             }
-        )
+        ).on('typeahead:selected',
+            (e, value) => {
+                this.unlockedByAddObject = value;
+                this.addUnlockedBy();
+            });
     }
 
     detached() {
@@ -123,24 +134,36 @@ export class PageEditFormCustomElement {
         this.location = this.locationFactory();
     }
 
-    @computedFrom('this.page.unlockedByPageIds')
-    get unlockedByPages(): Array<AuthoringPage> {
+    @computedFrom('page.unlockedByPageIds')
+    get unlockedByPages(): Array < AuthoringPage > {
         let pages = [];
         this.page.unlockedByPageIds.forEach(pageId => {
-            pages.concat(this.story.pages.get(pageId));
+            // Some validation to ensure the page is a valid page in the story
+            if (this.storyLookup.pageIdsForStory(this.story.id).indexOf(pageId) != -1) {
+                pages.push(this.story.pages.get(pageId));
+            }
         });
         return pages;
     }
 
-    getAvailablePages(): Array<AuthoringPage> {
+    getAvailablePages(): Array < AuthoringPage > {
         let matches = this.story.pages.all.filter((page) => {
             return (this.unlockedByPages.indexOf(page) == -1) && (page.id != this.page.id);
         });
+        console.log("matches", matches);
         return matches;
     }
 
+    @computedFrom('page.id')
+    get pageChapters(): Array<AuthoringChapter> {
+        return this.storyLookup.getChaptersForPageId(this.story.id, this.page.id);
+    }
+
     addUnlockedBy() {
-        console.log(this.unlockedByAddField);
+        this.page.unlockedByPageIds.push(this.unlockedByAddObject.id);
+        this.unlockedByAddField = "";
+        $(this.unlockedByText).typeahead("val", "");
+        this.bindingSignaler.signal('unlockedByChanged');
     }
 
     useCurrentLocation() {

@@ -63,7 +63,7 @@ export class LocationManager {
     source: LocationSource = LocationSource.GPS;
 
     constructor(private gps: Gps, private currentMapLocation: CurrentMapLocation, private bindingEngine: BindingEngine) {
-        this.switchToMap();
+        this.switchToGPS();
     }
 
     switchToGPS() {

@@ -63,6 +63,7 @@ export class MapManager {
     private trackingGPSLocation: boolean = true;
 
     private eventSub: Subscription;
+    private pageSelectedSub: Subscription;
 
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
@@ -102,6 +103,12 @@ export class MapManager {
         this.eventSub = this.eventAggregator.subscribe(RequestCurrentLocationEvent, () => {
             this.eventAggregator.publish(this.locationUpdateFromMapEventFactory(this.location.location.latitude, this.location.location.longitude));
         });
+
+        this.pageSelectedSub = this.eventAggregator.subscribe('pageListItemSelected', response => {
+            if (response.selected) {
+                this.enableRecenterControl();
+            }
+        });
     }
 
     detach() {
@@ -113,6 +120,11 @@ export class MapManager {
         if (this.eventSub) {
             this.eventSub.dispose();
             this.eventSub = undefined;
+        }
+
+        if (this.pageSelectedSub) {
+            this.pageSelectedSub.dispose();
+            this.pageSelectedSub = undefined;
         }
 
         this.mapCore.removeControl(this.recenterControl);
