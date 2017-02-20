@@ -78,5 +78,6 @@ export class MapMarker implements MapLayerInterface {
 
     destroy() {
         this.marker.remove();
+        this.marker = undefined;
     }
 }
