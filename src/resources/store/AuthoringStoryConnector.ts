@@ -39,7 +39,7 @@
 import {AuthoringStoryCollection} from "../collections/AuthoringStoryCollection";
 import {NewInstance, inject, computedFrom} from "aurelia-framework";
 import {AuthoringStory} from "../models/AuthoringStory";
-import {AuthoringStoryFactory} from "../factories/AuthoringStoryFactory";
+import {DefaultAuthoringStoryFactory} from "../factories/DefaultAuthoringStoryFactory";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Identifiable} from "../interfaces/Identifiable";
 
@@ -52,14 +52,14 @@ export interface hasModifiedDate {
     modifiedDate: string;
 }
 
-@inject(NewInstance.of(AuthoringStoryCollection), AuthoringStoryFactory, NewInstance.of(StoryPlacesAPI))
+@inject(NewInstance.of(AuthoringStoryCollection), DefaultAuthoringStoryFactory, NewInstance.of(StoryPlacesAPI))
 export class AuthoringStoryConnector {
     private dirtyAuthoringStoryIds: Set<string> = new Set();
     private conflictingAuthoringStoryIds: Set<string> = new Set();
     private numberOfNetworkConnections: number = 0;
     private serverOK: boolean = true;
 
-    constructor(private authoringStoryCollection: AuthoringStoryCollection, private authoringStoryFactory: AuthoringStoryFactory, private api: StoryPlacesAPI) {
+    constructor(private authoringStoryCollection: AuthoringStoryCollection, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private api: StoryPlacesAPI) {
         api.path = "/authoring/story/";
     }
 
@@ -109,7 +109,7 @@ export class AuthoringStoryConnector {
     }
 
     newAuthoringStory(): Promise<AuthoringStory> {
-        let defaultAuthoringStory = this.authoringStoryFactory.create();
+        let defaultAuthoringStory = this.defaultAuthoringStoryFactory.create();
 
         return this.sendStoryToServer(defaultAuthoringStory)
             .then(json => {
