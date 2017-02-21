@@ -36,41 +36,5 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapManager} from "../../../resources/map/MapManager";
-import {inject, bindable, BindingEngine} from "aurelia-framework";
-import {MarkerManager} from "../../../resources/map/MarkerManager";
-import {AuthoringStory} from "../../../resources/models/AuthoringStory";
-import {AuthoringPage} from "../../../resources/models/AuthoringPage";
-import {AuthoringLocation} from "../../../resources/models/AuthoringLocation";
 
-@inject(
-    MapManager,
-    MarkerManager,
-    BindingEngine
-)
-export class MapCustomElement {
-    mapElement: HTMLElement;
-
-    @bindable story: AuthoringStory;
-    @bindable currentPage: AuthoringPage;
-    @bindable currentLocation: AuthoringLocation;
-    @bindable activePageIds: Array<string>;
-
-    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private bindingEngine: BindingEngine) {
-    }
-
-
-    attached() {
-        this.mapManager.attach(this.mapElement);
-        this.markerManager.attach(this.story, this.currentPage, this.currentLocation, this.activePageIds);
-
-        this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => { this.markerManager.selectedLocation = newLocation});
-        this.bindingEngine.propertyObserver(this, 'activePageIds').subscribe(newPageIds => {this.markerManager.activePageIds = newPageIds});
-    }
-
-
-    detached() {
-        this.markerManager.detach();
-        this.mapManager.detach()
-    }
-}
+export class CancelPinDropEvent {}

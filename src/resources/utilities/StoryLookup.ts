@@ -88,5 +88,13 @@ export class StoryLookup {
         this.storyConnector.save(story);
     }
 
-    // Return a list of pages given a list of page Ids
+    // Return a list of page Ids for a given storyId
+    public pageIdsForStory(storyId: string) {
+        let story = this.storyConnector.byId(storyId);
+        if (!story) {
+            throw Error("Story with id " + storyId + " does not exist.");
+        }
+        return story.pages.all.map(page => page.id);
+
+    }
 }

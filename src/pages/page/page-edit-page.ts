@@ -126,7 +126,9 @@ export class PageEditPage {
 
     private clonePage() {
         let template = this.params.pageId ? this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId) : undefined;
-        this.page = this.pageFactory(template);
+
+        // $.extend is used here to deep copy the page
+        this.page = this.pageFactory($.extend(true, {}, template));
         this.pageModified = true;
     }
 
@@ -160,4 +162,6 @@ export class PageEditPage {
     private cancel() {
         this.router.navigateToRoute("story-edit", {storyId: this.story.id});
     }
+
+
 }

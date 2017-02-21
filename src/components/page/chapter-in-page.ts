@@ -36,69 +36,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject, computedFrom} from "aurelia-framework";
+import {bindable, containerless, autoinject} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
+import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
-import {StoryLookup} from "../../resources/utilities/StoryLookup";
-import {DialogService} from "aurelia-dialog";
-import {DeleteConfirm} from "../modals/delete-confirm";
-import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 /**
  * Created by andy on 28/11/16.
  */
 
-
-@autoinject()
 @containerless()
-export class PageListItem {
+@autoinject()
+export class ChapterInPage {
 
-    @bindable page: AuthoringPage;
-    @bindable storyId: string;
+    @bindable chapter: AuthoringChapter;
+    @bindable ownerPage: AuthoringPage;
 
-    selected: boolean;
-    private subscriber: Subscription;
-
-    constructor(private storyLookup: StoryLookup, private dialogService: DialogService, private eventAggregator: EventAggregator) {
+    constructor(private bindingSignaler: BindingSignaler) {
     }
 
-    attached() {
-        this.subscriber = this.eventAggregator.subscribe('pageListItemSelected', response => {
-            if (response.page != this.page) {
-                this.selected = false;
-            } else {
-                this.selected = response.selected;
-            }
-        });
-    }
-
-    detached() {
-        this.subscriber.dispose();
-    }
-
-    @computedFrom("storyId")
-    get chapters(): Array<AuthoringChapter> {
-        return this.storyLookup.getChaptersForPageId(this.storyId, this.page.id);
-    }
-
-    delete(): void {
-        let question = "Are you sure you wish to delete the page " + this.page.name + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
-            if (!response.wasCancelled) {
-                this.storyLookup.deletePageFromStory(this.storyId, this.page.id);
-            }
-        });
-    }
-
-    select(): void {
-        this.selected = !this.selected;
-        this.eventAggregator.publish('pageListItemSelected', {page: this.page, selected: this.selected});
-    }
-
-    get pageStyle(): string {
-        if (this.selected) {
-            return "page-selected";
-        }
-        return "";
+    remove() {
+        var index = this.chapter.pageIds.indexOf(this.ownerPage.id);
+        this.chapter.pageIds.splice(index, 1);
+        this.bindingSignaler.signal('chapterChanged');
     }
 
 }

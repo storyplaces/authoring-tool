@@ -33,10 +33,16 @@ function buildTypeScript() {
     .pipe(changedInPlace({firstPass: true}));
 
   return eventStream.merge(dts, src)
-    .pipe(plumber({ errorHandler: notify.onError('Error: <%= error.message %>') }))
+    .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
     .pipe(ts(typescriptCompiler))
     .pipe(build.bundle());
+}
+
+function onError(err){
+  if (notify) {
+    notify.onError('Error: <%= error.message %>')
+  }
 }
 
 export default gulp.series(

@@ -38,25 +38,8 @@
   -->
 
 <template>
-    <require from="../attributes/bootstrap-tooltip"></require>
-
-    <li class="list-group-item page-list-item-li ${pageStyle}" >
-        <div class="page-list-item">
-            <div class="grab-bar" click.delegate="select()"></div>
-            <div class="page-list-item-text" click.delegate="select()">
-                <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
-                                       class="chapter-symbol ${chapter.colour}" title="${chapter.name}"
-                                       data-toggle="tooltip" data-placement="bottom"></span></h4>
-                <p>${page.content}</p>
-            </div>
-            <div class="page-list-item-buttons">
-                <a class="btn btn-primary"
-                   route-href="route: page-edit; params.bind: {storyId: storyId, pageId: page.id}"><span
-                        class="glyphicon glyphicon-pencil"></span> Edit</a>
-                <button class="btn btn-danger" click.delegate="delete()"><span
-                        class="glyphicon glyphicon-remove"></span> Delete
-                </button>
-            </div>
-        </div>
+    <li class="list-group-item">
+        ${chapter.name}
+        <a click.delegate="remove()"><span class="glyphicon glyphicon-remove pull-right"></span></a>
     </li>
 </template>
