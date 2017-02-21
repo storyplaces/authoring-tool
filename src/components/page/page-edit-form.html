@@ -95,13 +95,20 @@
                             <label for="unlocked-by">Unlocked By:
                                 <information-icon help-text="Pages which unlock this page"></information-icon>
                             </label>
-                            <select class="form-control" value.bind="page.unlockedByPagesOperator">
+                            <select class="form-control" id="unlocked-by" value.bind="page.unlockedByPagesOperator">
                                 <option value="or">Any of:</option>
                                 <option value="and">All of:</option>
                             </select>
-                            <unlocked-by-page repeat.for="unlockedByPage of unlockedByPages & signal:'unlockedByChanged'"
-                                              page.bind="unlockedByPage"
-                                              owner-page.two-way="page"></unlocked-by-page>
+                            <div class="panel panel-default">
+                                <div class="mutable-list panel-body">
+                                    <ul class="list-group">
+                                        <unlocked-by-page
+                                                repeat.for="unlockedByPage of unlockedByPages & signal:'unlockedByChanged'"
+                                                page.bind="unlockedByPage"
+                                                owner-page.two-way="page"></unlocked-by-page>
+                                    </ul>
+                                </div>
+                            </div>
                             <input type="text" class="typeahead form-control" ref="unlockedByText"
                                    value.bind="unlockedByAddField" placeholder="Start typing a page name">
                         </div>
@@ -111,9 +118,15 @@
                             <information-icon
                                     help-text="The chapters which this page is a member of"></information-icon>
                         </label>
-                        <chapter-in-page repeat.for="chapter of pageChapters & signal:'chapterChanged'"
-                                          chapter.bind="chapter"
-                                          owner-page.two-way="page"></chapter-in-page>
+                        <div class="panel panel-default">
+                            <div class="mutable-list panel-body">
+                                <ul class="list-group">
+                                    <chapter-in-page repeat.for="chapter of pageChapters & signal:'chapterChanged'"
+                                         chapter.bind="chapter"
+                                         owner-page.two-way="page"></chapter-in-page>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -166,7 +179,8 @@
                 <div class="row">
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
-                            <button class="btn btn-block" class.bind="droppingPin ? 'btn-danger' : 'btn-primary'" click.delegate="dropPinOnMap()"><span
+                            <button class="btn btn-block" class.bind="droppingPin ? 'btn-danger' : 'btn-primary'"
+                                    click.delegate="dropPinOnMap()"><span
                                     class="glyphicon glyphicon-map-marker"></span> Drop pin on map
                             </button>
                         </div>

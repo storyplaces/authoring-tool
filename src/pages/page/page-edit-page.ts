@@ -45,8 +45,9 @@ import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../../components/modals/delete-confirm";
+import {DefaultAuthoringPageFactory} from "../../resources/factories/DefaultAuthoringPageFactory";
 
-@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory), Router, DialogService)
+@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory), Router, DialogService, DefaultAuthoringPageFactory)
 export class PageEditPage {
     private params: {storyId: string, pageId: string};
     private page: AuthoringPage;
@@ -62,7 +63,8 @@ export class PageEditPage {
                 private locationFactory: (data?) => AuthoringLocation,
                 private storyFactory: (data?) => AuthoringStory,
                 private router: Router,
-                private dialogService: DialogService) {
+                private dialogService: DialogService,
+                private defaultAuthoringPageFactory: DefaultAuthoringPageFactory) {
     }
 
     canActivate(params) {
@@ -125,10 +127,8 @@ export class PageEditPage {
     }
 
     private clonePage() {
-        let template = this.params.pageId ? this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId) : undefined;
-
         // $.extend is used here to deep copy the page
-        this.page = this.pageFactory($.extend(true, {}, template));
+        this.page = this.params.pageId ? this.pageFactory($.extend(true, {}, this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId))) : this.defaultAuthoringPageFactory.create();
         this.pageModified = true;
     }
 
