@@ -53,8 +53,8 @@ export class App {
             {route: '/help', name: 'help', moduleId: 'pages/static/help', title: 'Help'},
             {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
 
-            {route: '/story', moduleId: 'pages/story-list-page', title: 'Stories', name: 'story-list'},
-            {route: '/story/:storyId', moduleId: 'pages/story-edit-page', title: 'Story', name: 'story-edit'},
+            {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list'},
+            {route: '/story/:storyId', moduleId: 'pages/story/story-edit-page', title: 'Story', name: 'story-edit'},
 
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
             {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new'},

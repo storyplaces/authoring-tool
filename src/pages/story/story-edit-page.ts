@@ -38,8 +38,8 @@
  */
 import {autoinject, computedFrom} from "aurelia-framework";
 import {Router} from "aurelia-router";
-import {AuthoringStory} from "../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../resources/store/AuthoringStoryConnector";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 
 @autoinject()
 export class StoryEditPage {
