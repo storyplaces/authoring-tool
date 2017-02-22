@@ -44,18 +44,29 @@
     <require from="../../components/elements/mapping/map"></require>
 
 
-    <two-pane-template>
+    <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
             <map story.two-way="story" current-page.two-way="page" current-location.two-way="location"></map>
         </div>
         <div slot="content-pane" class="fill-space">
             <scrollable-list-with-header>
                 <div slot="heading">
-                    <button class="btn btn-success" click.delegate="save()"><span class="glyphicon glyphicon-save"></span> Save</button>
-                    <button class="btn btn-danger" click.delegate="cancel()"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                    <button class="btn btn-success" click.delegate="save()"><span
+                            class="glyphicon glyphicon-save"></span> Save
+                    </button>
+                    <button class="btn btn-danger" click.delegate="cancel()"><span
+                            class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button class="btn btn-default pull-right" click.delegate="mapHidden = false" show.bind="mapHidden"><span
+                            class="glyphicon glyphicon-resize-full"></span> Show Map
+                    </button>
+                    <button class="btn btn-default pull-right" click.delegate="mapHidden = true" show.bind="!mapHidden"><span
+                            class="glyphicon glyphicon-resize-small"></span> Hide Map
+                    </button>
                 </div>
                 <div slot="content">
-                    <page-edit-form story.two-way="story" page.two-way="page" location.two-way="location"></page-edit-form>
+                    <page-edit-form story.two-way="story" page.two-way="page"
+                                    location.two-way="location"></page-edit-form>
                 </div>
             </scrollable-list-with-header>
         </div>

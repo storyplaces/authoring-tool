@@ -37,12 +37,12 @@
   ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<template>
+<template bindable="mapHidden">
     <div class="fill-space">
-        <div class="map-pane">
+        <div class="map-pane" class.bind="mapHidden ? 'hidden' : ''">
             <slot name="map-pane"></slot>
         </div>
-        <div class="content-pane">
+        <div class="content-pane" class.bind="mapHidden ? 'fill-space' : ''">
             <slot name="content-pane"></slot>
         </div>
     </div>

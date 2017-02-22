@@ -57,6 +57,8 @@ export class PageEditPage {
     private storyModified: boolean = false;
     private pageModified: boolean = false;
 
+    private mapHidden: boolean = false;
+
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyLookup: StoryLookup,
                 private pageFactory: (data?) => AuthoringPage,
