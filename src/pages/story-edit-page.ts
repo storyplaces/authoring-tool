@@ -46,6 +46,8 @@ export class StoryEditPage {
 
     private storyId: string;
 
+    private mapHidden: boolean = false;
+
     @computedFrom('storyId', 'this.storyConnector.all')
     get story(): AuthoringStory {
         return this.storyConnector.byId(this.storyId);
