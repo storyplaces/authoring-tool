@@ -39,6 +39,7 @@
 import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
 import {Gps, GpsState} from "./Gps";
 import {LocationInformation} from "./LocationInformation";
+import {UserConfig} from "../store/UserConfig";
 import {CurrentMapLocation} from "../map/CurrentMapLocation";
 
 export enum LocationSource {
@@ -62,16 +63,21 @@ export class LocationManager {
     location: LocationInformation = {latitude: 50.935659, longitude: -1.396098, heading: 0, accuracy: 0};
     source: LocationSource = LocationSource.GPS;
 
-    constructor(private gps: Gps, private currentMapLocation: CurrentMapLocation, private bindingEngine: BindingEngine) {
-        this.switchToGPS();
+    constructor(private gps: Gps, private currentMapLocation: CurrentMapLocation, private bindingEngine: BindingEngine, private userConfig: UserConfig) {
+        this.updateSource();
+
+        this.bindingEngine.propertyObserver(this.userConfig, 'locationDemo').subscribe(() => {
+            this.updateSource();
+        });
     }
 
-    switchToGPS() {
+    private updateSource() {
+        if (this.userConfig.locationDemo) {
+            this.switchLocationSourceToMap();
+            return;
+        }
+
         this.switchLocationSourceToGPS();
-    }
-
-    switchToMap() {
-        this.switchLocationSourceToMap();
     }
 
     private switchLocationSourceToMap() {

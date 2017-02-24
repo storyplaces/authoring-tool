@@ -36,12 +36,13 @@
 import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
 import {AuthoringStoryConnector} from "./resources/store/AuthoringStoryConnector";
+import {UserConfig} from "./resources/store/UserConfig";
 
 @autoinject()
 export class App {
     router: Router;
 
-    constructor(private storyConnector: AuthoringStoryConnector) {
+    constructor(private storyConnector: AuthoringStoryConnector, private userConfig: UserConfig) {
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {

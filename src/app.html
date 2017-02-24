@@ -53,6 +53,16 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a route-href="route: story-list">My Stories</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Advanced <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a><div class="checkbox">
+                                <label>
+                                    <input type="checkbox" checked.bind="userConfig.locationDemo"> Demo Mode
+                                </label>
+                            </div></a></li>
+                        </ul>
+                    </li>
                     <li><a route-href="route: about">About</a></li>
                     <li><a route-href="route: help">Help</a></li>
                 </ul>
