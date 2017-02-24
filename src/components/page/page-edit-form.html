@@ -44,6 +44,7 @@
     <require from="resources/value-converters/IntToString"></require>
     <require from="./unlocked-by-page"></require>
     <require from="./chapter-in-page"></require>
+    <require from="components/attributes/scroll-on-edit"></require>
 
     <div class="padding">
         <div class="panel panel-default">
@@ -55,21 +56,22 @@
                     <label for="name">Page Name:
                         <information-icon help-text="The title of the page"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="page.name">
+                    <input type="text" class="form-control" id="name" value.bind="page.name" scroll-on-edit>
                 </div>
 
                 <div class="form-group">
                     <label for="content">Page Content:
                         <information-icon help-text="The content of the page"></information-icon>
                     </label>
-                    <textarea class="form-control" id="content" rows="5" value.bind="page.content"></textarea>
+                    <textarea class="form-control" id="content" rows="5" value.bind="page.content"
+                              scroll-on-edit></textarea>
                 </div>
                 <div class="form-group">
                     <label for="hint-text">Hint text:
                         <information-icon
                                 help-text="A hint to the reader shown in the list of pages"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint">
+                    <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint" scroll-on-edit>
                 </div>
 
             </div>
@@ -110,7 +112,8 @@
                                 </div>
                             </div>
                             <input type="text" class="typeahead form-control" ref="unlockedByText"
-                                   value.bind="unlockedByAddField" placeholder="Start typing a page name">
+                                   value.bind="unlockedByAddField" placeholder="Start typing a page name"
+                                   scroll-on-edit>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
@@ -122,8 +125,8 @@
                             <div class="mutable-list panel-body">
                                 <ul class="list-group">
                                     <chapter-in-page repeat.for="chapter of pageChapters & signal:'chapterChanged'"
-                                         chapter.bind="chapter"
-                                         owner-page.two-way="page"></chapter-in-page>
+                                                     chapter.bind="chapter"
+                                                     owner-page.two-way="page"></chapter-in-page>
                                 </ul>
                             </div>
                         </div>
@@ -152,7 +155,7 @@
                                         help-text="The latitude of the location of the page"></information-icon>
                             </label>
                             <input type="text" class="form-control" id="lat"
-                                   value.bind="location.lat | floatToString">
+                                   value.bind="location.lat | floatToString" scroll-on-edit>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
@@ -162,7 +165,7 @@
                                         help-text="The longitude of the location of the page"></information-icon>
                             </label>
                             <input type="text" class="form-control" id="long"
-                                   value.bind="location.long | floatToString">
+                                   value.bind="location.long | floatToString" scroll-on-edit>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
@@ -172,7 +175,7 @@
                                         help-text="The radius within which the page is valid."></information-icon>
                             </label>
                             <input type="text" class="form-control" id="radius"
-                                   value.bind="location.radius | intToString">
+                                   value.bind="location.radius | intToString" scroll-on-edit>
                         </div>
                     </div>
                 </div>
