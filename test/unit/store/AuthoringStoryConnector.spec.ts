@@ -40,7 +40,7 @@ import {Container} from "aurelia-framework";
 import {AuthoringStoryConnector} from "../../../src/resources/store/AuthoringStoryConnector";
 import {AuthoringStoryCollection} from "../../../src/resources/collections/AuthoringStoryCollection";
 import {StoryPlacesAPI} from "../../../src/resources/store/StoryplacesAPI";
-import {AuthoringStoryFactory} from "../../../src/resources/factories/AuthoringStoryFactory";
+import {DefaultAuthoringStoryFactory} from "../../../src/resources/factories/DefaultAuthoringStoryFactory";
 import {Identifiable} from "../../../src/resources/interfaces/Identifiable";
 
 describe("AuthoringStoryConnector", () => {
@@ -78,7 +78,7 @@ describe("AuthoringStoryConnector", () => {
     it("can be instantiated with a StoryCollection and a storyplacesAPI", () => {
         let authoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
     });
@@ -86,7 +86,7 @@ describe("AuthoringStoryConnector", () => {
     it("sets the storyPlacesAPI path to /authoring/story/", () => {
         let authoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
         expect(storyPlacesAPI.path).toEqual("/authoring/story/");
@@ -95,7 +95,7 @@ describe("AuthoringStoryConnector", () => {
     it("returns storyCollection.all when all is called", () => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "123";
 
@@ -110,7 +110,7 @@ describe("AuthoringStoryConnector", () => {
     it("calls storyCollection.get when byId is called", () => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "123";
 
@@ -128,7 +128,7 @@ describe("AuthoringStoryConnector", () => {
     it("can create a new story", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         apiReturnsSuccessfulSave(storyPlacesAPI, "123");
 
@@ -151,7 +151,7 @@ describe("AuthoringStoryConnector", () => {
     it("can update a story assuming server accepts the story", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "345";
@@ -176,7 +176,7 @@ describe("AuthoringStoryConnector", () => {
     it("will leave a story as dirty if the server is unreachable", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "345";
@@ -201,7 +201,7 @@ describe("AuthoringStoryConnector", () => {
     it("will flush existing dirty stories when syncDirty() is called", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "345";
@@ -249,7 +249,7 @@ describe("AuthoringStoryConnector", () => {
     it("will flush existing conflicting stories when syncDirty() is called and is successful", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "345";
@@ -297,7 +297,7 @@ describe("AuthoringStoryConnector", () => {
     it("will mark a story as conflicting and leave it in the dirty list if the server returns a 409 response", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "345";
@@ -322,7 +322,7 @@ describe("AuthoringStoryConnector", () => {
     it("will download stories from the server if they don't already exist", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStory = authoringStoryFactory.create();
         authoringStory.id = "123";
@@ -354,7 +354,7 @@ describe("AuthoringStoryConnector", () => {
     it("will download stories from the server if they already exist, they are newer on the server and not marked as modified", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStoryRemote = authoringStoryFactory.create();
         authoringStoryRemote.id = "123";
@@ -388,7 +388,7 @@ describe("AuthoringStoryConnector", () => {
     it("will not download stories from the server if they already exist, they are newer on the server and are marked as modified and mark them as conflicting", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStoryRemote = authoringStoryFactory.create();
         authoringStoryRemote.id = "123";
@@ -422,7 +422,7 @@ describe("AuthoringStoryConnector", () => {
     it("will not download stories from the server if they already exist and they are newer on the client", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: AuthoringStoryFactory = resolve(AuthoringStoryFactory);
+        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
         let authoringStoryRemote = authoringStoryFactory.create();
         authoringStoryRemote.id = "123";
