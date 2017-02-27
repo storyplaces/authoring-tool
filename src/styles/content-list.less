@@ -16,3 +16,25 @@
 .content-list-footer {
   border-top: solid lightgray 1px;
 }
+
+.arrow-mixin {
+  background-color: rgba(128, 128, 128, 0.50);
+  border-radius: 2px 0 0 2px;
+  right: 0;
+  z-index: 1;
+  width: 1.5em;
+  text-align: left;
+  padding: 0.1em 0 0 0.1em;
+}
+
+.up-arrow {
+  position: fixed;
+  margin-top: 0.25em;
+  .arrow-mixin;
+}
+
+.down-arrow {
+  position: fixed;
+  bottom: 0.25em + @contentListHeaderHeight;
+  .arrow-mixin;
+}
