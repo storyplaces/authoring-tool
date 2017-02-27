@@ -1,0 +1,12 @@
+@colours: aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow;
+
+// mixin to iterate over colors and create CSS class for each one
+.make-colour-classes(@i: length(@colours)) when (@i > 0) {
+  .make-colour-classes(@i - 1);
+  @colour: extract(@colours, @i);
+  .@{colour} {
+    background-color: @colour;
+  }
+}
+
+.make-colour-classes(); // run the mixin

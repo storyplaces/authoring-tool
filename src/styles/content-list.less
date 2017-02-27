@@ -1,0 +1,18 @@
+@contentListHeaderHeight: 3.5em;
+
+.content-list-controls {
+  height: @contentListHeaderHeight;
+  padding: 0.5em;
+}
+
+.content-list-body {
+  height: calc(~"100% - " @contentListHeaderHeight);
+}
+
+.content-list-scrollable {
+  overflow-y: auto;
+}
+
+.content-list-footer {
+  border-top: solid lightgray 1px;
+}
