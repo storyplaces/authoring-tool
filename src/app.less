@@ -106,15 +106,21 @@ html, body {
 
 @contentListHeaderHeight: 3.5em;
 
-.content-list-header {
+.content-list-controls {
   height: @contentListHeaderHeight;
   padding: 0.5em;
-  border-top: solid lightgray 1px;
 }
 
 .content-list-body {
   height: calc(~"100% - " @contentListHeaderHeight);
+}
+
+.content-list-scrollable {
   overflow-y: auto;
+}
+
+.content-list-footer {
+  border-top: solid lightgray 1px;
 }
 
 .fill-space {
@@ -123,6 +129,10 @@ html, body {
   padding: 0;
   border: 0;
   margin: 0;
+}
+
+.fill-height {
+  height: 100%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ;
 }
 
 .padding {
@@ -175,26 +185,34 @@ html, body {
   display: inline-block;
 }
 
-.page-list-item {
+.grabbable-list-item {
   height: 8em;
 }
 
-.page-list-item-li {
+.grabbable-list-item {
   padding: 0;
+  height: 8em;
+  width:100%;
 }
 
-.page-list-item-text {
+.grabbable-list-item-text {
   vertical-align: top;
   display: inline-block;
   width: calc(~"100% - 10em");
   height: inherit;
-  p {
-    height: 4.2em;
-    overflow: hidden;
-  }
 }
 
-.page-list-item-buttons {
+p.grabbable-list-item-text-body {
+  height: 4.2em;
+  overflow: hidden;
+}
+
+p.grabbable-list-item-text-body-small {
+  height: 2.2em;
+  overflow: hidden;
+}
+
+.grabbable-item-buttons {
   display: inline-block;
   width: 7em;
   vertical-align: top;
@@ -207,7 +225,7 @@ html, body {
   }
 }
 
-.grab-bar {
+.grabbable-list-item-grab-bar {
   background: repeating-linear-gradient(
           45deg,
           #606dbc,
