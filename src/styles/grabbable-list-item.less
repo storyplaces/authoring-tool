@@ -1,3 +1,5 @@
+@import (reference) "../../node_modules/bootstrap/less/bootstrap";
+
 .grabbable-list-item {
   height: 8em;
 }
@@ -5,7 +7,11 @@
 .grabbable-list-item {
   padding: 0;
   height: 8em;
-  width:100%;
+  width: 100%;
+
+  @media screen and (max-width: @screen-xs-max) {
+    height: 5em;
+  }
 }
 
 .grabbable-list-item-text {
@@ -18,11 +24,18 @@
 p.grabbable-list-item-text-body {
   height: 4.2em;
   overflow: hidden;
+  @media screen and (max-width: @screen-xs-max) {
+    height: 1.2em;
+  }
 }
 
 p.grabbable-list-item-text-body-small {
   height: 2.2em;
   overflow: hidden;
+
+  @media screen and (max-width: @screen-xs-max) {
+    height: 1.2em;
+  }
 }
 
 .grabbable-item-buttons {
@@ -35,6 +48,9 @@ p.grabbable-list-item-text-body-small {
   .btn {
     width: 6em;
     margin-top: 0.7em;
+    @media screen and (max-width: @screen-xs-max) {
+      width: 3em;
+    }
   }
 }
 
