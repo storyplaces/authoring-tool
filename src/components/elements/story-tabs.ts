@@ -36,40 +36,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {AuthoringStory, Advisories} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {bindable, containerless} from "aurelia-framework";
 
-
-@autoinject()
 @containerless()
-export class StoryDetailsForm {
+export class StoryTabsCustomElement{
 
-    @bindable story: AuthoringStory;
-    @bindable newStory: boolean = true;
-    @bindable storyModified = true;
+    @bindable selected: string;
+    @bindable storyId: string;
 
-    constructor(private router: Router, private storyConnector: AuthoringStoryConnector) {
-    }
-
-    get advisories(): Array<Object>{
-        return Advisories;
-    }
-
-    save() {
-        this.storyModified = false;
-        if (this.newStory) {
-            this.storyConnector.sendStory(this.story).then((story) => {
-                this.router.navigateToRoute("story-edit", {storyId: story.id});
-            });
-        } else {
-            this.storyConnector.save(this.story).then(() => {
-                this.router.navigateToRoute("story-edit", {storyId: this.story.id});
-            });
-
-        }
-
-
-    }
 }
