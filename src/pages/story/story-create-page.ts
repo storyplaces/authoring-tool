@@ -36,33 +36,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {customAttribute, inject} from "aurelia-framework";
-import "bootstrap";
+import {autoinject, computedFrom} from "aurelia-framework";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {DefaultAuthoringStoryFactory} from "../../resources/factories/DefaultAuthoringStoryFactory";
 
-@customAttribute('scroll-on-edit')
-@inject(Element)
-export class ScrollOnEdit {
-    constructor(private element: HTMLInputElement | HTMLTextAreaElement) {
+@autoinject()
+export class StoryCreatePage {
 
+    private defaultAuthoringStory: AuthoringStory;
+
+    @computedFrom('defaultAuthoringStory')
+    get story(): AuthoringStory {
+        return this.defaultAuthoringStory;
     }
 
-    bind() {
-        this.element.addEventListener('focus', this.scrollIntoView);
+    constructor(private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory) {
     }
 
-    unbind() {
+    activate() {
+        // Create a blank story
+        this.defaultAuthoringStory = this.defaultAuthoringStoryFactory.create();
+
     }
-
-    scrollIntoView(event: FocusEvent) {
-        let target = event.target as HTMLInputElement || HTMLTextAreaElement as any;
-
-        let rect = target.getBoundingClientRect();
-        let viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-
-        if (rect.bottom < 0 || rect.top - viewHeight >= 0) {
-            target.scrollIntoView(true);
-        }
-    }
-
-
 }

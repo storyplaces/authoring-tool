@@ -10,7 +10,7 @@ import {build} from 'aurelia-cli';
 export default function processCSS() {
   return gulp.src(project.cssProcessor.source)
     .pipe(changedInPlace({firstPass:true}))
-    .pipe(plumber({ errorHandler: notify.onError('Error: <%= error.message %>') }))
+    //.pipe(plumber({ errorHandler: notify.onError('Error: <%= error.message %>') }))
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(build.bundle());

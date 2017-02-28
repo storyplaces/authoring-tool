@@ -36,33 +36,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {customAttribute, inject} from "aurelia-framework";
-import "bootstrap";
+import {bindable, containerless, autoinject} from "aurelia-framework";
+import {Router} from "aurelia-router";
+import {AuthoringStory, Advisories} from "../../resources/models/AuthoringStory";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 
-@customAttribute('scroll-on-edit')
-@inject(Element)
-export class ScrollOnEdit {
-    constructor(private element: HTMLInputElement | HTMLTextAreaElement) {
 
+@autoinject()
+@containerless()
+export class StoryDetailsForm {
+
+    @bindable story: AuthoringStory;
+
+    constructor(private router: Router, private storyConnector: AuthoringStoryConnector) {
     }
 
-    bind() {
-        this.element.addEventListener('focus', this.scrollIntoView);
+    get advisories(): Array<Object>{
+        return Advisories;
     }
 
-    unbind() {
+    save() {
+        console.log(this.story.audience);
+        this.storyConnector.sendStory(this.story).then((story) => {
+            this.router.navigateToRoute("story-edit", {storyId: story.id});
+        });
+
+
     }
-
-    scrollIntoView(event: FocusEvent) {
-        let target = event.target as HTMLInputElement || HTMLTextAreaElement as any;
-
-        let rect = target.getBoundingClientRect();
-        let viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-
-        if (rect.bottom < 0 || rect.top - viewHeight >= 0) {
-            target.scrollIntoView(true);
-        }
-    }
-
-
 }

@@ -69,7 +69,7 @@ export class PageEditPage {
                 private defaultAuthoringPageFactory: DefaultAuthoringPageFactory) {
     }
 
-    canActivate(params) {
+    canActivate(params) : any{
         this.params = params;
 
         if (this.itemsExist()) {
@@ -130,7 +130,7 @@ export class PageEditPage {
 
     private clonePage() {
         // $.extend is used here to deep copy the page
-        this.page = this.params.pageId ? this.pageFactory($.extend(true, {}, this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId))) : this.defaultAuthoringPageFactory.create();
+        this.page = this.params.pageId ? this.pageFactory(($ as any).extend(true, {}, this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId))) : this.defaultAuthoringPageFactory.create();
         this.pageModified = true;
     }
 
