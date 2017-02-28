@@ -43,26 +43,40 @@
     <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
     <require from="../../components/elements/mapping/map"></require>
 
+
     <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
             <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
         </div>
         <div slot="content-pane" class="fill-space">
-            <scrollable-list-with-header>
-                <div slot="heading">
-                    <button class="btn btn-primary" click.delegate="new()"><span
-                            class="glyphicon glyphicon-plus"></span> Create new page</button>
-                    <button class="btn btn-default pull-right" click.delegate="mapHidden = false" show.bind="mapHidden"><span
-                            class="glyphicon glyphicon-resize-full"></span> Show Map
-                    </button>
-                    <button class="btn btn-default pull-right" click.delegate="mapHidden = true" show.bind="!mapHidden"><span
-                            class="glyphicon glyphicon-resize-small"></span> Hide Map
-                    </button>
-                </div>
-                <div slot="content">
-                    <story-page-list story.bind="story"></story-page-list>
-                </div>
-            </scrollable-list-with-header>
+            <div class="story-nav">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active"><a href="#">Pages</a></li>
+                    <li role="presentation"><a href="#">Chapters</a></li>
+                    <li role="presentation"><a href="#">Settings</a></li>
+                </ul>
+            </div>
+            <div class="story-nav-body">
+                <scrollable-list-with-header>
+                    <div slot="heading">
+                        <button class="btn btn-primary" click.delegate="new()"><span
+                                class="glyphicon glyphicon-plus"></span> New page
+                        </button>
+
+                        <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
+                                show.bind="mapHidden"><span
+                                class="glyphicon glyphicon-resize-full"></span> Show Map
+                        </button>
+                        <button class="btn btn-default pull-right" click.delegate="mapHidden = true"
+                                show.bind="!mapHidden"><span
+                                class="glyphicon glyphicon-resize-small"></span> Hide Map
+                        </button>
+                    </div>
+                    <div slot="content">
+                        <story-page-list story.bind="story"></story-page-list>
+                    </div>
+                </scrollable-list-with-header>
+            </div>
         </div>
     </two-pane-template>
 </template>
