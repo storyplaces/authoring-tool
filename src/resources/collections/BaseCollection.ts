@@ -64,6 +64,10 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
 
     public getClone(id: string): DATA_TYPE {
         let current = this.get(id);
+        if (!current) {
+            return undefined;
+        }
+
         return this.itemFromObject(this.cloneToObject(current));
     }
 
