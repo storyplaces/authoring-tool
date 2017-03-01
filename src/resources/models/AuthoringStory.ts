@@ -223,7 +223,7 @@ export class AuthoringStory extends BaseModel {
 
 }
 
-export var Advisories = [
+export var audiences = [
     {shortname: "general", fullname: "General Audience"},
     {shortname: "family", fullname: "Family Friendly"},
     {shortname: "advisory", fullname: "Advisory Content"}

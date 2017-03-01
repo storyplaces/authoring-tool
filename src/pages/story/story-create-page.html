@@ -38,6 +38,20 @@
   -->
 
 <template>
-    <require from="../../components/story/story-details-form"></require>
-    <story-details-form story.bind="story"></story-details-form>
+    <require from="components/story/story-details-form"></require>
+    <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
+
+    <div class="container fill-height">
+        <scrollable-list-with-header>
+            <div slot="heading">
+                <button class="btn btn-success" click.delegate="save()"><span
+                        class="glyphicon glyphicon-save"></span> Save
+                </button>
+            </div>
+            <div slot="content">
+                <h3>Create new story</h3>
+                <story-details-form story.two-way="story"></story-details-form>
+            </div>
+        </scrollable-list-with-header>
+    </div>
 </template>

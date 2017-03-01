@@ -41,8 +41,10 @@ import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {DeleteConfirm} from "../../components/modals/delete-confirm";
 import {DialogService} from "aurelia-dialog";
+import {Router} from "aurelia-router";
 
-@inject(AuthoringStoryConnector, Factory.of(AuthoringStory), DialogService)
+
+@inject(AuthoringStoryConnector, Factory.of(AuthoringStory), DialogService, Router)
 export class StoryEditPage {
 
     private storyId: string;
@@ -54,7 +56,8 @@ export class StoryEditPage {
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyFactory: (data?) => AuthoringStory,
-                private dialogService: DialogService) {
+                private dialogService: DialogService,
+                private router: Router) {
     }
 
     canActivate(params) {
@@ -97,11 +100,19 @@ export class StoryEditPage {
     }
 
     private cloneStory() {
-        this.story = this.storyFactory(this.storyConnector.byId(this.storyId));
+        this.story = this.storyConnector.cloneById(this.storyId);
         this.storyModified = true;
     }
 
     private hasData(): boolean {
         return this.story !== undefined;
+    }
+
+
+    save() {
+        this.storyModified = false;
+        this.storyConnector.save(this.story).then(() => {
+            this.router.navigateToRoute("story-pages", {storyId: this.story.id});
+        });
     }
 }

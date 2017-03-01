@@ -39,23 +39,25 @@
 import {autoinject, computedFrom} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {DefaultAuthoringStoryFactory} from "../../resources/factories/DefaultAuthoringStoryFactory";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {Router} from "aurelia-router";
 
 @autoinject()
 export class StoryCreatePage {
 
-    private defaultAuthoringStory: AuthoringStory;
+    private story: AuthoringStory;
 
-    @computedFrom('defaultAuthoringStory')
-    get story(): AuthoringStory {
-        return this.defaultAuthoringStory;
-    }
-
-    constructor(private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory) {
+    constructor(private storyConnector: AuthoringStoryConnector, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private router: Router) {
     }
 
     activate() {
         // Create a blank story
-        this.defaultAuthoringStory = this.defaultAuthoringStoryFactory.create();
+        this.story = this.defaultAuthoringStoryFactory.create();
+    }
 
+    save() {
+        this.storyConnector.sendStory(this.story).then((story) => {
+            this.router.navigateToRoute("story-pages", {storyId: story.id});
+        });
     }
 }
