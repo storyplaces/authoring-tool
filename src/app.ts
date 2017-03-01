@@ -55,9 +55,10 @@ export class App {
             {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
 
             {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list'},
-            {route: '/story/:storyId', moduleId: 'pages/story/story-edit-page', title: 'Story', name: 'story-edit'},
+            {route: '/story/:storyId/pages', moduleId: 'pages/story/story-edit-page', title: 'Story Pages', name: 'story-pages'},
             {route: '/story/new', moduleId: 'pages/story/story-create-page', title: 'New Story', name: 'story-create'},
             {route: '/story/:storyId/details', moduleId: 'pages/story/story-details-page', title: 'Story Details', name: 'story-details'},
+            {route: '/story/:storyId/chapters', moduleId: 'pages/story/story-chapters-page', title: 'Story Chapters', name: 'story-chapters'},
 
 
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},

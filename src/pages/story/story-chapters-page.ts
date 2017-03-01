@@ -36,40 +36,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject} from "aurelia-framework";
+import {autoinject, computedFrom} from "aurelia-framework";
 import {Router} from "aurelia-router";
-import {AuthoringStory, Advisories} from "../../resources/models/AuthoringStory";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 
-
 @autoinject()
-@containerless()
-export class StoryDetailsForm {
+export class StoryChaptersPage {
 
-    @bindable story: AuthoringStory;
-    @bindable newStory: boolean = true;
-    @bindable storyModified = true;
+    private storyId: string;
 
-    constructor(private router: Router, private storyConnector: AuthoringStoryConnector) {
+    private mapHidden: boolean = false;
+
+    @computedFrom('storyId', 'this.storyConnector.all')
+    get story(): AuthoringStory {
+        return this.storyConnector.byId(this.storyId);
     }
 
-    get advisories(): Array<Object>{
-        return Advisories;
+    constructor(private storyConnector: AuthoringStoryConnector,
+                private router: Router) {
     }
 
-    save() {
-        this.storyModified = false;
-        if (this.newStory) {
-            this.storyConnector.sendStory(this.story).then((story) => {
-                this.router.navigateToRoute("story-pages", {storyId: story.id});
-            });
-        } else {
-            this.storyConnector.save(this.story).then(() => {
-                this.router.navigateToRoute("story-pages", {storyId: this.story.id});
-            });
+    canActivate(params) {
+        this.storyId = params.storyId;
 
+        if (this.hasData()) {
+            return true;
         }
 
+        return this.storyConnector.sync().then(() => {
+            return this.hasData();
+        });
+    }
 
+    private hasData(): boolean {
+        return this.story !== undefined;
+    }
+
+    private new(): void {
+        this.router.navigateToRoute('chapter-new', {storyId: this.story.id});
     }
 }
