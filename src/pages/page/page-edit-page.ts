@@ -69,7 +69,7 @@ export class PageEditPage {
                 private defaultAuthoringPageFactory: DefaultAuthoringPageFactory) {
     }
 
-    canActivate(params) {
+    canActivate(params) : any{
         this.params = params;
 
         if (this.itemsExist()) {

@@ -36,33 +36,72 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {customAttribute, inject} from "aurelia-framework";
-import "bootstrap";
+import {inject, Factory} from "aurelia-framework";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {DeleteConfirm} from "../../components/modals/delete-confirm";
+import {DialogService} from "aurelia-dialog";
 
-@customAttribute('scroll-on-edit')
-@inject(Element)
-export class ScrollOnEdit {
-    constructor(private element: HTMLInputElement | HTMLTextAreaElement) {
+@inject(AuthoringStoryConnector, Factory.of(AuthoringStory), DialogService)
+export class StoryEditPage {
 
+    private storyId: string;
+
+    private mapHidden: boolean = false;
+    private story: AuthoringStory;
+    private storyModified: boolean;
+
+
+    constructor(private storyConnector: AuthoringStoryConnector,
+                private storyFactory: (data?) => AuthoringStory,
+                private dialogService: DialogService) {
     }
 
-    bind() {
-        this.element.addEventListener('focus', this.scrollIntoView);
+    canActivate(params) {
+        this.storyId = params.storyId;
+
+        if (this.itemsExist()) {
+            this.cloneStory();
+            return true;
+        }
+
+        return this.storyConnector.sync().then(() => {
+            this.cloneStory();
+            return this.itemsExist();
+        });
     }
 
-    unbind() {
-    }
+    private itemsExist(): boolean {
+        if (!this.storyId) {
+            return false;
+        }
 
-    scrollIntoView(event: FocusEvent) {
-        let target = event.target as HTMLInputElement || HTMLTextAreaElement as any;
+        let story = this.storyConnector.byId(this.storyId);
 
-        let rect = target.getBoundingClientRect();
-        let viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-
-        if (rect.bottom < 0 || rect.top - viewHeight >= 0) {
-            target.scrollIntoView(true);
+        if (!story) {
+            return false;
         }
     }
 
+    canDeactivate() {
+        console.log(this.storyModified);
+        let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
+        if (this.storyModified) {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+                if (!response.wasCancelled) {
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
 
+    private cloneStory() {
+        this.story = this.storyFactory(this.storyConnector.byId(this.storyId));
+        this.storyModified = true;
+    }
+
+    private hasData(): boolean {
+        return this.story !== undefined;
+    }
 }

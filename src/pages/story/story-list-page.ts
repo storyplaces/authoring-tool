@@ -39,10 +39,11 @@
 
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {autoinject, computedFrom} from "aurelia-framework";
+import {Router} from "aurelia-router";
 
 @autoinject()
 export class StoryListPage {
-    constructor(private storyConnector: AuthoringStoryConnector) {
+    constructor(private storyConnector: AuthoringStoryConnector, private router: Router) {
     }
 
     @computedFrom('storyconnector.all')
@@ -51,6 +52,6 @@ export class StoryListPage {
     }
 
     new(): void {
-        console.info("Not yet implemented");
+        this.router.navigateToRoute("story-create");
     }
 }

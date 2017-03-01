@@ -38,40 +38,49 @@
   -->
 
 <template>
-    <require from="../../components/story/story-page-list"></require>
-    <require from="../templates/two-pane-template.html"></require>
-    <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
-    <require from="../../components/elements/mapping/map"></require>
-    <require from="../../components/elements/story-tabs"></require>
+    <require from="../attributes/bootstrap-tooltip"></require>
+    <require from="../icons/information-icon.html"></require>
 
+    <div class="padding">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Story Details
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="name">Story Title:
+                        <information-icon help-text="The title of the story"></information-icon>
+                    </label>
+                    <input type="text" class="form-control" id="title" value.bind="story.title" scroll-on-edit>
+                </div>
 
-    <two-pane-template map-hidden.bind="mapHidden">
-        <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
-        </div>
-        <div slot="content-pane" class="fill-space">
-            <story-tabs selected="pages"></story-tabs>
-            <div class="story-nav-body">
-                <scrollable-list-with-header>
-                    <div slot="heading">
-                        <button class="btn btn-primary" click.delegate="new()"><span
-                                class="glyphicon glyphicon-plus"></span> New page
-                        </button>
+                <div class="form-group">
+                    <label for="name">Story Summary:
+                        <information-icon help-text="A brief description of the story."></information-icon>
+                    </label>
+                    <textarea type="textarea" class="form-control" id="description" value.bind="story.description"
+                              scroll-on-edit></textarea>
+                </div>
 
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
-                                show.bind="mapHidden"><span
-                                class="glyphicon glyphicon-resize-full"></span> Show Map
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = true"
-                                show.bind="!mapHidden"><span
-                                class="glyphicon glyphicon-resize-small"></span> Hide Map
-                        </button>
+                <div class="form-group">
+                    <label for="name">Audience Rating:
+                        <information-icon help-text="The content age appropriateness evaluation."></information-icon>
+                    </label>
+                    <div class="radio" repeat.for="advisory of advisories">
+                        <label>
+                            <input type="radio" name="audience"
+                                   model.bind="advisory.shortname" checked.bind="story.audience" class="radio">
+                            ${advisory.fullname}
+                        </label>
                     </div>
-                    <div slot="content">
-                        <story-page-list story.bind="story"></story-page-list>
-                    </div>
-                </scrollable-list-with-header>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" click.delegate="save()"><span
+                        class="glyphicon glyphicon-save"></span> Save
+                </button>
             </div>
         </div>
-    </two-pane-template>
+    </div>
 </template>

@@ -87,7 +87,7 @@ export class PageEditFormCustomElement {
             this.droppingPin = false;
         });
 
-        $(this.unlockedByText).typeahead({
+        ($(this.unlockedByText as any) as any).typeahead({
                 hint: false,
                 highlight: false,
                 minLength: 1
@@ -166,7 +166,7 @@ export class PageEditFormCustomElement {
     addUnlockedBy() {
         this.page.unlockedByPageIds.push(this.unlockedByAddObject.id);
         this.unlockedByAddField = "";
-        $(this.unlockedByText).typeahead("val", "");
+        ($(this.unlockedByText as any) as any).typeahead("val", "");
         this.bindingSignaler.signal('unlockedByChanged');
     }
 

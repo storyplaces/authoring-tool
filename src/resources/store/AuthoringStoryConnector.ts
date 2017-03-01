@@ -89,7 +89,7 @@ export class AuthoringStoryConnector {
     }
 
     @computedFrom('conflictingAuthoringStoryIds.size')
-    get numberOfConflictingStories() : number {
+    get numberOfConflictingStories(): number {
         return this.conflictingAuthoringStoryIds.size;
     }
 
@@ -114,7 +114,10 @@ export class AuthoringStoryConnector {
 
     newAuthoringStory(): Promise<AuthoringStory> {
         let defaultAuthoringStory = this.defaultAuthoringStoryFactory.create();
+        return this.sendStory(defaultAuthoringStory);
+    }
 
+    sendStory(defaultAuthoringStory: AuthoringStory) {
         return this.sendStoryToServer(defaultAuthoringStory)
             .then(json => {
                 this.authoringStoryCollection.save(json);
