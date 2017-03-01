@@ -152,12 +152,12 @@ export class PageEditPage {
 
         this.storyConnector.save(this.story).then(() => {
             this.storyModified = false;
-            this.router.navigateToRoute("story-edit", {storyId: this.story.id});
+            this.router.navigateToRoute("story-pages", {storyId: this.story.id});
         });
     }
 
     private cancel() {
-        this.router.navigateToRoute("story-edit", {storyId: this.story.id});
+        this.router.navigateToRoute("story-pages", {storyId: this.story.id});
     }
 
 

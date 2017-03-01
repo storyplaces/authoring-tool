@@ -50,7 +50,7 @@
             <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
         </div>
         <div slot="content-pane" class="fill-space">
-            <story-tabs selected="details"></story-tabs>
+            <story-tabs selected="details" story-id.bind="story.id"></story-tabs>
             <div class="story-nav-body">
                 <scrollable-list-with-header>
                     <div slot="heading">
