@@ -51,6 +51,14 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         return this._data.find(item => item.id == id)
     }
 
+    public getMany(ids: Array<string>): Array<DATA_TYPE> {
+        let items: Array<DATA_TYPE> = [];
+        for(let id of ids){
+            items.push(this.get(id));
+        }
+        return items;
+    }
+
     public getOrFail(id: string, type?: string): DATA_TYPE {
         let item: DATA_TYPE = this.get(id);
 
