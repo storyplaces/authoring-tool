@@ -51,14 +51,14 @@
                 <label for="title">Story Title:
                     <information-icon help-text="The title of the story"></information-icon>
                 </label>
-                <input type="text" class="form-control" id="title" value.bind="story.title" change.delegate="setDirty()">
+                <input type="text" class="form-control" id="title" value.bind="story.title & validate:rules" change.delegate="setDirty()">
             </div>
 
             <div class="form-group">
-                <label for="description">Story Summary:
+                <label for="description">Story Description:
                     <information-icon help-text="A brief description of the story."></information-icon>
                 </label>
-                <textarea type="textarea" class="form-control" id="description" value.bind="story.description" change.delegate="setDirty()"></textarea>
+                <textarea type="textarea" class="form-control" id="description" value.bind="story.description & validate:rules" change.delegate="setDirty()"></textarea>
             </div>
 
             <div class="form-group">
@@ -68,7 +68,7 @@
                 <div class="radio" repeat.for="audience of audiences">
                     <label>
                         <input type="radio" name="audience" id="audience"
-                               model.bind="audience.shortname" checked.bind="story.audience" class="radio" change.delegate="setDirty()">
+                               model.bind="audience.shortname" checked.bind="story.audience & validate:rules" class="radio" change.delegate="setDirty()">
                         ${audience.fullname}
                     </label>
                 </div>

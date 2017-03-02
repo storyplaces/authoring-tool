@@ -36,17 +36,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, autoinject, bindingMode} from "aurelia-framework";
+import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
+import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
+import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 
-@autoinject()
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
 export class StoryDetailsForm {
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
-    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean = false;
-    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean = false;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
 
-    originalStory: AuthoringStory = {} as any;
-    errors = {};
+    private validationController: ValidationController;
+    private errorSub: Disposable;
+
+    constructor(controllerFactory: ValidationControllerFactory, validationRendererFactory: () => BootstrapValidationRenderer, private bindingEngine: BindingEngine) {
+        this.validationController = controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
+    }
+
+    attached() {
+        this.setupValidation();
+    }
+
+    private setupValidation() {
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(errors => {
+            this.valid = (this.validationController.errors.length == 0);
+        });
+
+        this.valid = true;
+        this.dirty = false;
+        this.validationController.validate();
+    }
+
+    detached() {
+        if (this.errorSub) {
+            this.errorSub.dispose();
+            this.errorSub = undefined;
+        }
+    }
 
     get audiences(): Array<Object> {
         return audiences;
@@ -56,5 +85,12 @@ export class StoryDetailsForm {
         this.dirty = true;
     }
 
+    rules = ValidationRules
+        .ensure((story: AuthoringStory) => story.title).required().maxLength(255)
+        .ensure((story: AuthoringStory) => story.description).required().maxLength(1024)
+        .ensure((story: AuthoringStory) => story.audience).required().matches(/general|family|advisory/)
+        .rules;
 }
+
+
 

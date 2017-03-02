@@ -54,7 +54,7 @@
             <div class="story-nav-body">
                 <scrollable-list-with-header>
                     <div slot="heading">
-                        <button class="btn btn-success" click.delegate="save()"><span
+                        <button class="btn btn-success" click.delegate="save()" disabled.bind="!valid"><span
                                 class="glyphicon glyphicon-save"></span> Save
                         </button>
                         <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
@@ -68,7 +68,7 @@
                     </div>
                     <div slot="content">
                         <div class="padding">
-                            <story-details-form story.bind="story" dirty.bind="dirty"></story-details-form>
+                            <story-details-form story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-details-form>
                         </div>
                     </div>
                 </scrollable-list-with-header>

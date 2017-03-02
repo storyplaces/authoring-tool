@@ -48,8 +48,9 @@ import {DeleteConfirm} from "../../components/modals/delete-confirm";
 @autoinject()
 export class StoryCreatePage {
 
-    private dirty: boolean = false;
+    private dirty: boolean;
     private story: AuthoringStory;
+    private valid: boolean;
 
     constructor(private storyConnector: AuthoringStoryConnector, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private router: Router, private dialogService: DialogService) {
     }
@@ -60,6 +61,10 @@ export class StoryCreatePage {
     }
 
     save() {
+        if (!this.valid) {
+            return;
+        }
+
         this.storyConnector.sendStory(this.story).then((story) => {
             this.dirty = false;
             this.router.navigateToRoute("story-pages", {storyId: story.id});

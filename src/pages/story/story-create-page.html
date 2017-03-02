@@ -44,14 +44,14 @@
     <div class="container fill-height">
         <scrollable-list-with-header>
             <div slot="heading">
-                <button class="btn btn-success" click.delegate="save()"><span
+                <button class="btn btn-success" click.delegate="save()" disabled.bind="!valid"><span
                         class="glyphicon glyphicon-save"></span> Save
                 </button>
                 <a class="btn btn-danger" route-href="route: story-list"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
             </div>
             <div slot="content">
                 <h3>Create new story</h3>
-                <story-details-form story.bind="story" dirty.bind="dirty"></story-details-form>
+                <story-details-form story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-details-form>
             </div>
         </scrollable-list-with-header>
     </div>

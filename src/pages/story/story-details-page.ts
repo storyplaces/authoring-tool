@@ -51,8 +51,8 @@ export class StoryEditPage {
 
     private mapHidden: boolean = false;
     private story: AuthoringStory;
-    private dirty: boolean = false;
-
+    private dirty: boolean;
+    private valid: boolean;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyFactory: (data?) => AuthoringStory,
@@ -109,8 +109,12 @@ export class StoryEditPage {
 
 
     save() {
-        this.dirty = false;
+        if (!this.valid) {
+            return;
+        }
+
         this.storyConnector.save(this.story).then(() => {
+            this.dirty = false;
             this.router.navigateToRoute("story-pages", {storyId: this.story.id});
         });
     }
