@@ -54,6 +54,9 @@
             <div class="story-nav-body">
                 <scrollable-list-with-header>
                     <div slot="heading">
+                        <button class="btn btn-success" click.delegate="save()" disabled.bind="!valid"><span
+                                class="glyphicon glyphicon-save"></span> Save
+                        </button>
                         <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
                                 show.bind="mapHidden"><span
                                 class="glyphicon glyphicon-resize-full"></span> Show Map
@@ -64,8 +67,9 @@
                         </button>
                     </div>
                     <div slot="content">
-                        <story-details-form story.bind="story" story-modified.two-way="storyModified"
-                                            new-story.bind="false"></story-details-form>
+                        <div class="padding">
+                            <story-details-form story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-details-form>
+                        </div>
                     </div>
                 </scrollable-list-with-header>
             </div>

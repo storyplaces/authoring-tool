@@ -101,6 +101,10 @@ export class AuthoringStoryConnector {
         return this.authoringStoryCollection.get(id);
     }
 
+    cloneById(id: string): AuthoringStory {
+        return this.authoringStoryCollection.getClone(id);
+    }
+
     save(authoringStory: AuthoringStory): Promise<undefined> {
         authoringStory.modifiedDate = new Date();
         this.authoringStoryCollection.save(authoringStory);

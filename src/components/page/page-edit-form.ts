@@ -143,7 +143,7 @@ export class PageEditFormCustomElement {
         let pages = [];
         this.page.unlockedByPageIds.forEach(pageId => {
             // Some validation to ensure the page is a valid page in the story
-            if (this.storyLookup.pageIdsForStory(this.story.id).indexOf(pageId) != -1) {
+            if (this.storyLookup.pageIdsForStory(this.story).indexOf(pageId) != -1) {
                 pages.push(this.story.pages.get(pageId));
             }
         });
@@ -160,7 +160,7 @@ export class PageEditFormCustomElement {
 
     @computedFrom('page.id')
     get pageChapters(): Array<AuthoringChapter> {
-        return this.storyLookup.getChaptersForPageId(this.story.id, this.page.id);
+        return this.storyLookup.getChaptersForPageId(this.story, this.page.id);
     }
 
     addUnlockedBy() {

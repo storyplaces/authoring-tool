@@ -40,6 +40,7 @@
 import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 import {autoinject} from "aurelia-framework";
 import {AuthoringLocation} from "../models/AuthoringLocation";
+import {AuthoringStory} from "../models/AuthoringStory";
 /**
  * Created by andy on 02/02/17.
  */
@@ -51,8 +52,7 @@ export class StoryLookup {
     }
 
     // Returns an array of AuthoringChapters which contain the given page Id (in the specified story)
-    public getChaptersForPageId(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
+    public getChaptersForPageId(story: AuthoringStory, pageId: string) {
         if (!story) {
             return [];
         }
@@ -62,8 +62,7 @@ export class StoryLookup {
         });
     }
 
-    public getLocationForPageId(storyId: string, pageId: string) : AuthoringLocation{
-        let story = this.storyConnector.byId(storyId);
+    public getLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
         if (!story) {
             return undefined;
         }
@@ -76,12 +75,24 @@ export class StoryLookup {
         return story.locations.get(page.locationId);
     }
 
+    public getCloneLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
+        if (!story) {
+            return undefined;
+        }
+
+        let page = story.pages.get(pageId);
+        if (!page) {
+            return undefined;
+        }
+
+        return story.locations.getClone(page.locationId);
+    }
+
     // Remove a page from the story
     // Also remove the page Id from all chapters in the story
-    public deletePageFromStory(storyId: string, pageId: string) {
-        let story = this.storyConnector.byId(storyId);
+    public deletePageFromStory(story: AuthoringStory, pageId: string) {
         if (!story) {
-            throw Error("Story with id " + storyId + " does not exist.");
+            throw Error("Story with id " + story.id + " does not exist.");
         }
         story.pages.remove(pageId);
         story.chapters.removeReferencesToPage(pageId);
@@ -89,10 +100,9 @@ export class StoryLookup {
     }
 
     // Return a list of page Ids for a given storyId
-    public pageIdsForStory(storyId: string) {
-        let story = this.storyConnector.byId(storyId);
+    public pageIdsForStory(story: AuthoringStory) {
         if (!story) {
-            throw Error("Story with id " + storyId + " does not exist.");
+            throw Error("Story with id " + story.id + " does not exist.");
         }
         return story.pages.all.map(page => page.id);
 

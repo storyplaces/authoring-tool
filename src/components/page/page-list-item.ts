@@ -43,6 +43,7 @@ import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../modals/delete-confirm";
 import {EventAggregator, Subscription} from "aurelia-event-aggregator";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
 /**
  * Created by andy on 28/11/16.
  */
@@ -53,7 +54,7 @@ import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 export class PageListItem {
 
     @bindable page: AuthoringPage;
-    @bindable storyId: string;
+    @bindable story: AuthoringStory;
 
     selected: boolean;
     private subscriber: Subscription;
@@ -77,14 +78,14 @@ export class PageListItem {
 
     @computedFrom("storyId")
     get chapters(): Array<AuthoringChapter> {
-        return this.storyLookup.getChaptersForPageId(this.storyId, this.page.id);
+        return this.storyLookup.getChaptersForPageId(this.story, this.page.id);
     }
 
     delete(): void {
         let question = "Are you sure you wish to delete the page " + this.page.name + "?";
         this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
             if (!response.wasCancelled) {
-                this.storyLookup.deletePageFromStory(this.storyId, this.page.id);
+                this.storyLookup.deletePageFromStory(this.story, this.page.id);
             }
         });
     }

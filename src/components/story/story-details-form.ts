@@ -36,40 +36,61 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {AuthoringStory, Advisories} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
+import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
+import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
+import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 
-
-@autoinject()
-@containerless()
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
 export class StoryDetailsForm {
+    @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
 
-    @bindable story: AuthoringStory;
-    @bindable newStory: boolean = true;
-    @bindable storyModified = true;
+    private validationController: ValidationController;
+    private errorSub: Disposable;
 
-    constructor(private router: Router, private storyConnector: AuthoringStoryConnector) {
+    constructor(controllerFactory: ValidationControllerFactory, validationRendererFactory: () => BootstrapValidationRenderer, private bindingEngine: BindingEngine) {
+        this.validationController = controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
     }
 
-    get advisories(): Array<Object>{
-        return Advisories;
+    attached() {
+        this.setupValidation();
     }
 
-    save() {
-        this.storyModified = false;
-        if (this.newStory) {
-            this.storyConnector.sendStory(this.story).then((story) => {
-                this.router.navigateToRoute("story-pages", {storyId: story.id});
-            });
-        } else {
-            this.storyConnector.save(this.story).then(() => {
-                this.router.navigateToRoute("story-pages", {storyId: this.story.id});
-            });
+    private setupValidation() {
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(errors => {
+            this.valid = (this.validationController.errors.length == 0);
+        });
 
+        this.valid = true;
+        this.dirty = false;
+        this.validationController.validate();
+    }
+
+    detached() {
+        if (this.errorSub) {
+            this.errorSub.dispose();
+            this.errorSub = undefined;
         }
-
-
     }
+
+    get audiences(): Array<Object> {
+        return audiences;
+    }
+
+    setDirty() {
+        this.dirty = true;
+    }
+
+    rules = ValidationRules
+        .ensure((story: AuthoringStory) => story.title).required().maxLength(255)
+        .ensure((story: AuthoringStory) => story.description).required().maxLength(1024)
+        .ensure((story: AuthoringStory) => story.audience).required().matches(/general|family|advisory/)
+        .rules;
 }
+
+
+

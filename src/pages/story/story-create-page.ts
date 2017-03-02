@@ -39,23 +39,47 @@
 import {autoinject, computedFrom} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {DefaultAuthoringStoryFactory} from "../../resources/factories/DefaultAuthoringStoryFactory";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {Router} from "aurelia-router";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../../components/modals/delete-confirm";
+
 
 @autoinject()
 export class StoryCreatePage {
 
-    private defaultAuthoringStory: AuthoringStory;
+    private dirty: boolean;
+    private story: AuthoringStory;
+    private valid: boolean;
 
-    @computedFrom('defaultAuthoringStory')
-    get story(): AuthoringStory {
-        return this.defaultAuthoringStory;
-    }
-
-    constructor(private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory) {
+    constructor(private storyConnector: AuthoringStoryConnector, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private router: Router, private dialogService: DialogService) {
     }
 
     activate() {
         // Create a blank story
-        this.defaultAuthoringStory = this.defaultAuthoringStoryFactory.create();
+        this.story = this.defaultAuthoringStoryFactory.create();
+    }
 
+    save() {
+        if (!this.valid) {
+            return;
+        }
+
+        this.storyConnector.sendStory(this.story).then((story) => {
+            this.dirty = false;
+            this.router.navigateToRoute("story-pages", {storyId: story.id});
+        });
+    }
+
+    canDeactivate() {
+        let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
+        if (this.dirty) {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+                if (!response.wasCancelled) {
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 }

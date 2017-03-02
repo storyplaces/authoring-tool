@@ -33,8 +33,9 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {Identifiable} from "../interfaces/Identifiable";
+import {JSONable} from "../interfaces/JSONable";
 
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
+export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> {
 
 
     protected _data: Array<DATA_TYPE> = [];
@@ -67,6 +68,19 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         }
 
         return item
+    }
+
+    public getClone(id: string): DATA_TYPE {
+        let current = this.get(id);
+        if (!current) {
+            return undefined;
+        }
+
+        return this.itemFromObject(this.cloneToObject(current));
+    }
+
+    private cloneToObject(item: DATA_TYPE): Object {
+        return JSON.parse(JSON.stringify(item));
     }
 
     public save(passedItem: any): string {

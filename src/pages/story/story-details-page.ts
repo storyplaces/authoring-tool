@@ -41,20 +41,23 @@ import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {DeleteConfirm} from "../../components/modals/delete-confirm";
 import {DialogService} from "aurelia-dialog";
+import {Router} from "aurelia-router";
 
-@inject(AuthoringStoryConnector, Factory.of(AuthoringStory), DialogService)
+
+@inject(AuthoringStoryConnector, Factory.of(AuthoringStory), DialogService, Router)
 export class StoryEditPage {
 
     private storyId: string;
 
     private mapHidden: boolean = false;
     private story: AuthoringStory;
-    private storyModified: boolean;
-
+    private dirty: boolean;
+    private valid: boolean;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyFactory: (data?) => AuthoringStory,
-                private dialogService: DialogService) {
+                private dialogService: DialogService,
+                private router: Router) {
     }
 
     canActivate(params) {
@@ -84,9 +87,8 @@ export class StoryEditPage {
     }
 
     canDeactivate() {
-        console.log(this.storyModified);
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
-        if (this.storyModified) {
+        if (this.dirty) {
             return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
                 if (!response.wasCancelled) {
                     return true;
@@ -97,11 +99,23 @@ export class StoryEditPage {
     }
 
     private cloneStory() {
-        this.story = this.storyFactory(this.storyConnector.byId(this.storyId));
-        this.storyModified = true;
+        this.story = this.storyConnector.cloneById(this.storyId);
+        // this.storyModified = true;
     }
 
     private hasData(): boolean {
         return this.story !== undefined;
+    }
+
+
+    save() {
+        if (!this.valid) {
+            return;
+        }
+
+        this.storyConnector.save(this.story).then(() => {
+            this.dirty = false;
+            this.router.navigateToRoute("story-pages", {storyId: this.story.id});
+        });
     }
 }

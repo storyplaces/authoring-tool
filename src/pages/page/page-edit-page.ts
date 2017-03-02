@@ -124,13 +124,12 @@ export class PageEditPage {
     }
 
     private cloneStory() {
-        this.story = this.storyFactory(this.storyConnector.byId(this.params.storyId));
+        this.story = this.storyConnector.cloneById(this.params.storyId);
         this.storyModified = true;
     }
 
     private clonePage() {
-        // $.extend is used here to deep copy the page
-        this.page = this.params.pageId ? this.pageFactory(($ as any).extend(true, {}, this.storyConnector.byId(this.params.storyId).pages.get(this.params.pageId))) : this.defaultAuthoringPageFactory.create();
+        this.page = this.params.pageId ? this.story.pages.getClone(this.params.pageId) : this.defaultAuthoringPageFactory.create();
         this.pageModified = true;
     }
 
@@ -138,17 +137,13 @@ export class PageEditPage {
         this.location = undefined;
 
         if (this.params.pageId) {
-            let currentLocation = this.storyLookup.getLocationForPageId(this.params.storyId, this.params.pageId);
-            if (currentLocation) {
-                this.location = this.locationFactory(currentLocation);
-            }
+            this.location = this.storyLookup.getCloneLocationForPageId(this.story, this.params.pageId);
         }
     }
 
     private save() {
         if (this.location) {
-            let locationId = this.story.locations.save(this.location);
-            this.page.locationId = locationId;
+            this.page.locationId = this.story.locations.save(this.location);
         } else {
             this.page.locationId = undefined;
         }
