@@ -51,7 +51,7 @@ export class StoryEditPage {
 
     private mapHidden: boolean = false;
     private story: AuthoringStory;
-    private storyModified: boolean;
+    private dirty: boolean = false;
 
 
     constructor(private storyConnector: AuthoringStoryConnector,
@@ -87,9 +87,8 @@ export class StoryEditPage {
     }
 
     canDeactivate() {
-        console.log(this.storyModified);
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
-        if (this.storyModified) {
+        if (this.dirty) {
             return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
                 if (!response.wasCancelled) {
                     return true;
@@ -101,7 +100,7 @@ export class StoryEditPage {
 
     private cloneStory() {
         this.story = this.storyConnector.cloneById(this.storyId);
-        this.storyModified = true;
+        // this.storyModified = true;
     }
 
     private hasData(): boolean {
@@ -110,7 +109,7 @@ export class StoryEditPage {
 
 
     save() {
-        this.storyModified = false;
+        this.dirty = false;
         this.storyConnector.save(this.story).then(() => {
             this.router.navigateToRoute("story-pages", {storyId: this.story.id});
         });

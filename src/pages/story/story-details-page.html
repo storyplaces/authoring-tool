@@ -68,8 +68,7 @@
                     </div>
                     <div slot="content">
                         <div class="padding">
-                            <story-details-form story.bind="story"
-                                                story-modified.two-way="storyModified"></story-details-form>
+                            <story-details-form story.bind="story" dirty.bind="dirty"></story-details-form>
                         </div>
                     </div>
                 </scrollable-list-with-header>

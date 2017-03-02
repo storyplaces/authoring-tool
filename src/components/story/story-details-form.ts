@@ -36,18 +36,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, autoinject} from "aurelia-framework";
+import {bindable, autoinject, bindingMode} from "aurelia-framework";
 import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
 
 @autoinject()
 export class StoryDetailsForm {
+    @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean = false;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean = false;
 
-    @bindable story: AuthoringStory;
-    @bindable storyModified = true;
-
+    originalStory: AuthoringStory = {} as any;
+    errors = {};
 
     get audiences(): Array<Object> {
         return audiences;
     }
 
+    setDirty() {
+        this.dirty = true;
+    }
+
 }
+

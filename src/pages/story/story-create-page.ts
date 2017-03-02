@@ -41,13 +41,17 @@ import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {DefaultAuthoringStoryFactory} from "../../resources/factories/DefaultAuthoringStoryFactory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {Router} from "aurelia-router";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../../components/modals/delete-confirm";
+
 
 @autoinject()
 export class StoryCreatePage {
 
+    private dirty: boolean = false;
     private story: AuthoringStory;
 
-    constructor(private storyConnector: AuthoringStoryConnector, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private router: Router) {
+    constructor(private storyConnector: AuthoringStoryConnector, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private router: Router, private dialogService: DialogService) {
     }
 
     activate() {
@@ -57,7 +61,20 @@ export class StoryCreatePage {
 
     save() {
         this.storyConnector.sendStory(this.story).then((story) => {
+            this.dirty = false;
             this.router.navigateToRoute("story-pages", {storyId: story.id});
         });
+    }
+
+    canDeactivate() {
+        let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
+        if (this.dirty) {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+                if (!response.wasCancelled) {
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 }
