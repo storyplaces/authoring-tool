@@ -36,52 +36,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject, computedFrom} from "aurelia-framework";
+import {bindable, containerless, autoinject} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
+import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
-import {StoryLookup} from "../../resources/utilities/StoryLookup";
-import {DialogService} from "aurelia-dialog";
-import {DeleteConfirm} from "../modals/delete-confirm";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
 /**
  * Created by andy on 28/11/16.
  */
 
-
-@autoinject()
 @containerless()
-export class ChapterListItem {
+@autoinject()
+export class ChapterPage {
 
-    @bindable chapter: AuthoringChapter;
-    @bindable story: AuthoringStory;
+    @bindable page: AuthoringPage;
+    @bindable ownerChapter: AuthoringChapter;
 
-
-    constructor(private storyLookup: StoryLookup,
-                private dialogService: DialogService) {
+    constructor(private bindingSignaler: BindingSignaler) {
     }
 
-    attached() {
-    }
-
-    detached() {
-    }
-
-    @computedFrom("storyId", "chapter.id")
-    get pages(): Array<AuthoringPage> {
-        return this.story.pages.getMany(this.chapter.pageIds);
-    }
-
-    delete(): void {
-        let question = "Are you sure you wish to delete the chapter " + this.chapter.name + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
-            if (!response.wasCancelled) {
-                this.story.chapters.remove(this.chapter.id);
-            }
-        });
-    }
-
-    select(): void {
-
+    remove(){
+        var index = this.ownerChapter.unlockedByPageIds.indexOf(this.page.id);
+        this.ownerChapter.unlockedByPageIds.splice(index, 1);
+        this.bindingSignaler.signal('chapterPageChanged');
     }
 
 }

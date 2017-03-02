@@ -154,3 +154,5 @@ export class AuthoringChapter extends BaseModel {
         this._locksChapters = value;
     }
 }
+
+export var ChapterColours: Array<string> = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
