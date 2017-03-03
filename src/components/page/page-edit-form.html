@@ -56,22 +56,22 @@
                     <label for="name">Page Name:
                         <information-icon help-text="The title of the page"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="page.name" scroll-on-edit>
+                    <input type="text" class="form-control" id="name" value.bind="page.name & validate:rules" scroll-on-edit change.delegate="setDirty()">
                 </div>
 
                 <div class="form-group">
                     <label for="content">Page Content:
                         <information-icon help-text="The content of the page"></information-icon>
                     </label>
-                    <textarea class="form-control" id="content" rows="5" value.bind="page.content"
-                              scroll-on-edit></textarea>
+                    <textarea class="form-control" id="content" rows="5" value.bind="page.content & validate:rules"
+                              scroll-on-edit change.delegate="setDirty()"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="hint-text">Hint text:
+                    <label for="hint-text">Hint Text:
                         <information-icon
                                 help-text="A hint to the reader shown in the list of pages"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint" scroll-on-edit>
+                    <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint & validate:rules" scroll-on-edit change.delegate="setDirty()">
                 </div>
 
             </div>
@@ -84,7 +84,7 @@
                 <div class="form-group">
                     <div class="checkbox">
                         <label>
-                            <input id="read-multiple" type="checkbox" checked.bind="page.allowMultipleReadings">
+                            <input id="read-multiple" type="checkbox" checked.bind="page.allowMultipleReadings" change.delegate="setDirty()">
                             Allow Multiple Readings:
                         </label>
                         <information-icon
@@ -155,7 +155,7 @@
                                         help-text="The latitude of the location of the page"></information-icon>
                             </label>
                             <input type="text" class="form-control" id="lat"
-                                   value.bind="location.lat | floatToString" scroll-on-edit>
+                                   value.bind="location.lat | floatToString & validate:rules" scroll-on-edit change.delegate="setDirty()">
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
@@ -165,7 +165,7 @@
                                         help-text="The longitude of the location of the page"></information-icon>
                             </label>
                             <input type="text" class="form-control" id="long"
-                                   value.bind="location.long | floatToString" scroll-on-edit>
+                                   value.bind="location.long | floatToString & validate:rules" scroll-on-edit change.delegate="setDirty()">
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
@@ -175,7 +175,7 @@
                                         help-text="The radius within which the page is valid."></information-icon>
                             </label>
                             <input type="text" class="form-control" id="radius"
-                                   value.bind="location.radius | intToString" scroll-on-edit>
+                                   value.bind="location.radius | intToString & validate:rules" scroll-on-edit change.delegate="setDirty()">
                         </div>
                     </div>
                 </div>

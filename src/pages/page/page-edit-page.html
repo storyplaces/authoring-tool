@@ -51,7 +51,7 @@
         <div slot="content-pane" class="fill-space">
             <scrollable-list-with-header>
                 <div slot="heading">
-                    <button class="btn btn-success" click.delegate="save()"><span
+                    <button class="btn btn-success" click.delegate="save()" disabled.bind="!valid"><span
                             class="glyphicon glyphicon-save"></span> Save
                     </button>
                     <button class="btn btn-danger" click.delegate="cancel()"><span
@@ -65,8 +65,8 @@
                     </button>
                 </div>
                 <div slot="content">
-                    <page-edit-form story.two-way="story" page.two-way="page"
-                                    location.two-way="location"></page-edit-form>
+                    <page-edit-form story.bind="story" page.bind="page"
+                                    location.bind="location" dirty.bind="dirty" valid.bind="valid"></page-edit-form>
                 </div>
             </scrollable-list-with-header>
         </div>

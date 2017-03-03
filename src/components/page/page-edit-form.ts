@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory, computedFrom} from "aurelia-framework";
+import {bindable, inject, Factory, computedFrom, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
@@ -49,20 +49,38 @@ import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
+import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
+import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 
 
-@inject(Factory.of(AuthoringLocation), StoryLookup, EventAggregator, RequestCurrentLocationEvent, RequestPinDropEvent, CancelPinDropEvent, BindingSignaler)
+@inject(
+    Factory.of(AuthoringLocation),
+    StoryLookup, EventAggregator,
+    RequestCurrentLocationEvent,
+    RequestPinDropEvent,
+    CancelPinDropEvent,
+    BindingSignaler,
+    ValidationControllerFactory,
+    Factory.of(BootstrapValidationRenderer),
+    BindingEngine)
 export class PageEditFormCustomElement {
-    @bindable page: AuthoringPage;
-    @bindable location: AuthoringLocation;
-    @bindable story: AuthoringStory;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) page: AuthoringPage;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) location: AuthoringLocation;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
 
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
+
+    private errorSub: Disposable;
     private eventSub: Subscription;
 
-    unlockedByAddField: string;
-    unlockedByAddObject: AuthoringPage;
-    unlockedByText: HTMLInputElement;
+    private unlockedByAddField: string;
+    private unlockedByAddObject: AuthoringPage;
+    private unlockedByText: HTMLInputElement;
+
     private droppingPin: boolean;
+    private validationController: ValidationController;
+    private rules;
 
     constructor(private locationFactory: () => AuthoringLocation,
                 private storyLookup: StoryLookup,
@@ -70,11 +88,20 @@ export class PageEditFormCustomElement {
                 private requestCurrentLocationEvent: RequestCurrentLocationEvent,
                 private requestPinDropEvent: RequestPinDropEvent,
                 private cancelPinDropEvent: CancelPinDropEvent,
-                private bindingSignaler: BindingSignaler) {
-
+                private bindingSignaler: BindingSignaler,
+                private controllerFactory: ValidationControllerFactory,
+                private validationRendererFactory: () => BootstrapValidationRenderer,
+                private bindingEngine: BindingEngine) {
+        this.setupValidation();
     }
 
     attached() {
+        this.dirty = false;
+        this.validationController.validate().then(() => {
+            this.calculateIfValid();
+        });
+
+
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
             console.log("setting event from form");
 
@@ -85,6 +112,7 @@ export class PageEditFormCustomElement {
                 this.location.radius = 30;
             }
             this.droppingPin = false;
+            this.setDirty();
         });
 
         ($(this.unlockedByText as any) as any).typeahead({
@@ -122,20 +150,55 @@ export class PageEditFormCustomElement {
     }
 
     detached() {
-        console.log("detaching form");
         if (this.eventSub) {
             this.eventSub.dispose();
             this.eventSub = undefined;
         }
+
+        if (this.errorSub) {
+            this.errorSub.dispose();
+            this.errorSub = undefined;
+        }
+    }
+
+    private setupValidation() {
+        this.rules = this.validationRules();
+
+        this.validationController = this.controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(this.validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
+        this.valid = true;
+
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(() => {
+            this.calculateIfValid();
+        });
+    }
+
+    private calculateIfValid() {
+        this.valid = (this.validationController.errors.length == 0);
+    }
+
+    private validationRules() {
+        return ValidationRules
+            .ensure((page: AuthoringPage) => page.name).displayName("Page Name").required().maxLength(255)
+            .ensure((page: AuthoringPage) => page.content).displayName("Page Content").required()
+            .ensure((page: AuthoringPage) => page.pageHint).displayName("Hint Text").required().maxLength(255)
+            .ensure((location: AuthoringLocation) => location.lat).displayName("Latitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -90 && parseFloat(value) <= 90)).withMessage(`\${$displayName} must be between -90 and 90 inclusive`)
+            .ensure((location: AuthoringLocation) => location.long).displayName("Longitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -180 && parseFloat(value) <= 180)).withMessage(`\${$displayName} must be between -180 and 180 inclusive`)
+            .ensure((location: AuthoringLocation) => location.radius).displayName("Radius").required().satisfies(value => value == undefined || (parseFloat(value) >= 0 && parseFloat(value) <= 100000)).withMessage(`\${$displayName} must be between 0 and 100000 inclusive`)
+            .rules;
     }
 
     removeLocation() {
         this.story.locations.remove(this.location.id);
         this.location = undefined;
+        this.setDirty();
     }
 
     addLocation() {
         this.location = this.locationFactory();
+        this.setDirty();
+        this.validationController.validate();
     }
 
     @computedFrom('page.unlockedByPageIds')
@@ -168,6 +231,7 @@ export class PageEditFormCustomElement {
         this.unlockedByAddField = "";
         ($(this.unlockedByText as any) as any).typeahead("val", "");
         this.bindingSignaler.signal('unlockedByChanged');
+        this.setDirty();
     }
 
     useCurrentLocation() {
@@ -182,5 +246,9 @@ export class PageEditFormCustomElement {
         }
         this.droppingPin = true;
         this.eventAggregator.publish(this.requestPinDropEvent);
+    }
+
+    setDirty() {
+        this.dirty = true;
     }
 }

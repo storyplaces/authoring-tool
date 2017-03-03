@@ -54,10 +54,8 @@ export class PageEditPage {
     private location: AuthoringLocation;
     private story: AuthoringStory;
 
-    private storyModified: boolean = false;
-    private pageModified: boolean = false;
-
-    private mapHidden: boolean = false;
+    private valid: boolean;
+    private dirty: boolean;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyLookup: StoryLookup,
@@ -107,7 +105,7 @@ export class PageEditPage {
 
     canDeactivate() {
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
-        if (this.storyModified || this.pageModified) {
+        if (this.dirty) {
             return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
                 if (!response.wasCancelled) {
                     return true;
@@ -125,12 +123,10 @@ export class PageEditPage {
 
     private cloneStory() {
         this.story = this.storyConnector.cloneById(this.params.storyId);
-        this.storyModified = true;
     }
 
     private clonePage() {
         this.page = this.params.pageId ? this.story.pages.getClone(this.params.pageId) : this.defaultAuthoringPageFactory.create();
-        this.pageModified = true;
     }
 
     private cloneLocation() {
@@ -142,16 +138,19 @@ export class PageEditPage {
     }
 
     private save() {
+        if (!this.valid) {
+            return;
+        }
+
         if (this.location) {
             this.page.locationId = this.story.locations.save(this.location);
         } else {
             this.page.locationId = undefined;
         }
         this.story.pages.save(this.page);
-        this.pageModified = false;
 
         this.storyConnector.save(this.story).then(() => {
-            this.storyModified = false;
+            this.dirty = false;
             this.router.navigateToRoute("story-pages", {storyId: this.story.id});
         });
     }
@@ -159,6 +158,4 @@ export class PageEditPage {
     private cancel() {
         this.router.navigateToRoute("story-pages", {storyId: this.story.id});
     }
-
-
 }
