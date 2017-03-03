@@ -38,7 +38,7 @@
  */
 import {bindable, containerless, autoinject} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
-import {BindingSignaler} from "aurelia-templating-resources";
+import {EventAggregator} from "aurelia-event-aggregator";
 /**
  * Created by andy on 28/11/16.
  */
@@ -50,13 +50,13 @@ export class UnlockedByPage {
     @bindable page: AuthoringPage;
     @bindable ownerPage: AuthoringPage;
 
-    constructor(private bindingSignaler: BindingSignaler) {
+    constructor(private eventAggregator: EventAggregator) {
     }
 
-    remove(){
+    remove() {
         var index = this.ownerPage.unlockedByPageIds.indexOf(this.page.id);
         this.ownerPage.unlockedByPageIds.splice(index, 1);
-        this.bindingSignaler.signal('unlockedByChanged');
+        this.eventAggregator.publish('unlockedByPagesChanged');
     }
 
 }

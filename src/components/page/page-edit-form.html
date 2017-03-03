@@ -107,7 +107,7 @@
                                         <unlocked-by-page
                                                 repeat.for="unlockedByPage of unlockedByPages & signal:'unlockedByChanged'"
                                                 page.bind="unlockedByPage"
-                                                owner-page.two-way="page"></unlocked-by-page>
+                                                owner-page.two-way="page" change.delegate="setDirty()"></unlocked-by-page>
                                     </ul>
                                 </div>
                             </div>

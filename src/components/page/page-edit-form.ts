@@ -73,6 +73,7 @@ export class PageEditFormCustomElement {
 
     private errorSub: Disposable;
     private eventSub: Subscription;
+    private unlockedBySub: Subscription;
 
     private unlockedByAddField: string;
     private unlockedByAddObject: AuthoringPage;
@@ -101,6 +102,10 @@ export class PageEditFormCustomElement {
             this.calculateIfValid();
         });
 
+        this.unlockedBySub = this.eventAggregator.subscribe('unlockedByPagesChanged', () => {
+            this.setDirty();
+            this.bindingSignaler.signal('unlockedByChanged');
+        });
 
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
             console.log("setting event from form");
@@ -158,6 +163,11 @@ export class PageEditFormCustomElement {
         if (this.errorSub) {
             this.errorSub.dispose();
             this.errorSub = undefined;
+        }
+
+        if (this.unlockedBySub) {
+            this.unlockedBySub.dispose();
+            this.unlockedBySub = undefined;
         }
     }
 
@@ -230,8 +240,7 @@ export class PageEditFormCustomElement {
         this.page.unlockedByPageIds.push(this.unlockedByAddObject.id);
         this.unlockedByAddField = "";
         ($(this.unlockedByText as any) as any).typeahead("val", "");
-        this.bindingSignaler.signal('unlockedByChanged');
-        this.setDirty();
+        this.eventAggregator.publish('unlockedByPagesChanged');
     }
 
     useCurrentLocation() {
