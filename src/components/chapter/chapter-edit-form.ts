@@ -41,7 +41,7 @@ import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import "typeahead.js";
 import {BindingSignaler} from "aurelia-templating-resources";
-import {AuthoringChapter, ChapterColours} from "../../resources/models/AuthoringChapter";
+import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
 
 
@@ -97,9 +97,6 @@ export class ChapterEditFormCustomElement {
     detached() {
     }
 
-    get colours() {
-        return ChapterColours;
-    }
 
     @computedFrom('chapter.unlockedByPageIds')
     get chapterPages(): Array < AuthoringPage > {

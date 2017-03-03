@@ -42,6 +42,7 @@
     <require from="../icons/information-icon.html"></require>
     <require from="components/attributes/scroll-on-edit"></require>
     <require from="./chapter-page"></require>
+    <require from="components/elements/colour-picker"></require>
 
     <div class="padding">
         <div class="panel panel-default">
@@ -49,19 +50,19 @@
                 Chapter Information
             </div>
             <div class="panel-body">
-                <label for="name">Chapter Name:
-                    <information-icon help-text="The title of the chapter"></information-icon>
-                </label>
-                <input type="text" class="form-control" id="name" value.bind="chapter.name" scroll-on-edit>
-                <label for="name">Chapter Colour:
-                    <information-icon
-                            help-text="The colour which will be used to represent this chapter in the authoring tool."></information-icon>
-                </label>
-                <select type="text" class="form-control" id="colour" value.bind="chapter.colour"
-                        css="background-color: ${chapter.colour}; width: 3em;">
-                    <option repeat.for="colour of colours" value.bind="colour"
-                            css="background-color: ${colour}"></option>
-                </select>
+                <div class="form-group">
+                    <label for="name">Chapter Name:
+                        <information-icon help-text="The title of the chapter"></information-icon>
+                    </label>
+                    <input type="text" class="form-control" id="name" value.bind="chapter.name" scroll-on-edit>
+                </div>
+                <div class="form-group">
+                    <label>Chapter Colour:
+                        <information-icon
+                                help-text="The colour which will be used to represent this chapter in the authoring tool."></information-icon>
+                    </label><br>
+                    <colour-picker id="colour-picker" colour.bind="chapter.colour"></colour-picker>
+                </div>
             </div>
         </div>
         <div class="panel panel-default">
@@ -74,20 +75,20 @@
                         <label for="chapter-pages">Pages in this Chapter:
                             <information-icon help-text="Pages which belong to this chapter."></information-icon>
                         </label>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="mutable-list panel-body">
-                            <ul class="list-group">
-                                <chapter-page
-                                        repeat.for="chapterPage of chapterPages & signal:'chapterPageChanged'"
-                                        page.bind="chapterPage"
-                                        owner-chapter.two-way="chapter"></chapter-page>
-                            </ul>
+                        <div class="panel panel-default">
+                            <div class="mutable-list panel-body">
+                                <ul class="list-group">
+                                    <chapter-page
+                                            repeat.for="chapterPage of chapterPages & signal:'chapterPageChanged'"
+                                            page.bind="chapterPage"
+                                            owner-chapter.two-way="chapter"></chapter-page>
+                                </ul>
+                            </div>
                         </div>
+                        <input type="text" class="typeahead form-control" ref="chapterPageText"
+                               value.bind="unlockedByAddField" placeholder="Start typing a page name"
+                               scroll-on-edit>
                     </div>
-                    <input type="text" class="typeahead form-control" ref="chapterPageText"
-                           value.bind="unlockedByAddField" placeholder="Start typing a page name"
-                           scroll-on-edit>
                 </div>
             </div>
         </div>
