@@ -38,7 +38,10 @@
  */
 import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
-import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
+import {
+    ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger,
+    Rule
+} from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 
 @inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
@@ -49,25 +52,36 @@ export class StoryDetailsForm {
 
     private validationController: ValidationController;
     private errorSub: Disposable;
+    public rules: Rule<AuthoringStory, any>[][];
 
-    constructor(controllerFactory: ValidationControllerFactory, validationRendererFactory: () => BootstrapValidationRenderer, private bindingEngine: BindingEngine) {
-        this.validationController = controllerFactory.createForCurrentScope();
-        this.validationController.addRenderer(validationRendererFactory());
-        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
-    }
-
-    attached() {
+    constructor(private controllerFactory: ValidationControllerFactory, private validationRendererFactory: () => BootstrapValidationRenderer, private bindingEngine: BindingEngine) {
         this.setupValidation();
     }
 
+    attached() {
+        this.dirty = false;
+        this.validationController.validate();
+    }
+
     private setupValidation() {
+        this.rules = this.validationRules();
+
+        this.validationController = this.controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(this.validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
+        this.valid = true;
+
         this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(errors => {
             this.valid = (this.validationController.errors.length == 0);
         });
+    }
 
-        this.valid = true;
-        this.dirty = false;
-        this.validationController.validate();
+    private validationRules() {
+        return ValidationRules
+            .ensure((story: AuthoringStory) => story.title).required().maxLength(255)
+            .ensure((story: AuthoringStory) => story.description).required().maxLength(1024)
+            .ensure((story: AuthoringStory) => story.audience).required().matches(/general|family|advisory/)
+            .rules;
     }
 
     detached() {
@@ -85,11 +99,7 @@ export class StoryDetailsForm {
         this.dirty = true;
     }
 
-    rules = ValidationRules
-        .ensure((story: AuthoringStory) => story.title).required().maxLength(255)
-        .ensure((story: AuthoringStory) => story.description).required().maxLength(1024)
-        .ensure((story: AuthoringStory) => story.audience).required().matches(/general|family|advisory/)
-        .rules;
+
 }
 
 
