@@ -39,11 +39,25 @@
 
 
 export class FloatToStringValueConverter {
+
+    private prefix = "";
+
     toView(value: number): string {
-        return value ? value.toString() : "";
+        return value === undefined ? this.prefix : value.toString();
     }
 
     fromView(value: string): number {
-        return parseFloat(value);
+
+        let regex = /^-?0*\.?0*$/;
+
+        if (regex.test(value)) {
+            this.prefix = value;
+            return undefined;
+        }
+
+        this.prefix = '';
+
+        let result = parseFloat(value);
+        return isNaN(result) ? undefined : result;
     }
 }

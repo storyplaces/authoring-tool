@@ -40,10 +40,11 @@
 
 export class IntToStringValueConverter {
     toView(value: number): string {
-        return value ? value.toString() : "";
+        return value === undefined ? "" : value.toString();
     }
 
     fromView(value: string): number {
-        return parseInt(value);
+        let result = parseInt(value);
+        return isNaN(result) ? undefined : result;
     }
 }
