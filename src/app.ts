@@ -55,12 +55,16 @@ export class App {
             {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
 
             {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list'},
-            {route: '/story/:storyId/pages', moduleId: 'pages/story/story-edit-page', title: 'Story Pages', name: 'story-pages'},
             {route: '/story/new', moduleId: 'pages/story/story-create-page', title: 'New Story', name: 'story-create'},
             {route: '/story/:storyId/details', moduleId: 'pages/story/story-details-page', title: 'Story Details', name: 'story-details'},
+
+
             {route: '/story/:storyId/chapters', moduleId: 'pages/story/story-chapters-page', title: 'Story Chapters', name: 'story-chapters'},
+            {route: '/story/:storyId/chapter/:chapterId', moduleId: 'pages/chapter/chapter-edit-page', title: 'Edit Chapter', name: 'chapter-edit'},
+            {route: '/story/:storyId/chapter/new', moduleId: 'pages/chapter/chapter-edit-page', title: 'New Chapter', name: 'chapter-new'},
 
 
+            {route: '/story/:storyId/pages', moduleId: 'pages/story/story-edit-page', title: 'Story Pages', name: 'story-pages'},
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
             {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new'},
         ]);

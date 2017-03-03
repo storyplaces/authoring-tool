@@ -36,44 +36,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, computedFrom} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {bindable, containerless, autoinject} from "aurelia-framework";
+import {AuthoringPage} from "../../resources/models/AuthoringPage";
+import {BindingSignaler} from "aurelia-templating-resources";
+import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
+/**
+ * Created by andy on 28/11/16.
+ */
 
+@containerless()
 @autoinject()
-export class StoryChaptersPage {
+export class ChapterPage {
 
-    private storyId: string;
+    @bindable page: AuthoringPage;
+    @bindable ownerChapter: AuthoringChapter;
 
-    private mapHidden: boolean = false;
-
-    @computedFrom('storyId', 'this.storyConnector.all')
-    get story(): AuthoringStory {
-        return this.storyConnector.byId(this.storyId);
+    constructor(private bindingSignaler: BindingSignaler) {
     }
 
-    constructor(private storyConnector: AuthoringStoryConnector,
-                private router: Router) {
+    remove(){
+        var index = this.ownerChapter.unlockedByPageIds.indexOf(this.page.id);
+        this.ownerChapter.unlockedByPageIds.splice(index, 1);
+        this.bindingSignaler.signal('chapterPageChanged');
     }
 
-    canActivate(params): any {
-        this.storyId = params.storyId;
-
-        if (this.hasData()) {
-            return true;
-        }
-
-        return this.storyConnector.sync().then(() => {
-            return this.hasData();
-        });
-    }
-
-    private hasData(): boolean {
-        return this.story !== undefined;
-    }
-
-    private new(): void {
-        this.router.navigateToRoute('chapter-new', {storyId: this.story.id});
-    }
 }

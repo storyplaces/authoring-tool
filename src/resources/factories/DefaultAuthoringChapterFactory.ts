@@ -17,15 +17,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *   notice, this list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
  * - The name of the University of Southampton nor the name of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
@@ -36,44 +36,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, computedFrom} from "aurelia-framework";
-import {Router} from "aurelia-router";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {inject, Factory} from "aurelia-framework";
+import {AuthoringPage} from "../models/AuthoringPage";
+import {AuthoringChapter} from "../models/AuthoringChapter";
 
-@autoinject()
-export class StoryChaptersPage {
+@inject(Factory.of(AuthoringChapter))
+export class DefaultAuthoringChapterFactory {
 
-    private storyId: string;
-
-    private mapHidden: boolean = false;
-
-    @computedFrom('storyId', 'this.storyConnector.all')
-    get story(): AuthoringStory {
-        return this.storyConnector.byId(this.storyId);
+    constructor(private authoringChapterFactory: (data?) => AuthoringChapter) {
     }
 
-    constructor(private storyConnector: AuthoringStoryConnector,
-                private router: Router) {
+    create(): AuthoringChapter {
+        return this.authoringChapterFactory(this.defaultChapter());
     }
 
-    canActivate(params): any {
-        this.storyId = params.storyId;
-
-        if (this.hasData()) {
-            return true;
+    private defaultChapter(): Object {
+        return {
+            name: "New Chapter",
+            colour: "blue",
+            pageIds: [],
+            allowMultipleReadings: false,
+            unlockedByPageIds: [],
+            unlockedByPagesOperator: "and",
+            locksAllOtherChapters: false,
+            locksChapters: []
         }
-
-        return this.storyConnector.sync().then(() => {
-            return this.hasData();
-        });
-    }
-
-    private hasData(): boolean {
-        return this.story !== undefined;
-    }
-
-    private new(): void {
-        this.router.navigateToRoute('chapter-new', {storyId: this.story.id});
     }
 }

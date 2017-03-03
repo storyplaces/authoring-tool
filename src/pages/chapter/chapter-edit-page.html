@@ -38,39 +38,36 @@
   -->
 
 <template>
-    <require from="../../components/story/story-chapter-list"></require>
-    <require from="../../components/elements/story-tabs"></require>
     <require from="../templates/two-pane-template.html"></require>
     <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
     <require from="../../components/elements/mapping/map"></require>
+    <require from="../../components/chapter/chapter-edit-form"></require>
 
 
     <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
+            <map story.two-way="story" current-page.two-way="page" current-location.two-way="location"></map>
         </div>
         <div slot="content-pane" class="fill-space">
-            <story-tabs selected="chapters" story-id.bind="story.id"></story-tabs>
-            <div class="story-nav-body">
-                <scrollable-list-with-header>
-                    <div slot="heading">
-                        <button class="btn btn-primary" click.delegate="new()"><span
-                                class="glyphicon glyphicon-plus"></span> New chapter
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
-                                show.bind="mapHidden"><span
-                                class="glyphicon glyphicon-resize-full"></span> Show Map
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = true"
-                                show.bind="!mapHidden"><span
-                                class="glyphicon glyphicon-resize-small"></span> Hide Map
-                        </button>
-                    </div>
-                    <div slot="content">
-                        <story-chapter-list story.bind="story"></story-chapter-list>
-                    </div>
-                </scrollable-list-with-header>
-            </div>
+            <scrollable-list-with-header>
+                <div slot="heading">
+                    <button class="btn btn-success" click.delegate="save()"><span
+                            class="glyphicon glyphicon-save"></span> Save
+                    </button>
+                    <button class="btn btn-danger" click.delegate="cancel()"><span
+                            class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button class="btn btn-default pull-right" click.delegate="mapHidden = false" show.bind="mapHidden"><span
+                            class="glyphicon glyphicon-resize-full"></span> Show Map
+                    </button>
+                    <button class="btn btn-default pull-right" click.delegate="mapHidden = true" show.bind="!mapHidden"><span
+                            class="glyphicon glyphicon-resize-small"></span> Hide Map
+                    </button>
+                </div>
+                <div slot="content">
+                    <chapter-edit-form story.two-way="story" chapter.two-way="chapter"></chapter-edit-form>
+                </div>
+            </scrollable-list-with-header>
         </div>
     </two-pane-template>
 </template>

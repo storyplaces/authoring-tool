@@ -38,39 +38,8 @@
   -->
 
 <template>
-    <require from="../../components/story/story-chapter-list"></require>
-    <require from="../../components/elements/story-tabs"></require>
-    <require from="../templates/two-pane-template.html"></require>
-    <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
-    <require from="../../components/elements/mapping/map"></require>
-
-
-    <two-pane-template map-hidden.bind="mapHidden">
-        <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
-        </div>
-        <div slot="content-pane" class="fill-space">
-            <story-tabs selected="chapters" story-id.bind="story.id"></story-tabs>
-            <div class="story-nav-body">
-                <scrollable-list-with-header>
-                    <div slot="heading">
-                        <button class="btn btn-primary" click.delegate="new()"><span
-                                class="glyphicon glyphicon-plus"></span> New chapter
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
-                                show.bind="mapHidden"><span
-                                class="glyphicon glyphicon-resize-full"></span> Show Map
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = true"
-                                show.bind="!mapHidden"><span
-                                class="glyphicon glyphicon-resize-small"></span> Hide Map
-                        </button>
-                    </div>
-                    <div slot="content">
-                        <story-chapter-list story.bind="story"></story-chapter-list>
-                    </div>
-                </scrollable-list-with-header>
-            </div>
-        </div>
-    </two-pane-template>
+    <li class="list-group-item">
+        ${page.name}
+        <a click.delegate="remove()"><span class="glyphicon glyphicon-remove pull-right text-danger"></span></a>
+    </li>
 </template>

@@ -36,44 +36,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, computedFrom} from "aurelia-framework";
-import {Router} from "aurelia-router";
+import {bindable, containerless, autoinject, computedFrom} from "aurelia-framework";
+import {AuthoringPage} from "../../resources/models/AuthoringPage";
+import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
+import {StoryLookup} from "../../resources/utilities/StoryLookup";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../modals/delete-confirm";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+/**
+ * Created by andy on 28/11/16.
+ */
+
 
 @autoinject()
-export class StoryChaptersPage {
+@containerless()
+export class ChapterListItem {
 
-    private storyId: string;
+    @bindable chapter: AuthoringChapter;
+    @bindable story: AuthoringStory;
 
-    private mapHidden: boolean = false;
 
-    @computedFrom('storyId', 'this.storyConnector.all')
-    get story(): AuthoringStory {
-        return this.storyConnector.byId(this.storyId);
+    constructor(private storyLookup: StoryLookup,
+                private dialogService: DialogService) {
     }
 
-    constructor(private storyConnector: AuthoringStoryConnector,
-                private router: Router) {
+    attached() {
     }
 
-    canActivate(params): any {
-        this.storyId = params.storyId;
+    detached() {
+    }
 
-        if (this.hasData()) {
-            return true;
-        }
+    @computedFrom("storyId", "chapter.id")
+    get pages(): Array<AuthoringPage> {
+        return this.story.pages.getMany(this.chapter.pageIds);
+    }
 
-        return this.storyConnector.sync().then(() => {
-            return this.hasData();
+    delete(): void {
+        let question = "Are you sure you wish to delete the chapter " + this.chapter.name + "?";
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+            if (!response.wasCancelled) {
+                this.story.chapters.remove(this.chapter.id);
+            }
         });
     }
 
-    private hasData(): boolean {
-        return this.story !== undefined;
+    select(): void {
+
     }
 
-    private new(): void {
-        this.router.navigateToRoute('chapter-new', {storyId: this.story.id});
-    }
 }

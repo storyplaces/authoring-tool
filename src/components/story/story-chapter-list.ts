@@ -36,44 +36,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, computedFrom} from "aurelia-framework";
-import {Router} from "aurelia-router";
+import {bindable} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+/**
+ * Created by andy on 28/11/16.
+ */
 
-@autoinject()
-export class StoryChaptersPage {
+export class StoryChapterList {
 
-    private storyId: string;
+    @bindable story: AuthoringStory;
 
-    private mapHidden: boolean = false;
-
-    @computedFrom('storyId', 'this.storyConnector.all')
-    get story(): AuthoringStory {
-        return this.storyConnector.byId(this.storyId);
-    }
-
-    constructor(private storyConnector: AuthoringStoryConnector,
-                private router: Router) {
-    }
-
-    canActivate(params): any {
-        this.storyId = params.storyId;
-
-        if (this.hasData()) {
-            return true;
-        }
-
-        return this.storyConnector.sync().then(() => {
-            return this.hasData();
-        });
-    }
-
-    private hasData(): boolean {
-        return this.story !== undefined;
-    }
-
-    private new(): void {
-        this.router.navigateToRoute('chapter-new', {storyId: this.story.id});
-    }
 }
