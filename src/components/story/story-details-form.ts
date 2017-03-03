@@ -60,7 +60,9 @@ export class StoryDetailsForm {
 
     attached() {
         this.dirty = false;
-        this.validationController.validate();
+        this.validationController.validate().then(() => {
+            this.calculateIfValid();
+        });
     }
 
     private setupValidation() {
@@ -71,8 +73,8 @@ export class StoryDetailsForm {
         this.validationController.validateTrigger = validateTrigger.changeOrBlur;
         this.valid = true;
 
-        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(errors => {
-            this.valid = (this.validationController.errors.length == 0);
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(() => {
+            this.calculateIfValid();
         });
     }
 
@@ -99,7 +101,9 @@ export class StoryDetailsForm {
         this.dirty = true;
     }
 
-
+    private calculateIfValid() {
+        this.valid = (this.validationController.errors.length == 0);
+    }
 }
 
 
