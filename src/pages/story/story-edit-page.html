@@ -44,10 +44,11 @@
     <require from="../../components/elements/mapping/map"></require>
     <require from="../../components/elements/story-tabs"></require>
 
+    <require from="styles/chapter-filter-select.css" as="scoped"></require>
 
     <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
+            <map story.two-way="story" active-page-ids.bind="selectedChapterPageIds"></map>
         </div>
         <div slot="content-pane" class="fill-space">
             <story-tabs selected="pages" story-id.bind="story.id"></story-tabs>
@@ -57,6 +58,13 @@
                         <button class="btn btn-primary" click.delegate="new()"><span
                                 class="glyphicon glyphicon-plus"></span> New page
                         </button>
+
+                        <span class="glyphicon glyphicon-filter"></span>
+
+                        <select class="chapter-filter form" change.delegate="selectedChapterChanged()" value.bind="selectedChapterId">
+                            <option value="">All Chapters</option>
+                            <option repeat.for="chapter of story.chapters.all" value.bind="chapter.id">${chapter.name}</option>
+                        </select>
 
                         <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
                                 show.bind="mapHidden"><span
@@ -68,7 +76,7 @@
                         </button>
                     </div>
                     <div slot="content">
-                        <story-page-list story.bind="story"></story-page-list>
+                        <story-page-list story.bind="story" selected-page-ids.bind="selectedChapterPageIds"></story-page-list>
                     </div>
                 </scrollable-list-with-header>
             </div>

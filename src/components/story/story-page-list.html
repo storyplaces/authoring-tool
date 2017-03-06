@@ -40,6 +40,6 @@
 <template>
     <require from="../page/page-list-item"></require>
     <ul class="list-group">
-        <page-list-item repeat.for="page of story.pages.all" page.bind="page" story.bind="story"></page-list-item>
+        <page-list-item repeat.for="page of pages" page.bind="page" story.bind="story"></page-list-item>
     </ul>
 </template>

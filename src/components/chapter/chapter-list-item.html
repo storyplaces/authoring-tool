@@ -45,9 +45,7 @@
         <div class="grabbable-list-item-text" click.delegate="select()">
             <h4>${chapter.name}</h4>
             <p class="grabbable-list-item-text-body">
-            <div repeat.for="page of pages">
-                <div>${page}</div>
-            </div>
+            <span class="label label-default" repeat.for="page of pages">${page.name} </span>
             </p>
         </div>
         <div class="grabbable-item-buttons">

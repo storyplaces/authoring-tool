@@ -48,6 +48,9 @@ export class StoryEditPage {
 
     private mapHidden: boolean = false;
 
+    private selectedChapterId: string;
+    private selectedChapterPageIds: Array<string> = [];
+
     @computedFrom('storyId', 'this.storyConnector.all')
     get story(): AuthoringStory {
         return this.storyConnector.byId(this.storyId);
@@ -67,6 +70,24 @@ export class StoryEditPage {
         return this.storyConnector.sync().then(() => {
             return this.hasData();
         });
+    }
+
+    activate() {
+        this.selectedChapterId = "";
+        this.selectedChapterChanged();
+    }
+
+    selectedChapterChanged() {
+        let selectedAuthoringChapter = this.story.chapters.get(this.selectedChapterId);
+
+        if (selectedAuthoringChapter) {
+            this.selectedChapterPageIds = selectedAuthoringChapter.pageIds;
+            return;
+        }
+
+        let result = [];
+        this.story.chapters.all.forEach(chapter => {result = result.concat(chapter.pageIds)});
+        this.selectedChapterPageIds = Array.from(new Set(result));
     }
 
     private hasData(): boolean {
