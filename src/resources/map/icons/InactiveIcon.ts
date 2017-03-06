@@ -36,45 +36,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapMarker} from "../../mapping/markers/MapMarker";
-import {MapMarkerDefaults} from "../../mapping/settings/MapMarkerDefaults";
+import {MapIcon} from "../../mapping/icons/MapIcon";
 import {inject} from "aurelia-framework";
-import {PopupMarker} from "../interfaces/PopupMarker";
-import {InactiveIcon} from "../icons/InactiveIcon";
-import {ActiveIcon} from "../icons/ActiveIcon";
-import {SelectedIcon} from "../icons/SelectedIcon";
+import {MapIconDefaults} from "../../mapping/settings/MapIconDefaults";
 
-@inject(MapMarkerDefaults, InactiveIcon, ActiveIcon, SelectedIcon)
-export class TriStateMarker extends MapMarker implements PopupMarker {
-
-    public pageId: string;
-
-    private _active: boolean = false;
-
-    constructor(markerDefaults: MapMarkerDefaults, private inactiveIcon: InactiveIcon, private activeIcon: ActiveIcon, private selectedIcon: SelectedIcon,
-                latitude: number, longitude: number, active: boolean, selected: boolean, popupText: string) {
-        super(markerDefaults, latitude, longitude, {icon: inactiveIcon.leafletIcon});
-        this.active = active;
-        this.selected = selected;
-        this.popupText = popupText;
-    }
-
-    set active(active: boolean) {
-        this._active = active;
-        this.icon = active ? this.activeIcon : this.inactiveIcon;
-    }
-
-    set selected(selected: boolean) {
-        if (selected) {
-            this.icon = this.selectedIcon;
-            return
-        }
-
-        this.active = this._active;
-    }
-
-    set popupText(text: string) {
-        this.marker.unbindPopup();
-        this.marker.bindPopup(text);
+@inject(MapIconDefaults)
+export class InactiveIcon extends MapIcon {
+    constructor(defaults: MapIconDefaults) {
+        super(defaults, {
+            iconUrl: 'images/icons/markers/marker-icon-inactive.png',
+            iconRetinaUrl: 'images/icons/markers/marker-icon-inactive-2x.png'
+        });
     }
 }
