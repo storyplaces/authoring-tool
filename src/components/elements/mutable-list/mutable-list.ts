@@ -106,9 +106,7 @@ export class MutableListCustomElement {
                 name: 'typeAhead',
                 display: 'name',
                 templates: {
-                    empty: ['<div class="empty-message">',
-                        'No pages matching your input.',
-                        '</div>'].join('\n'),
+                    empty: '<div class="tt-no-suggestion"><strong>Sorry, there are no matches</strong></div>',
                     suggestion: (item: MutableListAvailableItem) => item.suggestion
                 },
                 source: (query, cb) => {

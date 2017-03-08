@@ -39,9 +39,11 @@
 
 <template>
     <require from="./mutable-list-item"></require>
+    <require from="styles/mutable-list.css"></require>
+    <require from="styles/twitter-type-ahead.css"></require>
 
-    <div class="panel panel-default">
-        <div class="mutable-list panel-body">
+    <div class="panel panel-default mutable-list">
+        <div class="panel-body">
             <ul class="list-group">
                 <mutable-list-item repeat.for="item of itemsToDisplay" item.bind="item" delete.delegate="deleteItem($event)"></mutable-list-item>
             </ul>
