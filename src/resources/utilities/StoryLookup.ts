@@ -53,20 +53,12 @@ export class StoryLookup {
 
     // Returns an array of AuthoringChapters which contain the given page Id (in the specified story)
     public getChaptersForPageId(story: AuthoringStory, pageId: string) {
-        if (!story) {
-            return [];
-        }
-
         return story.chapters.all.filter(chapter => {
             return chapter.pageIds.indexOf(pageId) != -1;
         });
     }
 
     public getLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
-        if (!story) {
-            return undefined;
-        }
-
         let page = story.pages.get(pageId);
         if (!page) {
             return undefined;
@@ -76,10 +68,6 @@ export class StoryLookup {
     }
 
     public getCloneLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
-        if (!story) {
-            return undefined;
-        }
-
         let page = story.pages.get(pageId);
         if (!page) {
             return undefined;
@@ -91,9 +79,6 @@ export class StoryLookup {
     // Remove a page from the story
     // Also remove the page Id from all chapters in the story
     public deletePageFromStory(story: AuthoringStory, pageId: string) {
-        if (!story) {
-            throw Error("Story with id " + story.id + " does not exist.");
-        }
         story.pages.remove(pageId);
         story.chapters.removeReferencesToPage(pageId);
         this.storyConnector.save(story);
@@ -101,10 +86,25 @@ export class StoryLookup {
 
     // Return a list of page Ids for a given storyId
     public pageIdsForStory(story: AuthoringStory) {
-        if (!story) {
-            throw Error("Story with id " + story.id + " does not exist.");
-        }
         return story.pages.all.map(page => page.id);
+    }
 
+    removePageIdFromChapterId(story: AuthoringStory, pageId: string, chapterId: string) {
+        let chapter = story.chapters.get(chapterId);
+
+        let index = chapter.pageIds.indexOf(pageId);
+
+        if (index != -1) {
+            chapter.pageIds.splice(index,1);
+        }
+    }
+
+    addPageIdToChapterId(story: AuthoringStory, pageId: string, chapterId: string) {
+        let chapter = story.chapters.get(chapterId);
+        let index = chapter.pageIds.indexOf(pageId);
+
+        if (index == -1) {
+            chapter.pageIds.push(pageId);
+        }
     }
 }

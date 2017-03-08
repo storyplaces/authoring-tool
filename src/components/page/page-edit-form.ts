@@ -51,6 +51,8 @@ import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
 import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
+import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
+import M = require("minimatch");
 
 
 @inject(
@@ -83,6 +85,11 @@ export class PageEditFormCustomElement {
     private validationController: ValidationController;
     private rules;
 
+    private availablePages: Array<MutableListAvailableItem>;
+    private availableChapters: Array<MutableListAvailableItem>;
+    private memberOfChapters: Array<string> = [];
+    private memberOfChaptersSub: Disposable;
+
     constructor(private locationFactory: () => AuthoringLocation,
                 private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
@@ -102,11 +109,13 @@ export class PageEditFormCustomElement {
             this.calculateIfValid();
         });
 
-        this.unlockedBySub = this.eventAggregator.subscribe('unlockedByPagesChanged', () => {
-            this.setDirty();
-            this.bindingSignaler.signal('unlockedByChanged');
-        });
+        this.makeMemberOfChapters();
+        this.makeAvailablePages();
+        this.makeAvailableChapters();
+        this.setupSubscriptions();
+    }
 
+    private setupSubscriptions() {
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
             console.log("setting event from form");
 
@@ -120,38 +129,7 @@ export class PageEditFormCustomElement {
             this.setDirty();
         });
 
-        ($(this.unlockedByText as any) as any).typeahead({
-                hint: false,
-                highlight: false,
-                minLength: 1
-            },
-            {
-                name: 'unlockedByPages',
-                display: 'name',
-                templates: {
-                    empty: ['<div class="empty-message">',
-                        'No pages matching your input.',
-                        '</div>'].join('\n'),
-                    suggestion: (value: AuthoringPage) => "<div><strong>" + value.name + "</strong> - " + value.pageHint + "</div>"
-                },
-                source: (query, cb) => {
-                    let matches = [];
-                    let substrRegex = new RegExp(query, 'i');
-
-                    this.getAvailablePages().forEach((page) => {
-                            if (substrRegex.test(page.name)) {
-                                matches.push(page);
-                            }
-                        }
-                    );
-                    cb(matches);
-                }
-            }
-        ).on('typeahead:selected',
-            (e, value) => {
-                this.unlockedByAddObject = value;
-                this.addUnlockedBy();
-            });
+        this.memberOfChaptersSub = this.bindingEngine.collectionObserver(this.memberOfChapters).subscribe(splices => this.memberOfChaptersChanged(splices));
     }
 
     detached() {
@@ -165,9 +143,9 @@ export class PageEditFormCustomElement {
             this.errorSub = undefined;
         }
 
-        if (this.unlockedBySub) {
-            this.unlockedBySub.dispose();
-            this.unlockedBySub = undefined;
+        if (this.memberOfChaptersSub) {
+            this.memberOfChaptersSub.dispose();
+            this.memberOfChaptersSub = undefined;
         }
     }
 
@@ -223,26 +201,6 @@ export class PageEditFormCustomElement {
         return pages;
     }
 
-    getAvailablePages(): Array < AuthoringPage > {
-        let matches = this.story.pages.all.filter((page) => {
-            return (this.unlockedByPages.indexOf(page) == -1) && (page.id != this.page.id);
-        });
-        console.log("matches", matches);
-        return matches;
-    }
-
-    @computedFrom('page.id')
-    get pageChapters(): Array<AuthoringChapter> {
-        return this.storyLookup.getChaptersForPageId(this.story, this.page.id);
-    }
-
-    addUnlockedBy() {
-        this.page.unlockedByPageIds.push(this.unlockedByAddObject.id);
-        this.unlockedByAddField = "";
-        ($(this.unlockedByText as any) as any).typeahead("val", "");
-        this.eventAggregator.publish('unlockedByPagesChanged');
-    }
-
     useCurrentLocation() {
         this.eventAggregator.publish(this.requestCurrentLocationEvent);
     }
@@ -260,4 +218,47 @@ export class PageEditFormCustomElement {
     setDirty() {
         this.dirty = true;
     }
+
+    private makeAvailablePages() {
+        this.availablePages =  this.story.pages.all.filter(page => page.id != this.page.id)
+            .map((page: AuthoringPage): MutableListAvailableItem => {
+                return {
+                    id: page.id,
+                    name: page.name,
+                    suggestion: `<div><strong>${page.name}</strong> - ${page.pageHint}</div>`,
+                    search: `${page.name} ${page.pageHint}`
+                };
+            });
+    }
+
+    private makeAvailableChapters() {
+        this.availableChapters =  this.story.chapters.all
+            .map((chapter: AuthoringChapter): MutableListAvailableItem => {
+                return {
+                    id: chapter.id,
+                    name: chapter.name,
+                    suggestion: `<div><strong>${chapter.name}</strong></div>`,
+                    search: chapter.name
+                };
+            })
+    }
+
+    private makeMemberOfChapters() {
+        this.memberOfChapters = this.storyLookup.getChaptersForPageId(this.story, this.page.id).map(page => page.id);
+    }
+
+    private memberOfChaptersChanged(splices) {
+        this.setDirty();
+        splices.forEach((splice) => {
+           if (splice.addedCount == 1) {
+               this.storyLookup.addPageIdToChapterId(this.story, this.page.id, this.memberOfChapters[splice.index]);
+           }
+
+           splice.removed.forEach(removedChapterId => {
+               this.storyLookup.removePageIdFromChapterId(this.story, this.page.id, removedChapterId);
+           });
+        });
+    }
+
+
 }
