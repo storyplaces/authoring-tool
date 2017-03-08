@@ -126,7 +126,13 @@ export class PageEditPage {
     }
 
     private clonePage() {
-        this.page = this.params.pageId ? this.story.pages.getClone(this.params.pageId) : this.defaultAuthoringPageFactory.create();
+        if (this.params.pageId) {
+            this.page = this.story.pages.getClone(this.params.pageId);
+            return
+        }
+
+        this.page = this.defaultAuthoringPageFactory.create();
+        this.story.pages.save(this.page);
     }
 
     private cloneLocation() {
