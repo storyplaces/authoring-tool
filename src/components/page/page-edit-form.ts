@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory, computedFrom, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
+import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
@@ -45,15 +45,16 @@ import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
 import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
-import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
 import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
-import M = require("minimatch");
-
+import {
+    ChapterMembershipChangedEvent,
+    ChapterMembershipChangedEventAction
+} from "../../resources/events/ChapterMembershipChangedEvent";
 
 @inject(
     Factory.of(AuthoringLocation),
@@ -61,10 +62,10 @@ import M = require("minimatch");
     RequestCurrentLocationEvent,
     RequestPinDropEvent,
     CancelPinDropEvent,
-    BindingSignaler,
     ValidationControllerFactory,
     Factory.of(BootstrapValidationRenderer),
-    BindingEngine)
+    BindingEngine,
+    Factory.of(ChapterMembershipChangedEvent))
 export class PageEditFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) page: AuthoringPage;
     @bindable({defaultBindingMode: bindingMode.twoWay}) location: AuthoringLocation;
@@ -75,11 +76,6 @@ export class PageEditFormCustomElement {
 
     private errorSub: Disposable;
     private eventSub: Subscription;
-    private unlockedBySub: Subscription;
-
-    private unlockedByAddField: string;
-    private unlockedByAddObject: AuthoringPage;
-    private unlockedByText: HTMLInputElement;
 
     private droppingPin: boolean;
     private validationController: ValidationController;
@@ -90,16 +86,18 @@ export class PageEditFormCustomElement {
     private memberOfChapters: Array<string> = [];
     private memberOfChaptersSub: Disposable;
 
+    /*** LIFECYCLE ***/
+
     constructor(private locationFactory: () => AuthoringLocation,
                 private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
                 private requestCurrentLocationEvent: RequestCurrentLocationEvent,
                 private requestPinDropEvent: RequestPinDropEvent,
                 private cancelPinDropEvent: CancelPinDropEvent,
-                private bindingSignaler: BindingSignaler,
                 private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
-                private bindingEngine: BindingEngine) {
+                private bindingEngine: BindingEngine,
+                private chapterMembershipChangedEventFactory: (pageId: string) => ChapterMembershipChangedEvent) {
         this.setupValidation();
     }
 
@@ -117,19 +115,12 @@ export class PageEditFormCustomElement {
 
     private setupSubscriptions() {
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
-            console.log("setting event from form");
-
-            this.location.lat = event.latitude;
-            this.location.long = event.longitude;
-
-            if (!this.location.radius) {
-                this.location.radius = 30;
-            }
-            this.droppingPin = false;
-            this.setDirty();
+            this.setLocationFromMapEvent(event);
         });
 
-        this.memberOfChaptersSub = this.bindingEngine.collectionObserver(this.memberOfChapters).subscribe(splices => this.memberOfChaptersChanged(splices));
+        this.memberOfChaptersSub = this.bindingEngine.collectionObserver(this.memberOfChapters).subscribe(splices => {
+            this.memberOfChaptersChanged(splices);
+        });
     }
 
     detached() {
@@ -148,6 +139,8 @@ export class PageEditFormCustomElement {
             this.memberOfChaptersSub = undefined;
         }
     }
+
+    /*** VALIDATION ***/
 
     private setupValidation() {
         this.rules = this.validationRules();
@@ -177,6 +170,8 @@ export class PageEditFormCustomElement {
             .rules;
     }
 
+    /*** LOCATIONS ***/
+
     removeLocation() {
         this.story.locations.remove(this.location.id);
         this.location = undefined;
@@ -187,18 +182,6 @@ export class PageEditFormCustomElement {
         this.location = this.locationFactory();
         this.setDirty();
         this.validationController.validate();
-    }
-
-    @computedFrom('page.unlockedByPageIds')
-    get unlockedByPages(): Array < AuthoringPage > {
-        let pages = [];
-        this.page.unlockedByPageIds.forEach(pageId => {
-            // Some validation to ensure the page is a valid page in the story
-            if (this.storyLookup.pageIdsForStory(this.story).indexOf(pageId) != -1) {
-                pages.push(this.story.pages.get(pageId));
-            }
-        });
-        return pages;
     }
 
     useCurrentLocation() {
@@ -215,12 +198,20 @@ export class PageEditFormCustomElement {
         this.eventAggregator.publish(this.requestPinDropEvent);
     }
 
-    setDirty() {
-        this.dirty = true;
+    private setLocationFromMapEvent(event: LocationUpdateFromMapEvent) {
+        this.location.lat = event.latitude;
+        this.location.long = event.longitude;
+
+        if (!this.location.radius) {
+            this.location.radius = 30;
+        }
+        this.droppingPin = false;
+        this.setDirty();
     }
 
+    /*** UNLOCKED BY / CHAPTERS ***/
     private makeAvailablePages() {
-        this.availablePages =  this.story.pages.all.filter(page => page.id != this.page.id)
+        this.availablePages = this.story.pages.all.filter(page => page.id != this.page.id)
             .map((page: AuthoringPage): MutableListAvailableItem => {
                 return {
                     id: page.id,
@@ -232,7 +223,7 @@ export class PageEditFormCustomElement {
     }
 
     private makeAvailableChapters() {
-        this.availableChapters =  this.story.chapters.all
+        this.availableChapters = this.story.chapters.all
             .map((chapter: AuthoringChapter): MutableListAvailableItem => {
                 return {
                     id: chapter.id,
@@ -250,15 +241,22 @@ export class PageEditFormCustomElement {
     private memberOfChaptersChanged(splices) {
         this.setDirty();
         splices.forEach((splice) => {
-           if (splice.addedCount == 1) {
-               this.storyLookup.addPageIdToChapterId(this.story, this.page.id, this.memberOfChapters[splice.index]);
-           }
+            if (splice.addedCount == 1) {
+                let chapterId = this.memberOfChapters[splice.index];
+                this.storyLookup.addPageIdToChapterId(this.story, this.page.id, chapterId);
+                this.eventAggregator.publish(this.chapterMembershipChangedEventFactory(this.page.id));
+            }
 
-           splice.removed.forEach(removedChapterId => {
-               this.storyLookup.removePageIdFromChapterId(this.story, this.page.id, removedChapterId);
-           });
+            splice.removed.forEach(removedChapterId => {
+                this.storyLookup.removePageIdFromChapterId(this.story, this.page.id, removedChapterId);
+                this.eventAggregator.publish(this.chapterMembershipChangedEventFactory(this.page.id));
+            });
         });
     }
 
+    /*** DIRTY ***/
+    setDirty() {
+        this.dirty = true;
+    }
 
 }

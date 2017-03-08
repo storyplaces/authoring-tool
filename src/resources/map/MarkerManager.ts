@@ -44,11 +44,10 @@ import {AuthoringPage} from "../models/AuthoringPage";
 import {AuthoringLocationMarker} from "./markers/AuthoringLocationMarker";
 import {AuthoringChapter} from "../models/AuthoringChapter";
 import {EventAggregator, Subscription} from "aurelia-event-aggregator";
-import {RequestPinDropEvent} from "../events/RequestPinDropEvent";
-import {LocationUpdateFromMapEvent} from "../events/LocationUpdateFromMapEvent";
+import {ChapterMembershipChangedEvent} from "../events/ChapterMembershipChangedEvent";
 
 
-@inject(MapCore, BindingEngine, EventAggregator, Factory.of(LocationUpdateFromMapEvent), Factory.of(AuthoringLocationMarker))
+@inject(MapCore, BindingEngine, EventAggregator, Factory.of(AuthoringLocationMarker))
 export class MarkerManager {
 
     private story: AuthoringStory;
@@ -63,13 +62,12 @@ export class MarkerManager {
     private selectedLocationLongSub: Disposable;
     private selectedLocationRadiusSub: Disposable;
 
-    private eventSub: Subscription;
     private selectEventSub: Subscription;
+    private chapterEventSub: Subscription;
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
                 private eventAggregator: EventAggregator,
-                private locationUpdateFromMapEventFactory: (latitude: number, longitude: number) => LocationUpdateFromMapEvent,
                 private authLocMarkerFactory: (latitude: number, longitude: number, active: boolean, selected: boolean, radius: number, popupText: string, chapters: Array<AuthoringChapter>, unlockedBy: boolean) => AuthoringLocationMarker) {
     }
 
@@ -84,6 +82,10 @@ export class MarkerManager {
         this.selectEventSub = this.eventAggregator.subscribe('pageListItemSelected', response => {
             this.pageListItemSelected(response);
         });
+
+        this.chapterEventSub = this.eventAggregator.subscribe(ChapterMembershipChangedEvent, event => {
+            this.chaptersChanged(event)
+        });
     }
 
     detach() {
@@ -93,9 +95,15 @@ export class MarkerManager {
         this.markers.forEach(marker => marker.destroy());
         this.markers = [];
         this.destroySelectedLocationListeners();
+
         if (this.selectEventSub) {
             this.selectEventSub.dispose();
             this.selectEventSub = undefined;
+        }
+
+        if (this.chapterEventSub) {
+            this.chapterEventSub.dispose();
+            this.chapterEventSub = undefined;
         }
     }
 
@@ -129,22 +137,6 @@ export class MarkerManager {
         });
     }
 
-    set selectedLocation(newLocation) {
-
-        this.destroySelectedLocationListeners();
-        if (this.selectedPageMarker) {
-            this.mapCore.removeItem(this.selectedPageMarker);
-        }
-        if (newLocation) {
-            this._selectedLocation = newLocation;
-            this.initSelectedLocationListeners();
-            this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
-            this.mapCore.panTo({lat: this.selectedPageMarker.latitude, lng: this.selectedPageMarker.longitude});
-            return;
-        }
-
-
-    }
 
     private initSelectedLocationListeners() {
         this.selectedLocationLatSub = this.bindingEngine.propertyObserver(this._selectedLocation, 'lat').subscribe(newLat => {
@@ -207,5 +199,30 @@ export class MarkerManager {
 
     private makeMarkerPopupText(page: AuthoringPage) {
         return `<p><b>${page.name}</b></p>${page.pageHint}`;
+    }
+
+    private chaptersChanged(event: ChapterMembershipChangedEvent) {
+        if (event.pageId == this.selectedPage.id) {
+            this.updateSelectedLocationMarkers();
+        }
+    }
+
+    private updateSelectedLocationMarkers() {
+        this.destroySelectedLocationListeners();
+
+        if (this.selectedPageMarker) {
+            this.mapCore.removeItem(this.selectedPageMarker);
+        }
+
+        if (this._selectedLocation) {
+            this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
+            this.mapCore.panTo({lat: this.selectedPageMarker.latitude, lng: this.selectedPageMarker.longitude});
+            this.initSelectedLocationListeners();
+        }
+    }
+
+    set selectedLocation(newLocation) {
+        this._selectedLocation = newLocation;
+        this.updateSelectedLocationMarkers();
     }
 }
