@@ -1,14 +1,14 @@
-@colours: aqua, black, blue, fuchsia, gray, green, lime, maroon, navy, olive, purple, red, silver, teal, white, yellow;
+@colours: aqua,  black, blue,  fuchsia, gray,  green, lime,  maroon, navy,  olive, purple, red,   silver, teal,  white, yellow;
+@textcls: black, white, white, white,   white, white, black, white,  white, white, white,  white, white,  white, black, black;
 
 // mixin to iterate over colors and create CSS class for each one
 .make-colour-classes(@i: length(@colours)) when (@i > 0) {
   .make-colour-classes(@i - 1);
   @colour: extract(@colours, @i);
+  @textcl: extract(@textcls, @i);
   .@{colour} {
     background-color: @colour;
-    & when (@colour = 'aqua'){
-      color: black;
-    }
+    color: @textcl;
   }
 }
 
