@@ -143,7 +143,12 @@ export class MarkerManager {
         this._activePageIds = newActivePageIds || [];
 
         this.markers.forEach(marker => {
-            marker.active = this._activePageIds.indexOf(marker.pageId) != -1;
+            marker.selected = marker.selected && this._activePageIds.indexOf(marker.pageId) != -1;
+
+            if (!marker.selected) {
+                marker.active = this._activePageIds.indexOf(marker.pageId) != -1;
+                this.selectedPage = undefined;
+            }
         });
     }
 
@@ -253,6 +258,10 @@ export class MarkerManager {
     private removePage(page: AuthoringPage) {
         if (this._selectedLocation && (this._selectedLocation.id == page.locationId)) {
             this.selectedLocation = undefined;
+        }
+
+        if (this.selectedPage.id == page.id) {
+            this.selectedPage = undefined;
         }
 
         this.removeMakerForPage(page);
