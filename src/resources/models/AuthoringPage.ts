@@ -45,15 +45,14 @@ import {TypeChecker} from "../utilities/TypeChecker";
     TypeChecker
 )
 export class AuthoringPage extends BaseModel {
-
-
     private _name: string;
     private _content: string;
     private _pageHint: string;
     private _locationId: string;
-    private _allowMultipleReadings: Boolean;
+    private _allowMultipleReadings: boolean;
     private _unlockedByPageIds: Array<string>;
     private _unlockedByPagesOperator: string;
+    private _finishesStory: boolean;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -69,7 +68,8 @@ export class AuthoringPage extends BaseModel {
         locationId: undefined,
         allowMultipleReadings: undefined,
         unlockedByPageIds: undefined,
-        unlockedByPagesOperator: undefined
+        unlockedByPagesOperator: undefined,
+        finishesStory: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -80,7 +80,7 @@ export class AuthoringPage extends BaseModel {
         this.allowMultipleReadings = data.allowMultipleReadings;
         this.unlockedByPageIds = data.unlockedByPageIds;
         this.unlockedByPagesOperator = data.unlockedByPagesOperator;
-
+        this.finishesStory = data.finishesStory;
     }
 
     public toJSON() {
@@ -92,8 +92,18 @@ export class AuthoringPage extends BaseModel {
             locationId: this.locationId,
             allowMultipleReadings: this.allowMultipleReadings,
             unlockedByPageIds: this.unlockedByPageIds,
-            unlockedByPagesOperator: this.unlockedByPagesOperator
+            unlockedByPagesOperator: this.unlockedByPagesOperator,
+            finishesStory: this.finishesStory
         }
+    }
+
+    get finishesStory(): boolean {
+        return this._finishesStory;
+    }
+
+    set finishesStory(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("Finishes Story", value);
+        this._finishesStory = value;
     }
 
     get pageHint(): string {

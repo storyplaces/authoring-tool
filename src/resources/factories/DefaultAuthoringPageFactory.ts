@@ -58,7 +58,8 @@ export class DefaultAuthoringPageFactory {
             locationId: "",
             allowMultipleReadings: false,
             unlockedByPageIds: [],
-            unlockedByPagesOperator: "and"
+            unlockedByPagesOperator: "and",
+            finishesStory: false
         }
     }
 }
