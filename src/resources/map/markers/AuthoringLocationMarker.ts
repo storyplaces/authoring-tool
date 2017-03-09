@@ -58,6 +58,9 @@ export class AuthoringLocationMarker extends MapGroup {
     private _radius: number;
     private additialItemsAdded: boolean;
 
+    private _selected: boolean;
+    private _active: boolean;
+
     constructor(private circleFactory: (lat?, lon?, radius?) => MapCircle,
                 private markerFactory: (lat?, lon?, active?, selected?, text?) => TriStateMarker,
                 private chapterMarkerFactory: (lat: number, lon: number, colour: string, index: number, popup: string) => ChapterMarker,
@@ -82,10 +85,12 @@ export class AuthoringLocationMarker extends MapGroup {
     }
 
     set active(active: boolean) {
+        this._active = active;
         this.mainMarker.active = active;
     }
 
     set selected(selected: boolean) {
+        this._selected = selected;
         this.mainMarker.selected = selected;
 
         if (selected && !this.additialItemsAdded) {
@@ -99,6 +104,14 @@ export class AuthoringLocationMarker extends MapGroup {
             this.removeItem(this.chapterMarkerGroup);
             this.additialItemsAdded = false;
         }
+    }
+
+    get active() {
+        return this._active;
+    }
+
+    get selected() {
+        return this._selected;
     }
 
     set latitude(latitude: number) {
