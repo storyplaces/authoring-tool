@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless} from "aurelia-framework";
+import {bindable, containerless, computedFrom} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 /**
@@ -44,14 +44,12 @@ import {AuthoringPage} from "../../resources/models/AuthoringPage";
  */
 
 export class StoryPageList {
-
-    private pages: Array<AuthoringPage>
-
     @bindable story: AuthoringStory;
-
     @bindable selectedPageIds: Array<string>;
 
-    selectedPageIdsChanged(newPageIds: Array<string>) {
-        this.pages = this.story.pages.all.filter(page => this.selectedPageIds.indexOf(page.id) != -1);
+    @computedFrom('story.pages.all.length', 'selectedPageIds')
+    get pages():Array<AuthoringPage> {
+        console.log("Get pages");
+        return this.story.pages.all.filter(page => this.selectedPageIds.indexOf(page.id) != -1);
     }
 }

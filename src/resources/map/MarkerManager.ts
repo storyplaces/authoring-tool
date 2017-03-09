@@ -64,6 +64,7 @@ export class MarkerManager {
 
     private selectEventSub: Subscription;
     private chapterEventSub: Subscription;
+    private pagesChangedSub: Disposable;
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
@@ -86,6 +87,10 @@ export class MarkerManager {
         this.chapterEventSub = this.eventAggregator.subscribe(ChapterMembershipChangedEvent, event => {
             this.chaptersChanged(event)
         });
+
+        this.pagesChangedSub = this.bindingEngine.collectionObserver(this.story.pages.all).subscribe(shards => {
+            this.pagesChanged(shards)
+        });
     }
 
     detach() {
@@ -104,6 +109,11 @@ export class MarkerManager {
         if (this.chapterEventSub) {
             this.chapterEventSub.dispose();
             this.chapterEventSub = undefined;
+        }
+
+        if (this.pagesChangedSub) {
+            this.pagesChangedSub.dispose();
+            this.pagesChangedSub = undefined;
         }
     }
 
@@ -224,5 +234,37 @@ export class MarkerManager {
     set selectedLocation(newLocation) {
         this._selectedLocation = newLocation;
         this.updateSelectedLocationMarkers();
+    }
+
+    private pagesChanged(shards) {
+        shards.forEach(shard => {
+
+            if (shard.added == 1) {
+                let page = this.story.pages.all[shard.index];
+                this.createMarkerForPage(page, this.pageIsActive(page), false);
+            }
+
+            shard.removed.forEach((page: AuthoringPage) => {
+                this.removePage(page);
+            });
+        });
+    }
+
+    private removePage(page: AuthoringPage) {
+        if (this._selectedLocation && (this._selectedLocation.id == page.locationId)) {
+            this.selectedLocation = undefined;
+        }
+
+        this.removeMakerForPage(page);
+    }
+
+    private removeMakerForPage(page: AuthoringPage) {
+        let markersToRemove = this.markers.filter(marker => marker.pageId == page.id);
+
+        markersToRemove.forEach(marker => {
+            this.mapCore.removeItem(marker);
+            let index = this.markers.indexOf(marker);
+            this.markers.splice(index, 1);
+        });
     }
 }
