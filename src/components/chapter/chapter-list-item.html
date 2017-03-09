@@ -42,10 +42,10 @@
 
     <li class="list-group-item grabbable-list-item ${pageStyle}">
         <div class="grabbable-list-item-grab-bar" click.delegate="select()"></div>
-        <div class="grabbable-list-item-text" click.delegate="select()">
+        <div class="grabbable-list-item-text" click.trigger="select($event)">
             <h4>${chapter.name}</h4>
             <p class="grabbable-list-item-text-body">
-            <span class="label label-default" repeat.for="page of pages">${page.name} </span>
+                <span role="button" class="label page-label" class.bind="chapter.colour" repeat.for="page of pages" click.trigger="clickLink($event, page)">${page.name}</span>
             </p>
         </div>
         <div class="grabbable-item-buttons">

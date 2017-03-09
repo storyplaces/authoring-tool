@@ -6,6 +6,9 @@
   @colour: extract(@colours, @i);
   .@{colour} {
     background-color: @colour;
+    & when (@colour = 'aqua'){
+      color: black;
+    }
   }
 }
 

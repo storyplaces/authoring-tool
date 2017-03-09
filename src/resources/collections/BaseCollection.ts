@@ -54,9 +54,9 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
 
     public getMany(ids: Array<string>): Array<DATA_TYPE> {
         let items: Array<DATA_TYPE> = [];
-        for(let id of ids){
+        ids.forEach((id) => {
             items.push(this.get(id));
-        }
+        });
         return items;
     }
 
@@ -104,7 +104,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
 
     public getNewUniqueId() {
         let guid = this.guid();
-        while (this.findIndexById(guid)!=undefined) {
+        while (this.findIndexById(guid) != undefined) {
             guid = this.guid();
         }
         return guid;

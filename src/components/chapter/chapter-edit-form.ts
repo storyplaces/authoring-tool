@@ -101,12 +101,13 @@ export class ChapterEditFormCustomElement {
     @computedFrom('chapter.unlockedByPageIds')
     get chapterPages(): Array < AuthoringPage > {
         let pages = [];
-        this.chapter.unlockedByPageIds.forEach(pageId => {
+        this.chapter.pageIds.forEach(pageId => {
             // Some validation to ensure the page is a valid page in the story
             if (this.storyLookup.pageIdsForStory(this.story).indexOf(pageId) != -1) {
                 pages.push(this.story.pages.get(pageId));
             }
         });
+        console.log("Pages in chapter: ", pages);
         return pages;
     }
 
@@ -118,7 +119,7 @@ export class ChapterEditFormCustomElement {
     }
 
     addChapterPage() {
-        this.chapter.unlockedByPageIds.push(this.chapterPageAddObject.id);
+        this.chapter.pageIds.push(this.chapterPageAddObject.id);
         this.chapterPageAddField = "";
         ($(this.chapterPageText as any) as any).typeahead("val", "");
         this.bindingSignaler.signal('chapterPageChanged');

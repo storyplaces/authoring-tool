@@ -43,6 +43,7 @@ import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../modals/delete-confirm";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {Router} from "aurelia-router";
 /**
  * Created by andy on 28/11/16.
  */
@@ -57,7 +58,8 @@ export class ChapterListItem {
 
 
     constructor(private storyLookup: StoryLookup,
-                private dialogService: DialogService) {
+                private dialogService: DialogService,
+                private router: Router) {
     }
 
     attached() {
@@ -68,6 +70,7 @@ export class ChapterListItem {
 
     @computedFrom("storyId", "chapter.id")
     get pages(): Array<AuthoringPage> {
+        console.log(this.chapter.pageIds);
         return this.story.pages.getMany(this.chapter.pageIds);
     }
 
@@ -80,8 +83,13 @@ export class ChapterListItem {
         });
     }
 
-    select(): void {
+    select(event: MouseEvent) {
+        console.log(event);
+    }
 
+    clickLink(event, page): void {
+        event.stopPropagation();
+        this.router.navigateToRoute("page-edit", {storyId: this.story.id, pageId: page.id});
     }
 
 }
