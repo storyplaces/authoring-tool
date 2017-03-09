@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
+import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable, computedFrom} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
@@ -252,6 +252,15 @@ export class PageEditFormCustomElement {
                 this.eventAggregator.publish(this.chapterMembershipChangedEventFactory(this.page.id));
             });
         });
+    }
+
+    set unlockedOperator(value: boolean) {
+        this.page.unlockedByPagesOperator = value ? "and" : "or";
+    }
+
+    @computedFrom('page.unlockedByPagesOperator')
+    get unlockedOperator() : boolean {
+        return this.page.unlockedByPagesOperator == "and";
     }
 
     /*** DIRTY ***/
