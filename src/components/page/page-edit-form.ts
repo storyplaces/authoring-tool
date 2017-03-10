@@ -180,6 +180,7 @@ export class PageEditFormCustomElement {
 
     addLocation() {
         this.location = this.locationFactory();
+        this.dropPinOnMap();
         this.setDirty();
         this.validationController.validate();
     }

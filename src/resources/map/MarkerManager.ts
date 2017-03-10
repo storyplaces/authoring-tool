@@ -231,7 +231,9 @@ export class MarkerManager {
 
         if (this._selectedLocation) {
             this.selectedPageMarker = this.createMarkerForPage(this.selectedPage, false, true);
-            this.mapCore.panTo({lat: this.selectedPageMarker.latitude, lng: this.selectedPageMarker.longitude});
+            if (this.selectedPageMarker.latitude && this.selectedPageMarker.longitude) {
+                this.mapCore.panTo({lat: this.selectedPageMarker.latitude, lng: this.selectedPageMarker.longitude});
+            }
             this.initSelectedLocationListeners();
         }
     }
