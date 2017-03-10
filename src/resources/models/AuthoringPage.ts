@@ -153,11 +153,11 @@ export class AuthoringPage extends BaseModel {
     set unlockedByPageIds(value: Array<string>) {
         this._unlockedByPageIds = value;
     }
-    get allowMultipleReadings(): Boolean {
+    get allowMultipleReadings(): boolean {
         return this._allowMultipleReadings;
     }
 
-    set allowMultipleReadings(value: Boolean) {
+    set allowMultipleReadings(value: boolean) {
         this.typeChecker.validateAsBooleanOrUndefined('AllowMultipleReadings', value);
         this._allowMultipleReadings = value;
     }

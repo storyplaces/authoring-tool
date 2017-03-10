@@ -52,10 +52,9 @@ export class ChapterEditPage {
     private chapter: AuthoringChapter;
     private story: AuthoringStory;
 
-    private storyModified: boolean = false;
-    private chapterModified: boolean = false;
-
     private mapHidden: boolean = false;
+
+    private dirty: boolean;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private router: Router,
@@ -101,7 +100,7 @@ export class ChapterEditPage {
 
     canDeactivate() {
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
-        if (this.storyModified || this.chapterModified) {
+        if (this.dirty) {
             return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
                 if (!response.wasCancelled) {
                     return true;
@@ -118,21 +117,18 @@ export class ChapterEditPage {
 
     private cloneStory() {
         this.story = this.storyConnector.cloneById(this.params.storyId);
-        this.storyModified = true;
     }
 
     private cloneChapter() {
         this.chapter = this.params.chapterId ? this.story.chapters.getClone(this.params.chapterId) : this.defaultAuthoringChapterFactory.create();
-        this.chapterModified = true;
     }
 
 
     private save() {
         this.story.chapters.save(this.chapter);
-        this.chapterModified = false;
 
         this.storyConnector.save(this.story).then(() => {
-            this.storyModified = false;
+            this.dirty = false;
             this.router.navigateToRoute("story-chapters", {storyId: this.story.id});
         });
     }

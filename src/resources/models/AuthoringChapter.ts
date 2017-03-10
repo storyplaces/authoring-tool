@@ -52,7 +52,7 @@ export class AuthoringChapter extends BaseModel {
     private _unlockedByPageIds: Array<string>;
     private _unlockedByPagesOperator: string;
     private _locksAllOtherChapters: Boolean;
-    private _locksChapters: Array<string>;
+    private _locksChapterIds: Array<string>;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -68,7 +68,7 @@ export class AuthoringChapter extends BaseModel {
         unlockedByPageIds: undefined,
         unlockedByPagesOperator: undefined,
         locksAllOtherChapters: undefined,
-        locksChapters: undefined
+        locksChapterIds: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -78,7 +78,7 @@ export class AuthoringChapter extends BaseModel {
         this.unlockedByPageIds = data.unlockedByPageIds;
         this.unlockedByPagesOperator = data.unlockedByPagesOperator;
         this.locksAllOtherChapters = data.locksAllOtherChapters;
-        this.locksChapters = data.locksChapters;
+        this.locksChapterIds = data.locksChapterIds;
     }
 
     public toJSON() {
@@ -90,7 +90,7 @@ export class AuthoringChapter extends BaseModel {
             unlockedByPageIds: this.unlockedByPageIds,
             unlockedByPagesOperator: this.unlockedByPagesOperator,
             locksAllOtherChapters: this.locksAllOtherChapters,
-            locksChapters: this.locksChapters
+            locksChapterIds: this.locksChapterIds
         }
     }
 
@@ -146,12 +146,12 @@ export class AuthoringChapter extends BaseModel {
         this._locksAllOtherChapters = value;
     }
 
-    get locksChapters(): Array<string> {
-        return this._locksChapters;
+    get locksChapterIds(): Array<string> {
+        return this._locksChapterIds;
     }
 
-    set locksChapters(value: Array<string>) {
-        this._locksChapters = value;
+    set locksChapterIds(value: Array<string>) {
+        this._locksChapterIds = value;
     }
 }
 

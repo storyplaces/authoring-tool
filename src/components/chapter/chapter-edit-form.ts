@@ -36,13 +36,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, computedFrom} from "aurelia-framework";
+import {bindable, inject, computedFrom, bindingMode} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import "typeahead.js";
 import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
+import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
 
 
 @inject(StoryLookup, BindingSignaler)
@@ -54,44 +55,25 @@ export class ChapterEditFormCustomElement {
     chapterPageAddObject: AuthoringPage;
     chapterPageText: HTMLInputElement;
 
+    private availablePages: Array<MutableListAvailableItem>;
+    private availableUnlockPages: Array<MutableListAvailableItem>;
+    private availableLockChapters: Array<MutableListAvailableItem>;
+
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
+
     constructor(private storyLookup: StoryLookup,
                 private bindingSignaler: BindingSignaler) {
 
     }
 
     attached() {
-        ($(this.chapterPageText as any) as any).typeahead({
-                hint: false,
-                highlight: false,
-                minLength: 1
-            },
-            {
-                name: 'chapterPages',
-                display: 'name',
-                templates: {
-                    empty: ['<div class="empty-message">',
-                        'No pages matching your input.',
-                        '</div>'].join('\n'),
-                    suggestion: (value: AuthoringPage) => "<div><strong>" + value.name + "</strong> - " + value.pageHint + "</div>"
-                },
-                source: (query, cb) => {
-                    let matches = [];
-                    let substrRegex = new RegExp(query, 'i');
+        this.dirty = false;
 
-                    this.getAvailablePages().forEach((page) => {
-                            if (substrRegex.test(page.name)) {
-                                matches.push(page);
-                            }
-                        }
-                    );
-                    cb(matches);
-                }
-            }
-        ).on('typeahead:selected',
-            (e, value) => {
-                this.chapterPageAddObject = value;
-                this.addChapterPage();
-            });
+        console.log(this.chapter);
+
+        this.makeAvailablePages();
+        this.makeAvailableUnlockPages();
+        this.makeAvailableLockChapters();
     }
 
     detached() {
@@ -125,4 +107,52 @@ export class ChapterEditFormCustomElement {
         this.bindingSignaler.signal('chapterPageChanged');
     }
 
+    private makeAvailablePages() {
+        this.availablePages = this.story.pages.all
+            .map((page: AuthoringPage): MutableListAvailableItem => {
+                return {
+                    id: page.id,
+                    name: page.name,
+                    suggestion: `<div><strong>${page.name}</strong> - ${page.pageHint}</div>`,
+                    search: `${page.name} ${page.pageHint}`
+                };
+            });
+    }
+
+    private makeAvailableUnlockPages() {
+        this.availableUnlockPages = this.story.pages.all
+            .map((page: AuthoringPage): MutableListAvailableItem => {
+                return {
+                    id: page.id,
+                    name: page.name,
+                    suggestion: `<div><strong>${page.name}</strong> - ${page.pageHint}</div>`,
+                    search: `${page.name} ${page.pageHint}`
+                };
+            });
+    }
+
+    private makeAvailableLockChapters() {
+        this.availableLockChapters = this.story.chapters.all.filter(chapter => chapter.id != this.chapter.id)
+            .map((chapter: AuthoringChapter): MutableListAvailableItem => {
+                return {
+                    id: chapter.id,
+                    name: chapter.name,
+                    suggestion: `<div><strong>${chapter.name}</strong>`,
+                    search: `${chapter.name}`
+                };
+            });
+    }
+
+    set unlockedOperator(value: boolean) {
+        this.chapter.unlockedByPagesOperator = value ? "and" : "or";
+    }
+
+    @computedFrom('chapter.unlockedByPagesOperator')
+    get unlockedOperator(): boolean {
+        return this.chapter.unlockedByPagesOperator == "and";
+    }
+
+    setDirty() {
+        this.dirty = true;
+    }
 }
