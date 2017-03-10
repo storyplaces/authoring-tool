@@ -59,7 +59,7 @@ export class DefaultAuthoringChapterFactory {
             unlockedByPageIds: [],
             unlockedByPagesOperator: "and",
             locksAllOtherChapters: false,
-            locksChapters: []
+            locksChapterIds: []
         }
     }
 }
