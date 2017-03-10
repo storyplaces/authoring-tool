@@ -36,15 +36,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable} from "aurelia-framework";
+import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable, computedFrom} from "aurelia-framework";
 import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
 import {
-    ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger,
+    ValidationControllerFactory,
+    ValidationController,
+    ValidationRules,
+    validateTrigger,
     Rule
 } from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {PublishingConnector} from "../../resources/store/PublishingConnector";
+import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
 
-@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector)
 export class StoryDetailsForm {
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
@@ -54,7 +60,17 @@ export class StoryDetailsForm {
     private errorSub: Disposable;
     public rules: Rule<AuthoringStory, any>[][];
 
-    constructor(private controllerFactory: ValidationControllerFactory, private validationRendererFactory: () => BootstrapValidationRenderer, private bindingEngine: BindingEngine) {
+    private results: string = "";
+
+    private publishing: boolean = false;
+    private buildingPreview: boolean = false;
+
+    constructor(private controllerFactory: ValidationControllerFactory,
+                private validationRendererFactory: () => BootstrapValidationRenderer,
+                private bindingEngine: BindingEngine,
+                private authoringStoryConnector: AuthoringStoryConnector,
+                private publishingConnector: PublishingConnector,
+                private previewConnector: PreviewingConnector) {
         this.setupValidation();
     }
 
@@ -103,6 +119,40 @@ export class StoryDetailsForm {
 
     private calculateIfValid() {
         this.valid = (this.validationController.errors.length == 0);
+    }
+
+    @computedFrom('authoringStoryConnector.hasUnSyncedStories')
+    get canPublish(): boolean {
+        return this.authoringStoryConnector.hasUnSyncedStories;
+    }
+
+    publish() {
+        this.publishing = true;
+        this.publishingConnector.publishStory(this.story).then(result => {
+           this.publishing = false;
+
+           if (typeof result !== 'boolean') {
+               this.results = result;
+               return
+           }
+
+           this.results = "Sorry it has not been possible to request publication at this time due to a network issue";
+        });
+    }
+
+    preview() {
+        this.buildingPreview = true;
+        this.previewConnector.previewStory(this.story).then(result => {
+            this.buildingPreview = false;
+
+            if (typeof result !== 'boolean') {
+                this.results = result;
+                return
+            }
+
+            this.results = "Sorry it has not been possible to request a preview at this time due to a network issue";
+        });
+
     }
 }
 

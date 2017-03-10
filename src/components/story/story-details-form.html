@@ -51,14 +51,16 @@
                 <label for="title">Story Title:
                     <information-icon help-text="The title of the story"></information-icon>
                 </label>
-                <input type="text" class="form-control" id="title" value.bind="story.title & validate:rules" change.delegate="setDirty()">
+                <input type="text" class="form-control" id="title" value.bind="story.title & validate:rules"
+                       change.delegate="setDirty()">
             </div>
 
             <div class="form-group">
                 <label for="description">Story Description:
                     <information-icon help-text="A brief description of the story."></information-icon>
                 </label>
-                <textarea type="textarea" class="form-control" id="description" value.bind="story.description & validate:rules" change.delegate="setDirty()"></textarea>
+                <textarea type="textarea" class="form-control" id="description"
+                          value.bind="story.description & validate:rules" change.delegate="setDirty()"></textarea>
             </div>
 
             <div class="form-group">
@@ -68,11 +70,43 @@
                 <div class="radio" repeat.for="audience of audiences">
                     <label>
                         <input type="radio" name="audience" id="audience"
-                               model.bind="audience.shortname" checked.bind="story.audience & validate:rules" class="radio" change.delegate="setDirty()">
+                               model.bind="audience.shortname" checked.bind="story.audience & validate:rules"
+                               class="radio" change.delegate="setDirty()">
                         ${audience.fullname}
                     </label>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Publish Story
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <button class="btn btn-primary" click.delegate="publish()" if.bind="!publishing"
+                            disabled.bind="canPublish"><span class="glyphicon glyphicon-book"></span> Request
+                        Publication
+                    </button>
+                    <button class="btn btn-danger" disabled if.bind="publishing"><span
+                            class="glyphicon glyphicon-refresh"></span> Requesting Publication
+                    </button>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <button class="btn btn-primary pull-right" click.delegate="preview()" if.bind="!buildingPreview"
+                            disabled.bind="canPublish"><span class="glyphicon glyphicon-eye-open"></span> Preview Story
+                    </button>
+                    <button class="btn btn-danger pull-right" disabled if.bind="buildingPreview"><span
+                            class="glyphicon glyphicon-refresh"></span> Requesting Preview
+                    </button>
+                </div>
+            </div>
+            <br>
+            <div class="well" if.bind="results">
+                ${results}
+            </div>
+
         </div>
     </div>
 </template>
