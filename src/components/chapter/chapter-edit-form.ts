@@ -68,8 +68,6 @@ export class ChapterEditFormCustomElement {
     attached() {
         this.dirty = false;
 
-        console.log(this.chapter);
-
         this.makeAvailablePages();
         this.makeAvailableUnlockPages();
         this.makeAvailableLockChapters();

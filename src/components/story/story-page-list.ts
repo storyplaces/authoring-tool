@@ -49,7 +49,6 @@ export class StoryPageList {
 
     @computedFrom('story.pages.all.length', 'selectedPageIds')
     get pages():Array<AuthoringPage> {
-        console.log("Get pages");
         return this.story.pages.all.filter(page => this.selectedPageIds.indexOf(page.id) != -1);
     }
 }
