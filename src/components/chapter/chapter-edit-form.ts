@@ -61,8 +61,7 @@ export class ChapterEditFormCustomElement {
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
 
-    constructor(private storyLookup: StoryLookup,
-                private bindingSignaler: BindingSignaler) {
+    constructor(private storyLookup: StoryLookup) {
 
     }
 
@@ -104,7 +103,6 @@ export class ChapterEditFormCustomElement {
         this.chapter.pageIds.push(this.chapterPageAddObject.id);
         this.chapterPageAddField = "";
         ($(this.chapterPageText as any) as any).typeahead("val", "");
-        this.bindingSignaler.signal('chapterPageChanged');
     }
 
     private makeAvailablePages() {

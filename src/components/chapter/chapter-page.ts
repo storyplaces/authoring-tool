@@ -45,19 +45,17 @@ import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
  */
 
 @containerless()
-@autoinject()
 export class ChapterPage {
 
     @bindable page: AuthoringPage;
     @bindable ownerChapter: AuthoringChapter;
 
-    constructor(private bindingSignaler: BindingSignaler) {
+    constructor() {
     }
 
     remove(){
         var index = this.ownerChapter.unlockedByPageIds.indexOf(this.page.id);
         this.ownerChapter.unlockedByPageIds.splice(index, 1);
-        this.bindingSignaler.signal('chapterPageChanged');
     }
 
 }

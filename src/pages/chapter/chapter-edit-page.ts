@@ -44,8 +44,9 @@ import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../../components/modals/delete-confirm";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {DefaultAuthoringChapterFactory} from "../../resources/factories/DefaultAuthoringChapterFactory";
+import {MarkerManager} from "../../resources/map/MarkerManager";
 
-@inject(AuthoringStoryConnector, Router, DialogService, DefaultAuthoringChapterFactory)
+@inject(AuthoringStoryConnector, Router, DialogService, DefaultAuthoringChapterFactory, MarkerManager)
 export class ChapterEditPage {
 
     private params: {storyId: string, chapterId: string};
@@ -55,11 +56,24 @@ export class ChapterEditPage {
     private mapHidden: boolean = false;
 
     private dirty: boolean;
+    private chapterPagesChangedCallback: (e) => any;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private router: Router,
                 private dialogService: DialogService,
-                private defaultAuthoringChapterFactory: DefaultAuthoringChapterFactory) {
+                private defaultAuthoringChapterFactory: DefaultAuthoringChapterFactory,
+                private markerManager: MarkerManager) {
+        this.chapterPagesChangedCallback = e => {
+            this.chapterPagesChanged();
+        }
+    }
+
+    attached() {
+        document.addEventListener('change', this.chapterPagesChangedCallback);
+    }
+
+    detached() {
+        document.removeEventListener('change', this.chapterPagesChangedCallback);
     }
 
     canActivate(params): any {
@@ -135,6 +149,10 @@ export class ChapterEditPage {
 
     private cancel() {
         this.router.navigateToRoute("story-chapters", {storyId: this.story.id});
+    }
+
+    chapterPagesChanged() {
+        this.markerManager.activePageIds = this.chapter.pageIds;
     }
 
 
