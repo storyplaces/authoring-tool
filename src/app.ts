@@ -70,7 +70,6 @@ export class App {
         ]);
 
         this.router = router;
-        console.log(this.router);
     }
 
     attached() {

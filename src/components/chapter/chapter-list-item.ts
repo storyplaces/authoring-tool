@@ -70,7 +70,6 @@ export class ChapterListItem {
 
     @computedFrom("storyId", "chapter.id")
     get pages(): Array<AuthoringPage> {
-        console.log(this.chapter.pageIds);
         return this.story.pages.getMany(this.chapter.pageIds);
     }
 
