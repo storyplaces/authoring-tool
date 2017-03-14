@@ -56,14 +56,14 @@
                     <label for="name">Chapter Name:
                         <information-icon help-text="The title of the chapter"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="chapter.name & validate:rules" scroll-on-edit>
+                    <input type="text" class="form-control" id="name" value.bind="chapter.name & validate:rules" scroll-on-edit change.delegate="setDirty()">
                 </div>
                 <div class="form-group">
                     <label>Chapter Colour:
                         <information-icon
                                 help-text="The colour which will be used to represent this chapter in the authoring tool."></information-icon>
                     </label><br>
-                    <colour-picker id="colour-picker" colour.bind="chapter.colour"></colour-picker>
+                    <colour-picker id="colour-picker" colour.bind="chapter.colour" change.delegate="setDirty()"></colour-picker>
                 </div>
             </div>
         </div>

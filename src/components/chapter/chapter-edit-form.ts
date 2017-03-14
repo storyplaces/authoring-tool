@@ -54,6 +54,9 @@ import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValid
 export class ChapterEditFormCustomElement {
     @bindable chapter: AuthoringChapter;
     @bindable story: AuthoringStory;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
+
 
     chapterPageAddField: string;
     chapterPageAddObject: AuthoringPage;
@@ -64,11 +67,7 @@ export class ChapterEditFormCustomElement {
     private availableLockChapters: Array<MutableListAvailableItem>;
     private validationController: ValidationController;
     private rules;
-    private valid:boolean;
     private errorSub: Disposable;
-
-
-    @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
 
     constructor(private storyLookup: StoryLookup,
                 private controllerFactory: ValidationControllerFactory,

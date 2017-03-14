@@ -56,6 +56,7 @@ export class ChapterEditPage {
     private mapHidden: boolean = false;
 
     private dirty: boolean;
+    private valid: boolean;
     private chapterPagesChangedCallback: (e) => any;
 
     constructor(private storyConnector: AuthoringStoryConnector,
@@ -139,6 +140,10 @@ export class ChapterEditPage {
 
 
     private save() {
+        if (!this.valid) {
+            return;
+        }
+
         this.story.chapters.save(this.chapter);
 
         this.storyConnector.save(this.story).then(() => {
