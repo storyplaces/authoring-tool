@@ -39,11 +39,15 @@
 
 
 import {ChapterColours} from "../../resources/models/AuthoringChapter";
-import {bindable, bindingMode} from "aurelia-framework";
+import {bindable, bindingMode, inject} from "aurelia-framework";
 
+@inject(Element)
 export class ColourPickerCustomElement {
 
     @bindable({defaultBindingMode: bindingMode.twoWay})  colour: string;
+
+    constructor(private element: Element) {
+    }
 
     colourChanged(newColour:string) {
         if (this.colours.indexOf(newColour) == -1) {
@@ -57,5 +61,20 @@ export class ColourPickerCustomElement {
 
     select(colour: string) {
         this.colour = colour;
+        this.changed();
+    }
+
+    changed() {
+        this.element.dispatchEvent(this.makeChangeEvent());
+    }
+
+    private makeChangeEvent() {
+        if ((window as any).CustomEvent) {
+            return new CustomEvent('change', {bubbles: true});
+        }
+
+        let deleteEvent = document.createEvent('CustomEvent');
+        deleteEvent.initCustomEvent('change', true, true, {});
+        return deleteEvent;
     }
 }
