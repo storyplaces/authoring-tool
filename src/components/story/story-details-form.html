@@ -85,28 +85,31 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-xs-12 col-sm-6">
-                    <button class="btn btn-primary" click.delegate="publish()" if.bind="!publishing"
-                            disabled.bind="canPublish"><span class="glyphicon glyphicon-book"></span> Request
-                        Publication
-                    </button>
-                    <button class="btn btn-danger" disabled if.bind="publishing"><span
-                            class="glyphicon glyphicon-refresh"></span> Requesting Publication
-                    </button>
+                    <p>
+                        <button class="btn btn-primary btn-block" click.delegate="publish()" if.bind="!publishing"
+                                disabled.bind="canPublish"><span class="glyphicon glyphicon-book"></span> Request
+                            Publication
+                        </button>
+                        <button class="btn btn-danger btn-block" disabled if.bind="publishing"><span
+                                class="glyphicon glyphicon-refresh"></span> Requesting Publication
+                        </button>
+                    </p>
                 </div>
                 <div class="col-xs-12 col-sm-6">
-                    <button class="btn btn-primary pull-right" click.delegate="preview()" if.bind="!buildingPreview"
-                            disabled.bind="canPublish"><span class="glyphicon glyphicon-eye-open"></span> Preview Story
-                    </button>
-                    <button class="btn btn-danger pull-right" disabled if.bind="buildingPreview"><span
-                            class="glyphicon glyphicon-refresh"></span> Requesting Preview
-                    </button>
+                    <p>
+                        <button class="btn btn-primary btn-block" click.delegate="preview()" if.bind="!buildingPreview"
+                                disabled.bind="canPublish"><span class="glyphicon glyphicon-eye-open"></span> Preview
+                            Story
+                        </button>
+                        <button class="btn btn-danger btn-block" disabled if.bind="buildingPreview"><span
+                                class="glyphicon glyphicon-refresh"></span> Requesting Preview
+                        </button>
+                    </p>
                 </div>
             </div>
-            <br>
             <div class="well" if.bind="results">
                 ${results}
             </div>
-
         </div>
     </div>
 </template>
