@@ -51,10 +51,7 @@ import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
 import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
-import {
-    ChapterMembershipChangedEvent,
-    ChapterMembershipChangedEventAction
-} from "../../resources/events/ChapterMembershipChangedEvent";
+import {ChapterMembershipChangedEvent} from "../../resources/events/ChapterMembershipChangedEvent";
 
 @inject(
     Factory.of(AuthoringLocation),
@@ -260,7 +257,7 @@ export class PageEditFormCustomElement {
     }
 
     @computedFrom('page.unlockedByPagesOperator')
-    get unlockedOperator() : boolean {
+    get unlockedOperator(): boolean {
         return this.page.unlockedByPagesOperator == "and";
     }
 
