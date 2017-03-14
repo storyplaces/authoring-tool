@@ -56,7 +56,7 @@
                     <label for="name">Chapter Name:
                         <information-icon help-text="The title of the chapter"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="chapter.name" scroll-on-edit>
+                    <input type="text" class="form-control" id="name" value.bind="chapter.name & validate:rules" scroll-on-edit>
                 </div>
                 <div class="form-group">
                     <label>Chapter Colour:
@@ -99,7 +99,7 @@
                             <information-icon
                                     help-text="Are all other chapters locked when this chapter is entered?"></information-icon>
                         </label>
-                        <toggle-switch checked.bind="chapter.locksAllOtherChapters" off="No" on="Yes"
+                        <toggle-switch checked.bind="chapter.locksAllOtherChapters" off="No" on="Yes" colourise="yes-no"
                                        change.delegate="setDirty()"></toggle-switch>
                         <br/>
                         <div hidden.bind="chapter.locksAllOtherChapters">

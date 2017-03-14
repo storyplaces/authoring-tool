@@ -36,17 +36,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, computedFrom, bindingMode} from "aurelia-framework";
+import {bindable, inject, computedFrom, bindingMode, Factory, BindingEngine, Disposable} from "aurelia-framework";
 import {AuthoringPage} from "../../resources/models/AuthoringPage";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import "typeahead.js";
-import {BindingSignaler} from "aurelia-templating-resources";
 import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
 import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
+import {ValidationControllerFactory, ValidationController, ValidationRules, validateTrigger} from "aurelia-validation";
+import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 
 
-@inject(StoryLookup, BindingSignaler)
+@inject(StoryLookup,
+    ValidationControllerFactory,
+    Factory.of(BootstrapValidationRenderer),
+    BindingEngine)
 export class ChapterEditFormCustomElement {
     @bindable chapter: AuthoringChapter;
     @bindable story: AuthoringStory;
@@ -58,15 +62,29 @@ export class ChapterEditFormCustomElement {
     private availablePages: Array<MutableListAvailableItem>;
     private availableUnlockPages: Array<MutableListAvailableItem>;
     private availableLockChapters: Array<MutableListAvailableItem>;
+    private validationController: ValidationController;
+    private rules;
+    private valid:boolean;
+    private errorSub: Disposable;
+
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
 
-    constructor(private storyLookup: StoryLookup) {
-
+    constructor(private storyLookup: StoryLookup,
+                private controllerFactory: ValidationControllerFactory,
+                private validationRendererFactory: () => BootstrapValidationRenderer,
+                private bindingEngine: BindingEngine
+    ) {
+        this.setupValidation()
     }
 
     attached() {
         this.dirty = false;
+
+        this.validationController.validate().then(() => {
+            this.calculateIfValid();
+        });
+
 
         this.makeAvailablePages();
         this.makeAvailableUnlockPages();
@@ -74,6 +92,10 @@ export class ChapterEditFormCustomElement {
     }
 
     detached() {
+        if (this.errorSub) {
+            this.errorSub.dispose();
+            this.errorSub = undefined;
+        }
     }
 
 
@@ -151,4 +173,30 @@ export class ChapterEditFormCustomElement {
     setDirty() {
         this.dirty = true;
     }
+
+    /*** VALIDATION ***/
+
+    private setupValidation() {
+        this.rules = this.validationRules();
+
+        this.validationController = this.controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(this.validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
+        this.valid = true;
+
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(() => {
+            this.calculateIfValid();
+        });
+    }
+
+    private calculateIfValid() {
+        this.valid = (this.validationController.errors.length == 0);
+    }
+
+    private validationRules() {
+        return ValidationRules
+            .ensure((chapter: AuthoringChapter) => chapter.name).displayName("Chapter Name").required().maxLength(255)
+            .rules;
+    }
+
 }
