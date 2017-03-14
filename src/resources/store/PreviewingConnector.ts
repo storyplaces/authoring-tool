@@ -36,28 +36,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory, NewInstance} from "aurelia-framework";
+import {inject, NewInstance} from "aurelia-framework";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {AuthoringStory} from "../models/AuthoringStory";
-import {PublishRequest} from "../models/PublishRequest";
-import {PreviewRequest} from "../models/PreviewRequest";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(PreviewRequest))
+@inject(NewInstance.of(StoryPlacesAPI))
 export class PreviewingConnector {
 
     private _numberOfNetworkConnections;
     private _serverOK: boolean;
 
-    constructor(private api: StoryPlacesAPI, private previewRequestFactory: (story: AuthoringStory) => PreviewRequest) {
-        api.path = "/authoring/preview/";
+    constructor(private api: StoryPlacesAPI) {
+        api.path = "/authoring/story/";
         this._numberOfNetworkConnections = 0;
     }
 
     previewStory(story: AuthoringStory): Promise<string | boolean> {
-        let request = this.previewRequestFactory(story);
 
         this._numberOfNetworkConnections++;
-        return this.api.save(request)
+        return this.api.trigger(story, 'preview')
             .then(response => response.json() as any)
             .then(jsonObject => {
                 this._numberOfNetworkConnections--;

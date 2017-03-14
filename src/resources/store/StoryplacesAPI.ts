@@ -69,4 +69,17 @@ export class StoryPlacesAPI {
             body: JSON.stringify(object)
         });
     }
+
+    trigger(object: Identifiable, event: string): Promise<Response> {
+        if (object.id == undefined) {
+            throw new Error("Unable to trigger event as no object ID passed");
+        }
+
+        let path = `${this.path}${object.id}/${event}`;
+
+        return this.client.fetch(path, {
+            method: 'post',
+            body: JSON.stringify({id: object.id})
+        });
+    }
 }

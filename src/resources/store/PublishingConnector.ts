@@ -39,24 +39,21 @@
 import {inject, Factory, NewInstance} from "aurelia-framework";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {AuthoringStory} from "../models/AuthoringStory";
-import {PublishRequest} from "../models/PublishRequest";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(PublishRequest))
+@inject(NewInstance.of(StoryPlacesAPI))
 export class PublishingConnector {
 
     private _numberOfNetworkConnections;
     private _serverOK: boolean;
 
-    constructor(private api: StoryPlacesAPI, private publishRequestFactory: (story: AuthoringStory) => PublishRequest) {
-        api.path = "/authoring/publish/";
+    constructor(private api: StoryPlacesAPI, ) {
+        api.path = "/authoring/story/";
         this._numberOfNetworkConnections = 0;
     }
 
     publishStory(story: AuthoringStory): Promise<string | boolean> {
-        let request = this.publishRequestFactory(story);
-
         this._numberOfNetworkConnections++;
-        return this.api.save(request)
+        return this.api.trigger(story, 'publish')
             .then(response => response.json() as any)
             .then(jsonObject => {
                 this._numberOfNetworkConnections--;
