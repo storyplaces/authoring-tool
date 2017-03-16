@@ -75,7 +75,8 @@ export class AuthoringLocation extends BaseModel {
             id: this.id,
             lat: this.lat,
             long: this.long,
-            radius: this.radius
+            radius: this.radius,
+            type: "circle"
         }
     }
 
