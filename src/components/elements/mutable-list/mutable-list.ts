@@ -100,11 +100,12 @@ export class MutableListCustomElement {
         ($(this.lookup as any) as any).typeahead({
                 hint: false,
                 highlight: false,
-                minLength: 1
+                minLength: 0
             },
             {
                 name: 'typeAhead',
                 display: 'name',
+                limit: 5,
                 templates: {
                     empty: '<div class="tt-no-suggestion"><strong>Sorry, there are no matches</strong></div>',
                     suggestion: (item: MutableListAvailableItem) => item.suggestion
