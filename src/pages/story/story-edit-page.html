@@ -48,7 +48,7 @@
 
     <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids.two-way="pagesInChapter"></map>
+            <map story.two-way="story" active-page-ids.two-way="selectedChapterPageIds"></map>
         </div>
         <div slot="content-pane" class="fill-space">
             <story-tabs selected="pages" story-id.bind="story.id"></story-tabs>
@@ -62,7 +62,8 @@
                         <span class="glyphicon glyphicon-filter"></span>
 
                         <select class="chapter-filter form" change.delegate="selectedChapterChanged()" value.bind="selectedChapterId">
-                            <option value="">All Chapters</option>
+                            <option value="">All Pages</option>
+                            <option value="loose-pages">Loose Pages</option>
                             <option repeat.for="chapter of story.chapters.all" value.bind="chapter.id">${chapter.name}</option>
                         </select>
 

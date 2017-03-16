@@ -78,6 +78,18 @@ export class StoryEditPage {
     }
 
     selectedChapterChanged() {
+        if (this.selectedChapterId == "") {
+            this.selectedChapterPageIds = this.story.pages.all.map(page => page.id);
+            return;
+        }
+
+        if (this.selectedChapterId == "loose-pages") {
+            let pagesInChapters = [];
+            this.story.chapters.all.forEach(chapter => {pagesInChapters = pagesInChapters.concat(chapter.pageIds)});
+            this.selectedChapterPageIds = this.story.pages.all.filter(page => pagesInChapters.indexOf(page.id) == -1).map(page => page.id);
+            return;
+        }
+
         let selectedAuthoringChapter = this.story.chapters.get(this.selectedChapterId);
 
         if (selectedAuthoringChapter) {
@@ -85,9 +97,8 @@ export class StoryEditPage {
             return;
         }
 
-        let result = [];
-        this.story.chapters.all.forEach(chapter => {result = result.concat(chapter.pageIds)});
-        this.selectedChapterPageIds = Array.from(new Set(result));
+        this.selectedChapterPageIds = [];
+        return;
     }
 
     private hasData(): boolean {

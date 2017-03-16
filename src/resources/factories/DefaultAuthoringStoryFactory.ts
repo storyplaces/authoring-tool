@@ -63,16 +63,16 @@ export class DefaultAuthoringStoryFactory {
             tags: [],
             pages: [],
             chapters: [
-                {
-                    "id": "loosePages",
-                    "name": "Loose Pages",
-                    "colour": "blue",
-                    "pageIds": [],
-                    "unlockedByPageIds": [],
-                    "unlockedByPageOperator": "and",
-                    "locksAllOtherChapters": true,
-                    "locksChapterIds": []
-                }
+                // {
+                //     "id": "loosePages",
+                //     "name": "Loose Pages",
+                //     "colour": "blue",
+                //     "pageIds": [],
+                //     "unlockedByPageIds": [],
+                //     "unlockedByPageOperator": "and",
+                //     "locksAllOtherChapters": true,
+                //     "locksChapterIds": []
+                // }
             ],
             locations: [],
             version: 1
