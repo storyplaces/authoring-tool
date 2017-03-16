@@ -47,7 +47,7 @@
 
     <two-pane-template map-hidden.bind="mapHidden">
         <div slot="map-pane" class="fill-space">
-            <map story.two-way="story" active-page-ids="story.chapters.get('1').pageIds"></map>
+            <map story.two-way="story"></map>
         </div>
         <div slot="content-pane" class="fill-space">
             <story-tabs selected="details" story-id.bind="story.id"></story-tabs>
