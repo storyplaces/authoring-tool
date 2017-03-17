@@ -36,15 +36,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, computedFrom} from "aurelia-framework";
+import {bindable, computedFrom, autoinject} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
-/**
- * Created by andy on 28/11/16.
- */
+import {Router} from "aurelia-router";
 
+@autoinject()
 export class StoryChapterList {
 
     @bindable story: AuthoringStory;
+
+    constructor(private router: Router) {}
 
     @computedFrom('story.id')
     get loosePages() {
@@ -53,4 +54,8 @@ export class StoryChapterList {
         return this.story.pages.all.filter(page => pagesInChapters.indexOf(page.id) == -1);
     }
 
+    clickLink(event, page): void {
+        event.stopPropagation();
+        this.router.navigateToRoute("page-edit", {storyId: this.story.id, pageId: page.id});
+    }
 }
