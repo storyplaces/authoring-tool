@@ -61,19 +61,17 @@ export class DefaultAuthoringStoryFactory {
             modifiedDate: now,
             authorIds: [this.authenticator.userId],
             tags: [],
-            pages: [],
-            chapters: [
-                // {
-                //     "id": "loosePages",
-                //     "name": "Loose Pages",
-                //     "colour": "blue",
-                //     "pageIds": [],
-                //     "unlockedByPageIds": [],
-                //     "unlockedByPageOperator": "and",
-                //     "locksAllOtherChapters": true,
-                //     "locksChapterIds": []
-                // }
-            ],
+            pages: [{
+                "id": "defaultPage",
+                "name": "Sample Page",
+                "content": "This is where the text content for the page will go.",
+                "pageHint": "This is a text hint for the location of this page. This gives the reader a clue about where they should go to read this page.",
+                "allowMultipleReadings": false,
+                "finishesStory": false,
+                "unlockedByPageIds": [],
+                "unlockedByPagesOperator": "or"
+            }],
+            chapters: [],
             locations: [],
             version: 1
         }

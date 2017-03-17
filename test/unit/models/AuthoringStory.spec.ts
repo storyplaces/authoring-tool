@@ -246,6 +246,6 @@ describe("Story model", () => {
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authors":[{"id":"author"}],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location"}],"tags":["tag"]}');
+        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authors":[{"id":"author"}],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"]}');
     });
 });
