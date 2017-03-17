@@ -39,6 +39,13 @@
 
 <template>
     <require from="../chapter/chapter-list-item"></require>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h4>Loose Pages</h4>
+            <span role="button" class="label label-default page-label" repeat.for="page of loosePages"
+                  route-href="route: page-edit; params.bind: {storyId: story.id, pageId: page.id}">${page.name}</span>
+        </div>
+    </div>
     <ul class="list-group">
         <chapter-list-item repeat.for="chapter of story.chapters.all" chapter.bind="chapter" story.bind="story"></chapter-list-item>
     </ul>
