@@ -36,7 +36,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 import {autoinject} from "aurelia-framework";
 import {AuthoringLocation} from "../models/AuthoringLocation";
@@ -58,7 +57,7 @@ export class StoryLookup {
         });
     }
 
-    public getLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
+    public getLocationForPageId(story: AuthoringStory, pageId: string): AuthoringLocation {
         let page = story.pages.get(pageId);
         if (!page) {
             return undefined;
@@ -67,7 +66,7 @@ export class StoryLookup {
         return story.locations.get(page.locationId);
     }
 
-    public getCloneLocationForPageId(story: AuthoringStory, pageId: string) : AuthoringLocation{
+    public getCloneLocationForPageId(story: AuthoringStory, pageId: string): AuthoringLocation {
         let page = story.pages.get(pageId);
         if (!page) {
             return undefined;
@@ -92,15 +91,25 @@ export class StoryLookup {
     removePageIdFromChapterId(story: AuthoringStory, pageId: string, chapterId: string) {
         let chapter = story.chapters.get(chapterId);
 
+        if (!chapter) {
+            return;
+        }
+
         let index = chapter.pageIds.indexOf(pageId);
 
         if (index != -1) {
-            chapter.pageIds.splice(index,1);
+            chapter.pageIds.splice(index, 1);
         }
     }
 
     addPageIdToChapterId(story: AuthoringStory, pageId: string, chapterId: string) {
+        let page = story.pages.get(pageId);
         let chapter = story.chapters.get(chapterId);
+
+        if (!chapter || !page) {
+            return;
+        }
+
         let index = chapter.pageIds.indexOf(pageId);
 
         if (index == -1) {

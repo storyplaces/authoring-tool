@@ -41,102 +41,275 @@ import {StoryLookup} from "../../../src/resources/utilities/StoryLookup";
 import {AuthoringStory} from "../../../src/resources/models/AuthoringStory";
 import {AuthoringChapterCollection} from "../../../src/resources/collections/AuthoringChapterCollection";
 import {AuthoringStoryConnector} from "../../../src/resources/store/AuthoringStoryConnector";
-import {AuthoringChapter} from "../../../src/resources/models/AuthoringChapter";
 import {AuthoringPageCollection} from "../../../src/resources/collections/AuthoringPageCollection";
+import {AuthoringLocationCollection} from "../../../src/resources/collections/AuthoringLocationCollection";
 describe("StoryLookup", () => {
 
     let container: Container = new Container().makeGlobal();
+    let story: AuthoringStory;
+
+    let storyLookup: StoryLookup;
+    let storyConnector: AuthoringStoryConnector;
+
+    let testLocations: any;
+    let testPages: any;
+    let testChapters: any;
 
     function resolve(object: Function, data?: any) {
         return container.invoke(object, [data]);
     }
 
-    describe("getChaptersForPageId", () => {
-        let mockStory: AuthoringStory;
-        let storyConnector: AuthoringStoryConnector;
-        let storyLookup: StoryLookup;
+    beforeEach(() => {
+        testChapters = resolve(AuthoringChapterCollection, [
+            {id: "c1", name: "Chapter 1", pageIds: ["p1"]},
+            {id: "c2", name: "Chapter 2", pageIds: ["p1", "p2"]},
+            {id: "c3", name: "Chapter 3", pageIds: [], locationId: ""}
+        ]);
 
-        let connectorSpy: jasmine.Spy;
-        beforeEach(() => {
-            mockStory = {} as AuthoringStory;
-            storyConnector = resolve(AuthoringStoryConnector);
-            connectorSpy = spyOn(storyConnector, 'byId').and.returnValue(mockStory);
-            storyLookup = new StoryLookup(storyConnector);
+        testPages = resolve(AuthoringPageCollection, [
+            {id: "p1", name: "Page 1", locationId: "l1"},
+            {id: "p2", name: "Page 2", locationId: "l2"},
+            {id: "p3", name: "Page 3"}
+        ]);
+
+        testLocations = resolve(AuthoringLocationCollection, [
+            {id: "l1", lat: 1, long: 1, radius: 1},
+            {id: "l2", lat: 2, long: 2, radius: 2},
+            {id: "l3", lat: 3, long: 3, radius: 3}
+        ]);
+
+        story = resolve(AuthoringStory, {
+            pages: testPages,
+            chapters: testChapters,
+            locations: testLocations,
         });
 
+        storyConnector = resolve(AuthoringStoryConnector);
+        storyLookup = new StoryLookup(storyConnector);
+    });
+
+    afterEach(() => {
+        story = undefined;
+    });
+
+    describe("getChaptersForPageId", () => {
         it("returns an empty array if there are no chapters in a story", () => {
-            mockStory.chapters = resolve(AuthoringChapterCollection);
-            let result = storyLookup.getChaptersForPageId("storyId", "pageId");
+            story.chapters = resolve(AuthoringChapterCollection, []);
+            let result = storyLookup.getChaptersForPageId(story, "p1");
             expect(result).toEqual([]);
         });
 
         it("returns an empty array if no chapters contain this page", () => {
-            mockStory.chapters = resolve(AuthoringChapterCollection, [resolve(AuthoringChapter, {
-                id: "123",
-                pageIds: []
-            }), resolve(AuthoringChapter, {id: "456", pageIds: []})]);
-            let result = storyLookup.getChaptersForPageId("storyId", "pageId");
-            expect(result).toEqual([]);
-        });
-
-        it("returns an empty array if the story does not exist", () => {
-            connectorSpy.and.returnValue(undefined);
-            let result = storyLookup.getChaptersForPageId("storyId", "pageId");
+            let result = storyLookup.getChaptersForPageId(story, "p3");
             expect(result).toEqual([]);
         });
 
         it("returns an array with chapters which contain this page", () => {
-            let testChapter = resolve(AuthoringChapter, {
-                id: "123",
-                name: "name",
-                colour: "blue",
-                pageIds: ["pageId"],
-                unlockedByPageIds: [],
-                unlockedByPagesOperator: "and",
-                locksAllOtherChapters: false,
-                locksChapters: []
-            })
-            mockStory.chapters = resolve(AuthoringChapterCollection, [testChapter]);
-            let result = storyLookup.getChaptersForPageId("storyId", "pageId");
-            expect(result).toEqual([testChapter]);
-        })
+            let result = storyLookup.getChaptersForPageId(story, "p1");
+            expect(result).toEqual([testChapters.get("c1"), testChapters.get("c2")]);
+        });
+    });
 
+    describe("getLocationForPageId", () => {
+        it("returns undefined if the page doesn't exist", () => {
+            let result = storyLookup.getLocationForPageId(story, "unknown");
+            expect(result).toBeUndefined();
+        });
+
+        it("returns undefined if there is no location associated with it", () => {
+            let result = storyLookup.getLocationForPageId(story, "p3");
+            expect(result).toBeUndefined();
+        });
+
+        it("returns a Location record if the page has a location associated with it", () => {
+            let result = storyLookup.getLocationForPageId(story, "p2");
+            expect(result).toBe(testLocations.get("l2"));
+        });
+    });
+
+    describe("getCloneLocationForPageId", () => {
+        it("returns undefined if the page doesn't exist", () => {
+            let result = storyLookup.getCloneLocationForPageId(story, "unknown");
+            expect(result).toBeUndefined();
+        });
+
+        it("returns undefined if there is no location associated with it", () => {
+            let result = storyLookup.getCloneLocationForPageId(story, "p3");
+            expect(result).toBeUndefined();
+        });
+
+        it("returns a Location record if the page has a location associated with it", () => {
+            let result = storyLookup.getCloneLocationForPageId(story, "p2");
+            expect(result).not.toBe(testLocations.get("l2"));
+        });
     });
 
     describe("deletePageFromStory", () => {
-        let mockStory: AuthoringStory;
-        let storyConnector: AuthoringStoryConnector;
-        let storyLookup: StoryLookup;
-        let byIdSpy: jasmine.Spy;
-
         beforeEach(() => {
-            mockStory = {} as AuthoringStory;
-            storyConnector = resolve(AuthoringStoryConnector);
-            byIdSpy = spyOn(storyConnector, 'byId').and.returnValue(mockStory);
-            spyOn(storyConnector, 'save');
-            storyLookup = new StoryLookup(storyConnector);
+            spyOn(storyConnector, 'save').and.stub();
         });
 
-        it("calls remove on the AuthoringPagesCollection and removeReferencesToPage on the AuthoringChapterCollection", () => {
-            mockStory.pages = resolve(AuthoringPageCollection);
-            mockStory.chapters = resolve(AuthoringChapterCollection);
+        it("removes a page and the references to it from a chapter when the page exists and is a member of a single chapter", () => {
+            storyLookup.deletePageFromStory(story, "p2");
 
-            spyOn(mockStory.pages, "remove");
-            spyOn(mockStory.chapters, "removeReferencesToPage");
+            expect(storyConnector.save).toHaveBeenCalledWith(story);
+            expect(story.pages.length()).toEqual(2, "Incorrect pages length");
+            expect(story.pages.get("p2")).toBeUndefined();
 
-            storyLookup.deletePageFromStory("storyId", "pageId");
-
-            expect(mockStory.pages.remove).toHaveBeenCalledWith("pageId");
-            expect(mockStory.chapters.removeReferencesToPage).toHaveBeenCalledWith("pageId");
-            expect(storyConnector.save).toHaveBeenCalledWith(mockStory);
-
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
         });
 
-        it("throws an error if the story with given id does not exist", () => {
-            byIdSpy.and.returnValue(undefined);
 
-            expect(() => {storyLookup.deletePageFromStory("storyId", "pageId")}).toThrowError("Story with id storyId does not exist.");
+        it("removes a page and the references to it from a chapter when the page exists and is a member of multiple chapters", () => {
+            storyLookup.deletePageFromStory(story, "p1");
 
+            expect(storyConnector.save).toHaveBeenCalledWith(story);
+            expect(story.pages.length()).toEqual(2, "Incorrect pages length");
+            expect(story.pages.get("p1")).toBeUndefined();
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(0);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it ("does nothing when the page exists but isn't part of a chapter", () => {
+            storyLookup.deletePageFromStory(story, "p3");
+
+            expect(storyConnector.save).toHaveBeenCalledWith(story);
+            expect(story.pages.length()).toEqual(2, "Incorrect pages length");
+            expect(story.pages.get("p3")).toBeUndefined();
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it ("does nothing when the page doesn't exist", () => {
+            storyLookup.deletePageFromStory(story, "unknown");
+
+            expect(storyConnector.save).toHaveBeenCalledWith(story);
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+    });
+
+    describe("pageIdsForStory", () => {
+        it("returns an array with the ids for all the pages if there are pages", () => {
+            let result = storyLookup.pageIdsForStory(story);
+            expect(result).toContain("p1");
+            expect(result).toContain("p2");
+            expect(result).toContain("p3");
+        });
+
+        it("returns an empty array if no pages are defined", () => {
+            story.pages = resolve(AuthoringPageCollection, []);
+            let result = storyLookup.pageIdsForStory(story);
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe("removePageIdFromChapterId", () => {
+        it("will remove the page from the chapter if the page is a member of the chapter", () => {
+            storyLookup.removePageIdFromChapterId(story, "p1", "c2");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+
+            expect(story.chapters.get("c2").pageIds).toEqual(["p2"]);
+        });
+
+        it("will remove the page from the chapter if every thing exists but the page is not a member of the chapter", () => {
+            storyLookup.removePageIdFromChapterId(story, "p2", "c1");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if the chapter doesn't exist", () => {
+            storyLookup.removePageIdFromChapterId(story, "p1", "c4");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if the page doesn't exist", () => {
+            storyLookup.removePageIdFromChapterId(story, "p4", "c1");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if nether the page or chapter exist", () => {
+            storyLookup.removePageIdFromChapterId(story, "p4", "c4");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+    });
+
+    describe("addPageIdToChapterId", () => {
+        it("will add the page to the chapter if the page is not a member of the chapter", () => {
+            storyLookup.addPageIdToChapterId(story, "p2", "c1");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+
+            expect(story.chapters.get("c1").pageIds).toContain("p1");
+            expect(story.chapters.get("c1").pageIds).toContain("p2");
+        });
+
+        it("will do nothing if the page is already a member of the chapter", () => {
+            storyLookup.addPageIdToChapterId(story, "p1", "c1");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if the chapter doesn't exist", () => {
+            storyLookup.addPageIdToChapterId(story, "p1", "c4");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if the page doesn't exist", () => {
+            storyLookup.addPageIdToChapterId(story, "p4", "c1");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
+        });
+
+        it("will do nothing if nether the page or chapter exist", () => {
+            storyLookup.addPageIdToChapterId(story, "p4", "c4");
+            expect(story.pages.length()).toEqual(3, "Incorrect pages length");
+
+            expect(story.chapters.get("c1").pageIds.length).toEqual(1);
+            expect(story.chapters.get("c2").pageIds.length).toEqual(2);
+            expect(story.chapters.get("c3").pageIds.length).toEqual(0);
         });
     });
 });
