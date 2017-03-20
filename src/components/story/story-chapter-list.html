@@ -43,7 +43,7 @@
         <li class="list-group-item grabbable-list-item">
             <div class="grabbable-list-item-dummy-bar" click.delegate="select()"></div>
             <div class="grabbable-list-item-text">
-                <h4>Loose Pages</h4>
+                <h4>Loose Pages <small>(Pages not in a chapter)</small></h4>
                 <p class="grabbable-list-item-text-body">
                 <span role="button" class="label label-default page-label" repeat.for="page of loosePages"
                       click.trigger="clickLink($event, page)">${page.name}</span>
