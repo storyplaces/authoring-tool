@@ -48,6 +48,7 @@ export class MutableListCustomElement {
     private lookup: HTMLInputElement;
     private itemsToDisplay: Array<MutableListAvailableItem>;
     private itemsToSearch: Array<MutableListAvailableItem>;
+    private currentFilteredCount: number;
 
     constructor(private element: Element) {
     }
@@ -63,6 +64,16 @@ export class MutableListCustomElement {
     recalculateLists() {
         this.itemsToDisplay = (this.availableItems || []).filter(item => (this.selectedItems || []).indexOf(item.id) !== -1);
         this.itemsToSearch = (this.availableItems || []).filter(item => (this.selectedItems || []).indexOf(item.id) == -1);
+        this.forceTypeaheadRefresh();
+    }
+
+    // Insert and then immediately delete a character to refresh the typeahead lists.
+    // This is required because on deletion of an item from the list typeahead does not automatically reload the
+    // suggestions and typing and removing a character forces it to do so.
+    // Ideally typeahead would contain a refresh method in its API, but since it does not this workaround is in
+    // effect.
+    private forceTypeaheadRefresh() {
+        ($(this.lookup as any) as any).typeahead('val', "z").typeahead('val', "");
     }
 
     deleteItem(event: CustomEvent) {
@@ -108,11 +119,17 @@ export class MutableListCustomElement {
                 limit: 5,
                 templates: {
                     empty: '<div class="tt-no-suggestion"><strong>Sorry, there are no matches</strong></div>',
-                    suggestion: (item: MutableListAvailableItem) => item.suggestion
+                    suggestion: (item: MutableListAvailableItem) => item.suggestion,
+                    footer: (context) => {
+                        let furtherResultsCount = this.currentFilteredCount - 5;
+                        return furtherResultsCount > 0 ? `<div class="tt-no-suggestion">${furtherResultsCount} more available...</div>` : "";
+                    }
                 },
                 source: (query, cb) => {
                     let substrRegex = new RegExp(query, 'i');
-                    cb(this.itemsToSearch.filter(item => substrRegex.test(item.search)));
+                    let filter = this.itemsToSearch.filter(item => substrRegex.test(item.search));
+                    this.currentFilteredCount = filter.length;
+                    cb(filter);
                 }
             }
         ).on('typeahead:selected',
@@ -131,8 +148,8 @@ export class MutableListCustomElement {
             return new CustomEvent('change', {bubbles: true});
         }
 
-        let deleteEvent = document.createEvent('CustomEvent');
-        deleteEvent.initCustomEvent('change', true, true, {});
-        return deleteEvent;
+        let customEvent = document.createEvent('CustomEvent');
+        customEvent.initCustomEvent('change', true, true, {});
+        return customEvent;
     }
 }
