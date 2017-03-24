@@ -59,7 +59,7 @@ export class PreviewingConnector {
             .then(jsonObject => {
                 this._numberOfNetworkConnections--;
                 this._serverOK = true;
-                return jsonObject.message || false;
+                return jsonObject.id || false;
             })
             .catch(() => {
                 this._numberOfNetworkConnections--;

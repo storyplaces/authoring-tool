@@ -100,7 +100,6 @@ export class StoryEditPage {
 
     private cloneStory() {
         this.story = this.storyConnector.cloneById(this.storyId);
-        // this.storyModified = true;
     }
 
     private hasData(): boolean {
