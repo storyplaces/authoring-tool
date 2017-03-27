@@ -37,6 +37,8 @@ export class Config {
 
     private _config = {
         server: "/storyplaces",
+        reading_tool_url: "",
+        google_oauth_client_id: ""
     };
 
     read(key: string) {

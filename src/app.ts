@@ -37,6 +37,7 @@ import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
 import {AuthoringStoryConnector} from "./resources/store/AuthoringStoryConnector";
 import {UserConfig} from "./resources/store/UserConfig";
+import {AuthenticateStep} from 'aurelia-authentication';
 
 @autoinject()
 export class App {
@@ -48,25 +49,30 @@ export class App {
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'StoryPlaces';
 
+        config.addPipelineStep('authorize', AuthenticateStep);
+
         config.map([
             {route: '/', name: 'home', moduleId: 'pages/static/home', title: 'Home'},
 
             {route: '/help', name: 'help', moduleId: 'pages/static/help', title: 'Help'},
             {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
 
-            {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list'},
-            {route: '/story/new', moduleId: 'pages/story/story-create-page', title: 'New Story', name: 'story-create'},
-            {route: '/story/:storyId/details', moduleId: 'pages/story/story-details-page', title: 'Story Details', name: 'story-details'},
+            {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list', auth: true },
+            {route: '/story/new', moduleId: 'pages/story/story-create-page', title: 'New Story', name: 'story-create', auth: true },
+            {route: '/story/:storyId/details', moduleId: 'pages/story/story-details-page', title: 'Story Details', name: 'story-details', auth: true },
 
 
-            {route: '/story/:storyId/chapters', moduleId: 'pages/story/story-chapters-page', title: 'Story Chapters', name: 'story-chapters'},
-            {route: '/story/:storyId/chapter/:chapterId', moduleId: 'pages/chapter/chapter-edit-page', title: 'Edit Chapter', name: 'chapter-edit'},
-            {route: '/story/:storyId/chapter/new', moduleId: 'pages/chapter/chapter-edit-page', title: 'New Chapter', name: 'chapter-new'},
+            {route: '/story/:storyId/chapters', moduleId: 'pages/story/story-chapters-page', title: 'Story Chapters', name: 'story-chapters', auth: true },
+            {route: '/story/:storyId/chapter/:chapterId', moduleId: 'pages/chapter/chapter-edit-page', title: 'Edit Chapter', name: 'chapter-edit', auth: true },
+            {route: '/story/:storyId/chapter/new', moduleId: 'pages/chapter/chapter-edit-page', title: 'New Chapter', name: 'chapter-new', auth: true },
 
 
-            {route: '/story/:storyId/pages', moduleId: 'pages/story/story-edit-page', title: 'Story Pages', name: 'story-pages'},
-            {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit'},
-            {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new'},
+            {route: '/story/:storyId/pages', moduleId: 'pages/story/story-edit-page', title: 'Story Pages', name: 'story-pages', auth: true },
+            {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit', auth: true },
+            {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new', auth: true },
+
+            {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
+            {route: '/logout', moduleId: 'pages/auth/logout', title: 'Log Out', name: 'logout', auth: true },
         ]);
 
         this.router = router;
