@@ -53,6 +53,8 @@ export class StoryEditPage {
     private story: AuthoringStory;
     private dirty: boolean;
     private valid: boolean;
+    private saving: boolean = false;
+    private saved: boolean = false;
 
     constructor(private storyConnector: AuthoringStoryConnector,
                 private storyFactory: (data?) => AuthoringStory,
@@ -113,9 +115,12 @@ export class StoryEditPage {
             return;
         }
 
+        this.saving = true;
+        this.saved = false;
         this.storyConnector.save(this.story).then(() => {
             this.dirty = false;
-            this.router.navigateToRoute("story-pages", {storyId: this.story.id});
+            this.saving = false;
+            this.saved = true;
         });
     }
 }

@@ -122,7 +122,7 @@ export class StoryDetailsForm {
     }
 
     @computedFrom('authoringStoryConnector.hasUnSyncedStories')
-    get canPublish(): boolean {
+    get canNotPublish(): boolean {
         return this.authoringStoryConnector.hasUnSyncedStories;
     }
 
