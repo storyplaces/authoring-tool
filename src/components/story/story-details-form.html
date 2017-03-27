@@ -108,7 +108,12 @@
                 </div>
             </div>
             <div class="well" if.bind="results">
-                ${results}
+                <div if.bind="!isPreviewLink">${results}</div>
+                <div if.bind="isPreviewLink">
+                    The following link is a one-time preview link, which will expire at midnight.
+                    <br/>
+                    <a href.bind="results" target="_blank">${results}</a>
+                </div>
             </div>
             <div class="well" if.bind="dirty || canNotPublish">
                 <span class="text-warning">Please save any changes before you preview or publish your story and ensure the changes are synchronised with the server.</span>

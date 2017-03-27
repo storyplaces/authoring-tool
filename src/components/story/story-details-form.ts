@@ -49,8 +49,9 @@ import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValid
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {PublishingConnector} from "../../resources/store/PublishingConnector";
 import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
+import {Config} from "../../config/Config";
 
-@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector)
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector, Config)
 export class StoryDetailsForm {
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
@@ -60,17 +61,19 @@ export class StoryDetailsForm {
     private errorSub: Disposable;
     public rules: Rule<AuthoringStory, any>[][];
 
-    private results: string = "";
+    private _results: string = "";
 
     private publishing: boolean = false;
     private buildingPreview: boolean = false;
+    private isPreviewLink: boolean = false;
 
     constructor(private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
                 private bindingEngine: BindingEngine,
                 private authoringStoryConnector: AuthoringStoryConnector,
                 private publishingConnector: PublishingConnector,
-                private previewConnector: PreviewingConnector) {
+                private previewConnector: PreviewingConnector,
+                private config: Config) {
         this.setupValidation();
     }
 
@@ -146,7 +149,8 @@ export class StoryDetailsForm {
             this.buildingPreview = false;
 
             if (typeof result !== 'boolean') {
-                this.results = result;
+                this.results = this.makePreviewLink(result);
+                this.isPreviewLink = true;
                 return
             }
 
@@ -154,6 +158,21 @@ export class StoryDetailsForm {
         });
 
     }
+
+    private makePreviewLink(id: string) {
+        let previewUrl = this.config.read('reading_tool_url') + 'story/' + id;
+        return previewUrl;
+    }
+
+    set results(value: string){
+        this._results = value;
+        this.isPreviewLink = false;
+    }
+
+    get results() {
+        return this._results;
+    }
+
 }
 
 
