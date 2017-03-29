@@ -73,7 +73,7 @@ export class App {
     }
 
     attached() {
-        this.storyConnector.sync();
+
     }
 
 }

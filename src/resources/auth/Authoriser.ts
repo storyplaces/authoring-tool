@@ -36,16 +36,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import * as jwtDecode from "jwt-decode";
 
-export class Authenticator {
-    private _userId = "ABCDEF1234";
-    private _jwt = "ThisIsARubbishJWT";
+export class Authoriser {
 
-    get userId() {
+    private _userId: string;
+    private _userPrivileges: Array<string>;
+
+    constructor() {
+        this._userId = undefined;
+        this._userPrivileges = [];
+    }
+
+    public parseJwt(jwt: string) {
+        let payload = jwtDecode(jwt);
+        this._userPrivileges = payload.privileges;
+        this._userId = payload.sub;
+    }
+
+    get userId(): string {
         return this._userId;
     }
 
-    get jwt() {
-        return this._jwt;
+    public hasPrivilege(privilege: string): boolean {
+        return (this._userPrivileges.indexOf(privilege) != -1);
     }
+
 }

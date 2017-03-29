@@ -36,52 +36,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringStory} from "../models/AuthoringStory";
-import {Authenticator} from "../auth/Authoriser";
 
-@inject(Factory.of(AuthoringStory), Authenticator)
-export class DefaultAuthoringStoryFactory {
+import {AuthoringUser} from "../../resources/models/AuthoringUser";
+export class UserEditPage {
+    private user: AuthoringUser;
 
-    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private authenticator: Authenticator) {
+    constructor() {
     }
 
-    create(): AuthoringStory {
-        return this.authoringStoryFactory(this.defaultStory());
+    canActivate(params): any {
+        this.user = this.userConnector.getCurrentUser();
     }
 
-    private defaultStory(): Object {
-        let now = new Date().toISOString();
 
-        return {
-            title: "New Story",
-            description: "",
-            audience: "general",
-            createdDate: now,
-            modifiedDate: now,
-            authorIds: [this.authenticator.userId],
-            tags: [],
-            pages: [{
-                // "id": "defaultPage",
-                "name": "Start Page",
-                "content": `Edit this page to create the first page in your story.
 
-To help get you started, it is useful to know that your story pages may or may not be pinned to a location on the map. A page pinned to a location can only be read in that location. By default, pages can only be read once, although you can change this.
 
-Pages first appear as 'loose pages'. But if you want, you can organise your pages into chapters. Pages in a chapter are only accessible when that chapter is open - so chapters are a good way of managing progression through your story.
 
-Your start page should always be a 'loose page,' so that it can be read at the beginning of the story. You may choose to have more than one possible start page.
+    private save() {
 
-Enjoy writing your story!`,
-                "pageHint": "Read this page to begin the story",
-                "allowMultipleReadings": false,
-                "finishesStory": false,
-                "unlockedByPageIds": [],
-                "unlockedByPagesOperator": "and"
-            }],
-            chapters: [],
-            locations: [],
-            version: 1
-        }
+    }
+
+    private cancel() {
+
     }
 }

@@ -1,18 +1,16 @@
 /**
  * Created by andy on 25/11/16.
  */
-
-import {HttpClient} from 'aurelia-fetch-client';
-import {autoinject} from 'aurelia-framework';
+import {HttpClient} from "aurelia-fetch-client";
+import {autoinject} from "aurelia-framework";
 import {Identifiable} from "../interfaces/Identifiable";
 import {Config} from "../../config/Config";
-import {Authenticator} from "../auth/Authenticator";
 
 @autoinject()
 export class StoryPlacesAPI {
     protected _path;
 
-    constructor(protected client: HttpClient, protected config: Config, private authenticator: Authenticator) {
+    constructor(protected client: HttpClient, protected config: Config) {
         this.configure()
     }
 
@@ -21,7 +19,6 @@ export class StoryPlacesAPI {
 
         headers['Content-Type'] = "application/json";
         headers['Accept'] = "application/json";
-        //headers['AuthToBeWorkedOut'] = this.authenticator.jwt;
 
         this.client.configure(config => {
             config
@@ -35,7 +32,7 @@ export class StoryPlacesAPI {
 
     set path(path: string) {
         // Add the trailing / if there is not one already
-        if (path.slice(-1) == "/"){
+        if (path.slice(-1) == "/") {
             this._path = path;
         } else {
             this._path = path.concat("/");

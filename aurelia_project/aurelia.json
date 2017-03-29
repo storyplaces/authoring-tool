@@ -169,7 +169,8 @@
             "deps": [
               "jquery"
             ]
-          }
+          },
+          "jwt-decode"
         ]
       }
     ]
