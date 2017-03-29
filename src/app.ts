@@ -37,13 +37,13 @@ import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
 import {AuthoringStoryConnector} from "./resources/store/AuthoringStoryConnector";
 import {UserConfig} from "./resources/store/UserConfig";
-import {AuthenticateStep} from 'aurelia-authentication';
+import {AuthenticateStep, FetchConfig} from 'aurelia-authentication';
 
 @autoinject()
 export class App {
     router: Router;
 
-    constructor(private storyConnector: AuthoringStoryConnector, private userConfig: UserConfig) {
+    constructor(private storyConnector: AuthoringStoryConnector, private userConfig: UserConfig, private fetchConfig: FetchConfig) {
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
@@ -82,4 +82,7 @@ export class App {
 
     }
 
+    activate() {
+        this.fetchConfig.configure();
+    }
 }

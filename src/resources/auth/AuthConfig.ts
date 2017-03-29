@@ -54,7 +54,7 @@ export class AuthConfig {
         expiredRedirect: 1,            // redirect to logoutRedirect after token expiration
         providers: {
             google: {
-                //url: undefined,
+                url: '/storyplaces/auth/google',
                 clientId: this.config.read('google_oauth_client_id')
             }
         },
