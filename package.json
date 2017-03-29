@@ -11,6 +11,8 @@
     "@types/jwt-decode": "^1.4.28",
     "@types/leaflet": "^1.0.41",
     "aurelia-animator-css": "^1.0.0",
+    "aurelia-api": "^3.1.1",
+    "aurelia-authentication": "^3.4.1",
     "aurelia-bootstrapper": "^1.0.0",
     "aurelia-dialog": "1.0.0-beta.3.0.1",
     "aurelia-fetch-client": "^1.1.0",
