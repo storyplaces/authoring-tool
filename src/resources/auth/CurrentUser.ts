@@ -61,7 +61,7 @@ export class CurrentUser {
         this.user.id = this._userId;
         this.fetch().then((user) => {
             this.user.bio = user.bio;
-            this.user.name = user.displayName;
+            this.user.name = user.name;
         });
 
         this.loggedIn = true;
