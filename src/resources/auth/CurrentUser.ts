@@ -36,52 +36,70 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringStory} from "../models/AuthoringStory";
-import {CurrentUser} from "../auth/CurrentUser";
+import * as jwtDecode from "jwt-decode";
+import {inject, NewInstance, Factory} from "aurelia-framework";
+import {StoryPlacesAPI} from "../store/StoryplacesAPI";
+import {AuthoringUser} from "../models/AuthoringUser";
 
-@inject(Factory.of(AuthoringStory), CurrentUser)
-export class DefaultAuthoringStoryFactory {
+@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
+export class CurrentUser {
 
-    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private authoriser: CurrentUser) {
+    private _userId: string;
+    public loggedIn: boolean;
+    private user: AuthoringUser;
+
+    constructor(private storyPlacesAPI: StoryPlacesAPI, private authoringUserFactory: () => AuthoringUser) {
+        storyPlacesAPI.path = "/authoring/user/";
+        this.clearData();
     }
 
-    create(): AuthoringStory {
-        return this.authoringStoryFactory(this.defaultStory());
+    public setFromJwt(jwt: string) {
+        let payload = jwtDecode(jwt);
+        this._userId = payload.sub;
+
+        // Fetch user info from the server
+        this.user.id = this._userId;
+        this.fetch().then((user) => {
+            this.user.bio = user.bio;
+            this.user.name = user.displayName;
+        });
+
+        this.loggedIn = true;
     }
 
-    private defaultStory(): Object {
-        let now = new Date().toISOString();
-
-        return {
-            title: "New Story",
-            description: "",
-            audience: "general",
-            createdDate: now,
-            modifiedDate: now,
-            authorIds: [this.authoriser.userId],
-            tags: [],
-            pages: [{
-                // "id": "defaultPage",
-                "name": "Start Page",
-                "content": `Edit this page to create the first page in your story.
-
-To help get you started, it is useful to know that your story pages may or may not be pinned to a location on the map. A page pinned to a location can only be read in that location. By default, pages can only be read once, although you can change this.
-
-Pages first appear as 'loose pages'. But if you want, you can organise your pages into chapters. Pages in a chapter are only accessible when that chapter is open - so chapters are a good way of managing progression through your story.
-
-Your start page should always be a 'loose page,' so that it can be read at the beginning of the story. You may choose to have more than one possible start page.
-
-Enjoy writing your story!`,
-                "pageHint": "Read this page to begin the story",
-                "allowMultipleReadings": false,
-                "finishesStory": false,
-                "unlockedByPageIds": [],
-                "unlockedByPagesOperator": "and"
-            }],
-            chapters: [],
-            locations: [],
-            version: 1
-        }
+    get userId(): string {
+        return this._userId;
     }
+    
+    get displayName(): string {
+        return this.user.name;
+    }
+
+    get bio(): string {
+        return this.user.bio;
+    }
+
+    public hasPrivilege(privilege: string): boolean {
+        return (this.user.privileges.indexOf(privilege) != -1);
+    }
+
+    private clearData(){
+        this.user = this.authoringUserFactory();
+        this.loggedIn = false;
+    }
+
+    public logOut(){
+        this.clearData();
+    }
+
+    public fetch(): Promise<any>{
+        return this.storyPlacesAPI.getOne(this._userId).then((user) => {
+            return user.json();
+        })
+    }
+
+    public save(): Promise<null> {
+        return this.storyPlacesAPI.save(this.user);
+    }
+
 }

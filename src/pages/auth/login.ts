@@ -38,12 +38,13 @@
  */
 import {autoinject} from "aurelia-framework";
 import {AuthService} from "aurelia-authentication";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
 
 @autoinject()
 export class Login {
     private authenticated: boolean = false;
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private currentUser: CurrentUser) {
 
     }
 

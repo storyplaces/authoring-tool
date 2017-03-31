@@ -51,15 +51,21 @@
                     <label for="name">Author Name:
                         <information-icon help-text="The name you will be referred to as in the stories you create."></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="user.name & validate:rules"
+                    <input type="text" class="form-control" id="name" value.bind="user.name"
                            scroll-on-edit change.delegate="setDirty()">
                 </div>
                 <div class="form-group">
                     <label for="name">Author Bio:
                         <information-icon help-text="A brief biography about you."></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="bio" value.bind="user.bio & validate:rules"
-                           scroll-on-edit change.delegate="setDirty()">
+                    <textarea class="form-control" id="bio" rows="5" value.bind="user.bio"
+                              scroll-on-edit change.delegate="setDirty()"></textarea>
+                    <button class="btn btn-success" click.delegate="save()" disabled.bind="!valid" if.bind="!saving"><span
+                            class="glyphicon glyphicon-save"></span> Save${!dirty && saved ? 'd' : '' }
+                    </button>
+                    <button class="btn btn-success" disabled if.bind="saving"><span
+                            class="glyphicon glyphicon-save"></span> Saving
+                    </button>
                 </div>
 
             </div>

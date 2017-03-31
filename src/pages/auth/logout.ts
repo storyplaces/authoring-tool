@@ -36,28 +36,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {autoinject} from 'aurelia-framework';
-import {Config} from "../../config/Config";
+import {autoinject} from "aurelia-framework";
+import {AuthService} from "aurelia-authentication";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
 
 @autoinject()
-export class AuthConfig {
+export class Login {
+    private authenticated: boolean = false;
 
-    constructor(private config: Config) {}
+    constructor(private authService: AuthService, private currentUser: CurrentUser) {
 
-    public authConfig = {
-        endpoint: 'auth',
-        configureEndpoints: ['auth'],
-        loginOnSignup: false,
-        storageChangedReload: true,    // ensure secondary tab reloading after auth status changes
-        expiredRedirect: 1,            // redirect to logoutRedirect after token expiration
-        providers: {
-            google: {
-                url: this.config.read('server') + '/auth/google',
-                clientId: this.config.read('google_oauth_client_id')
-            }
-        },
-        loginRedirect: '#/story',
-        logoutRedirect: '#/'
+    }
+
+    logout() {
+        return this.authService.logout()
+            .then(() => {
+                this.authenticated = this.authService.authenticated;
+            });
     };
+
+    attached() {
+        this.logout();
+    }
 }

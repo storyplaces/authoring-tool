@@ -51,6 +51,10 @@ export class StoryListPage {
         return this.storyConnector.all;
     }
 
+    attached() {
+        this.storyConnector.sync();
+    }
+
     new(): void {
         this.router.navigateToRoute("story-create");
     }

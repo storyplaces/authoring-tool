@@ -47,10 +47,10 @@ import {TypeChecker} from "../utilities/TypeChecker";
 export class AuthoringUser extends BaseModel {
 
 
-    private _email: String;
-    private _name: String;
-    private _bio: String;
-    private _role: String;
+    private _email: string;
+    private _name: string;
+    private _bio: string;
+    private _privileges: Array<string>;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -63,14 +63,14 @@ export class AuthoringUser extends BaseModel {
         email: undefined,
         name: undefined,
         bio: undefined,
-        role: undefined
+        privileges: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.email = data.email;
         this.name = data.name;
         this.bio = data.bio;
-        this.role = data.role;
+        this.privileges = data.privileges;
 
     }
 
@@ -80,42 +80,41 @@ export class AuthoringUser extends BaseModel {
             email: this.email,
             name: this.name,
             bio: this.bio,
-            role: this.role
+            privileges: this.privileges
         }
     }
 
-    get role(): String {
-        return this._role;
+    get privileges(): Array<string> {
+        return this._privileges;
     }
 
-    set role(value: String) {
-        this.typeChecker.validateAsStringOrUndefined('Role', value);
-        this._role = value;
+    set privileges(value: Array<string>) {
+        this._privileges = value;
     }
 
-    get bio(): String {
+    get bio(): string {
         return this._bio;
     }
 
-    set bio(value: String) {
+    set bio(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Bio', value);
         this._bio = value;
     }
 
-    get name(): String {
+    get name(): string {
         return this._name;
     }
 
-    set name(value: String) {
+    set name(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Name', value);
         this._name = value;
     }
 
-    get email(): String {
+    get email(): string {
         return this._email;
     }
 
-    set email(value: String) {
+    set email(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Email', value);
         this._email = value;
     }

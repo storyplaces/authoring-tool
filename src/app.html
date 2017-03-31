@@ -47,7 +47,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" route-href="route: home"><img src="images/logo/StoryPlaces_40x40.png">StoryPlaces</a>
-                <sync-icon></sync-icon>
+                <sync-icon if.bind="authService.authenticated"></sync-icon>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -65,6 +65,9 @@
                     </li>
                     <li><a route-href="route: about">About</a></li>
                     <li><a route-href="route: help">Help</a></li>
+                    <li if.bind="currentUser.loggedIn"><a route-href="route: user-edit">Logged in as ${currentUser.displayName}</a></li>
+                    <li if.bind="currentUser.loggedIn"><a route-href="route: logout">Log Out</a></li>
+                    <li if.bind="!currentUser.loggedIn"><a route-href="route: login">Log In </a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

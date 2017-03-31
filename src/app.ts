@@ -37,13 +37,15 @@ import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
 import {AuthoringStoryConnector} from "./resources/store/AuthoringStoryConnector";
 import {UserConfig} from "./resources/store/UserConfig";
-import {AuthenticateStep, FetchConfig} from 'aurelia-authentication';
+import {AuthenticateStep, FetchConfig, AuthService} from 'aurelia-authentication';
+import {AuthManager} from "./resources/auth/AuthManager";
+import {CurrentUser} from "./resources/auth/CurrentUser";
 
 @autoinject()
 export class App {
     router: Router;
 
-    constructor(private storyConnector: AuthoringStoryConnector, private userConfig: UserConfig, private fetchConfig: FetchConfig) {
+    constructor(private storyConnector: AuthoringStoryConnector, private userConfig: UserConfig,  private authService: AuthService, private authManager: AuthManager, private currentUser: CurrentUser) {
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
@@ -73,16 +75,13 @@ export class App {
 
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/logout', moduleId: 'pages/auth/logout', title: 'Log Out', name: 'logout', auth: true },
+            {route: '/user', moduleId: 'pages/user/user-edit-page', title: 'Your Details', name: 'user-edit', auth: true },
+
         ]);
 
         this.router = router;
     }
 
-    attached() {
-
-    }
-
     activate() {
-        this.fetchConfig.configure();
     }
 }

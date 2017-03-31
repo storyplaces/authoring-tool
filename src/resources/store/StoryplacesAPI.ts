@@ -5,16 +5,18 @@ import {HttpClient} from "aurelia-fetch-client";
 import {autoinject} from "aurelia-framework";
 import {Identifiable} from "../interfaces/Identifiable";
 import {Config} from "../../config/Config";
+import {FetchConfig} from "aurelia-authentication";
 
 @autoinject()
 export class StoryPlacesAPI {
     protected _path;
 
-    constructor(protected client: HttpClient, protected config: Config) {
-        this.configure()
+    constructor(protected client: HttpClient, protected config: Config, private fetchConfig: FetchConfig) {
+        this.configure();
     }
 
     private configure() {
+
         let headers = {};
 
         headers['Content-Type'] = "application/json";
@@ -37,6 +39,8 @@ export class StoryPlacesAPI {
         } else {
             this._path = path.concat("/");
         }
+        this.fetchConfig.configure(this.client);
+        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk ", this._path, this.client.interceptors);
     }
 
     get path(): string {

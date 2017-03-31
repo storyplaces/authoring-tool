@@ -36,30 +36,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import * as jwtDecode from "jwt-decode";
 
-export class Authoriser {
+/**
+ * Created by andy on 29/03/17.
+ */
 
-    private _userId: string;
-    private _userPrivileges: Array<string>;
+import {autoinject} from 'aurelia-framework';
+import {EventAggregator} from "aurelia-event-aggregator";
+import {AuthService} from "aurelia-authentication";
+import {CurrentUser} from "./CurrentUser";
 
-    constructor() {
-        this._userId = undefined;
-        this._userPrivileges = [];
+@autoinject()
+export class AuthManager {
+
+    constructor (private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser) {
+
+        // On start, check if we are logged in already
+        if (this.authService.authenticated) {
+            this.loggedIn();
+        }
+
+        // Subscribe for login/out events
+        this.eventAggregator.subscribe('authentication-change', (authenticated) => {
+            if (authenticated) {
+                return this.loggedIn();
+            }
+            return this.loggedOut();
+        })
     }
 
-    public parseJwt(jwt: string) {
-        let payload = jwtDecode(jwt);
-        this._userPrivileges = payload.privileges;
-        this._userId = payload.sub;
+    private loggedIn() {
+        this.currentUser.setFromJwt(this.authService.getAccessToken());
     }
 
-    get userId(): string {
-        return this._userId;
+    private loggedOut() {
+        this.currentUser.logOut();
     }
-
-    public hasPrivilege(privilege: string): boolean {
-        return (this._userPrivileges.indexOf(privilege) != -1);
-    }
-
 }

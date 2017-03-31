@@ -38,25 +38,48 @@
  */
 
 import {AuthoringUser} from "../../resources/models/AuthoringUser";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
+
+import {inject, Factory, NewInstance} from 'aurelia-framework';
+import {StoryPlacesAPI} from "../../resources/store/StoryplacesAPI";
+
+@inject(CurrentUser, Factory.of(AuthoringUser), NewInstance.of(StoryPlacesAPI))
 export class UserEditPage {
     private user: AuthoringUser;
 
-    constructor() {
+    private dirty: boolean = false;
+    private saving: boolean = false;
+    private saved: boolean = true;
+    private valid: boolean = true;
+
+    constructor(private currentUser: CurrentUser, private authoringUserFactory: () => AuthoringUser, private storyplacesAPI: StoryPlacesAPI) {
+
+
+        this.user = this.authoringUserFactory();
+        this.user.id = this.currentUser.userId;
+        this.user.bio = this.currentUser.bio;
+        this.user.name = this.currentUser.displayName;
     }
-
-    canActivate(params): any {
-        this.user = this.userConnector.getCurrentUser();
-    }
-
-
-
-
 
     private save() {
+        if (!this.valid) {
+            return;
+        }
 
+        this.saving = true;
+        this.saved = false;
+        this.currentUser.save().then(() => {
+            this.dirty = false;
+            this.saving = false;
+            this.saved = true;
+        });
     }
 
     private cancel() {
 
+    }
+
+    private setDirty() {
+        this.dirty = true;
     }
 }
