@@ -37,21 +37,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {AuthoringUser} from "../../resources/models/AuthoringUser";
 import {CurrentUser} from "../../resources/auth/CurrentUser";
 
-import {inject, Factory, NewInstance} from 'aurelia-framework';
-import {StoryPlacesAPI} from "../../resources/store/StoryplacesAPI";
+import {BindingEngine, Disposable, Factory, inject} from "aurelia-framework";
+import {validateTrigger, ValidationController, ValidationControllerFactory, ValidationRules} from "aurelia-validation";
+import {BootstrapValidationRenderer} from "../../components/validation-renderer/BootstrapValidationRenderer";
 
-@inject(CurrentUser, Factory.of(AuthoringUser), NewInstance.of(StoryPlacesAPI))
+@inject(
+    CurrentUser,
+    ValidationControllerFactory,
+    Factory.of(BootstrapValidationRenderer),
+    BindingEngine
+)
 export class UserEditPage {
 
     private dirty: boolean = false;
     private saving: boolean = false;
-    private saved: boolean = true;
+    private saved: boolean = false;
     private valid: boolean = true;
+    private rules;
+    private validationController: ValidationController;
+    private errorSub: Disposable;
 
-    constructor(private currentUser: CurrentUser, private authoringUserFactory: () => AuthoringUser, private storyplacesAPI: StoryPlacesAPI) {
+    constructor(private currentUser: CurrentUser,
+                private controllerFactory: ValidationControllerFactory,
+                private validationRendererFactory: () => BootstrapValidationRenderer,
+                private bindingEngine: BindingEngine) {
+        this.setupValidation();
     }
 
     private save() {
@@ -74,5 +86,30 @@ export class UserEditPage {
 
     private setDirty() {
         this.dirty = true;
+        this.saved = false;
+    }
+
+    /*** VALIDATION ***/
+
+    private setupValidation() {
+        this.rules = this.validationRules();
+
+        this.validationController = this.controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(this.validationRendererFactory());
+        this.validationController.validateTrigger = validateTrigger.changeOrBlur;
+        this.valid = true;
+
+        this.errorSub = this.bindingEngine.collectionObserver(this.validationController.errors).subscribe(() => {
+            this.calculateIfValid();
+        });
+    }
+
+    private calculateIfValid() {
+        this.valid = (this.validationController.errors.length == 0);
+    }
+
+    private validationRules() {
+        return ValidationRules
+            .ensure((user: CurrentUser) => user.displayName).displayName("Author Name").required().maxLength(255).rules;
     }
 }

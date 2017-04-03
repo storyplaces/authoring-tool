@@ -40,15 +40,16 @@ import * as jwtDecode from "jwt-decode";
 import {inject, NewInstance, Factory} from "aurelia-framework";
 import {StoryPlacesAPI} from "../store/StoryplacesAPI";
 import {AuthoringUser} from "../models/AuthoringUser";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
+@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser), TypeChecker)
 export class CurrentUser {
 
     private _userId: string;
     public loggedIn: boolean;
     private user: AuthoringUser;
 
-    constructor(private storyPlacesAPI: StoryPlacesAPI, private authoringUserFactory: () => AuthoringUser) {
+    constructor(private storyPlacesAPI: StoryPlacesAPI, private authoringUserFactory: () => AuthoringUser, private typeChecker: TypeChecker) {
         storyPlacesAPI.path = "/authoring/user/";
         this.clearData();
     }
@@ -75,8 +76,18 @@ export class CurrentUser {
         return this.user.name;
     }
 
+    set displayName(name: string) {
+        this.typeChecker.validateAsStringOrUndefined("Display Name", name);
+        this.user.name = name;
+    }
+
     get bio(): string {
         return this.user.bio;
+    }
+
+    set bio(bio: string) {
+        this.typeChecker.validateAsStringOrUndefined("Bio", bio);
+        this.user.bio = bio;
     }
 
     public hasPrivilege(privilege: string): boolean {
