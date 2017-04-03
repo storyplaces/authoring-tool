@@ -36,20 +36,63 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import {autoinject} from "aurelia-framework";
-import {AuthService} from "aurelia-authentication";
-import {AuthManager} from "../../../resources/auth/AuthManager";
+import {NavigationInstruction, Next, Redirect} from "aurelia-router";
+import {CurrentUser} from "./CurrentUser";
 
 @autoinject()
-export class googleCustomElement {
-     constructor(private authService: AuthService, private authManager: AuthManager) {}
+export class HasPrivilege {
 
-     login() {
-        return this.authService
-            .authenticate('google')
-            .then(() => this.authManager.logIn())
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+    constructor(private currentUser: CurrentUser) {
+    }
+
+    run(navigationInstruction: NavigationInstruction, next: Next): Promise<any> {
+        let authorised = true;
+
+        if (!this.currentUser.userId) {
+            return next();
+        }
+
+        navigationInstruction.getAllInstructions().forEach(instruction => {
+            let privileges = (instruction.config as any).privileges;
+
+            if (!privileges) {
+                return;
+            }
+
+            authorised = authorised && this.hasAllPrivileges(privileges) && this.hasAnyPrivileges(privileges);
+        });
+
+        if (!authorised) {
+            return next.cancel(new Redirect('login'));
+        }
+
+        return next();
+    }
+
+    private hasAnyPrivileges(privileges): boolean {
+
+        if (!privileges.any) {
+            return true;
+        }
+
+        if (!Array.isArray(privileges.any)) {
+            throw new Error("Privileges must be passed as any array");
+        }
+
+        return privileges.any.some(privilege => this.currentUser.hasPrivilege(privilege));
+    }
+
+    private hasAllPrivileges(privileges): boolean {
+        if (!privileges.all) {
+            return true;
+        }
+
+        if (!Array.isArray(privileges.all)) {
+            throw new Error("Privileges must be passed as any array");
+        }
+
+        return privileges.all.every(privilege => this.currentUser.hasPrivilege(privilege));
+    }
 }

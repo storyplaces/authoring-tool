@@ -53,23 +53,23 @@ export class AuthManager {
 
         // On start, check if we are logged in already
         if (this.authService.authenticated) {
-            this.loggedIn();
+            this.logIn();
         }
 
         // Subscribe for login/out events
         this.eventAggregator.subscribe('authentication-change', (authenticated) => {
             if (authenticated) {
-                return this.loggedIn();
+                // return this.logIn();
             }
-            return this.loggedOut();
+            return this.logOut();
         })
     }
 
-    private loggedIn() {
-        this.currentUser.setFromJwt(this.authService.getAccessToken());
+    logIn() {
+        return this.currentUser.setFromJwt(this.authService.getAccessToken());
     }
 
-    private loggedOut() {
-        this.currentUser.logOut();
+    logOut() {
+        return this.currentUser.logOut();
     }
 }
