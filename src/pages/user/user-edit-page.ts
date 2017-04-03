@@ -45,7 +45,6 @@ import {StoryPlacesAPI} from "../../resources/store/StoryplacesAPI";
 
 @inject(CurrentUser, Factory.of(AuthoringUser), NewInstance.of(StoryPlacesAPI))
 export class UserEditPage {
-    private user: AuthoringUser;
 
     private dirty: boolean = false;
     private saving: boolean = false;
@@ -53,12 +52,6 @@ export class UserEditPage {
     private valid: boolean = true;
 
     constructor(private currentUser: CurrentUser, private authoringUserFactory: () => AuthoringUser, private storyplacesAPI: StoryPlacesAPI) {
-
-
-        this.user = this.authoringUserFactory();
-        this.user.id = this.currentUser.userId;
-        this.user.bio = this.currentUser.bio;
-        this.user.name = this.currentUser.displayName;
     }
 
     private save() {
