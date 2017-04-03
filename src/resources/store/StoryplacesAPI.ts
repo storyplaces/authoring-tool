@@ -40,7 +40,6 @@ export class StoryPlacesAPI {
             this._path = path.concat("/");
         }
         this.fetchConfig.configure(this.client);
-        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk ", this._path, this.client.interceptors);
     }
 
     get path(): string {
