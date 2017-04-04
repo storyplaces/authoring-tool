@@ -17,15 +17,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *   notice, this list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
  * - The name of the University of Southampton nor the name of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
@@ -37,27 +37,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {autoinject} from 'aurelia-framework';
-import {Config} from "../../config/Config";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
+import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
+import {Router} from "aurelia-router";
 
 @autoinject()
-export class AuthConfig {
+export class PostLogin {
+    private sub: Disposable;
 
-    constructor(private config: Config) {}
+     constructor(private currentUser: CurrentUser, private bindingEngine: BindingEngine, private router: Router) {
+     }
 
-    public authConfig = {
-        endpoint: 'auth',
-        configureEndpoints: ['auth'],
-        loginOnSignup: false,
-        storageChangedReload: true,    // ensure secondary tab reloading after auth status changes
-        expiredRedirect: 1,            // redirect to logoutRedirect after token expiration
-        providers: {
-            google: {
-                url: this.config.read('server') + '/auth/google',
-                clientId: this.config.read('google_oauth_client_id')
-            }
-        },
-        loginRedirect: '#/post-login',
-        logoutRedirect: '#/'
-    };
-}
+     attached() {
+         if (this.currentUser.loggedIn) {
+             this.redirect();
+             return
+         }
+
+         this.sub = this.bindingEngine.propertyObserver(this.currentUser, 'loggedIn').subscribe(loggedIn => {
+             if (loggedIn) {
+                 this.redirect();
+             }
+         });
+     }
+
+    private redirect() {
+        this.router.navigateToRoute("story-list");
+    }
+
+     detached() {
+         if (this.sub) {
+             this.sub.dispose();
+         }
+     }
+
+
+ }

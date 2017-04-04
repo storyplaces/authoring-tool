@@ -45,11 +45,13 @@ import {autoinject} from 'aurelia-framework';
 import {EventAggregator} from "aurelia-event-aggregator";
 import {AuthService} from "aurelia-authentication";
 import {CurrentUser} from "./CurrentUser";
+import {Router} from "aurelia-router";
+
 
 @autoinject()
 export class AuthManager {
 
-    constructor (private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser) {
+    constructor (private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser, private router: Router) {
 
         // On start, check if we are logged in already
         if (this.authService.authenticated) {
@@ -59,7 +61,7 @@ export class AuthManager {
         // Subscribe for login/out events
         this.eventAggregator.subscribe('authentication-change', (authenticated) => {
             if (authenticated) {
-                // return this.logIn();
+                return this.logIn();
             }
             return this.logOut();
         })

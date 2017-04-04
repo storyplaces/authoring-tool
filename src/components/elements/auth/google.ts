@@ -47,7 +47,6 @@ export class googleCustomElement {
      login() {
         return this.authService
             .authenticate('google')
-            .then(() => this.authManager.logIn())
             .catch((error) => {
                 console.log(error);
             });
