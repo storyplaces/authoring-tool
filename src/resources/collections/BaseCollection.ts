@@ -162,4 +162,8 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
 
         return data;
     }
+
+    public empty() {
+        this._data = [];
+    }
 }

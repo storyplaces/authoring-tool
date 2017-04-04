@@ -41,17 +41,17 @@
  * Created by andy on 29/03/17.
  */
 
-import {autoinject} from 'aurelia-framework';
+import {autoinject} from "aurelia-framework";
 import {EventAggregator} from "aurelia-event-aggregator";
 import {AuthService} from "aurelia-authentication";
 import {CurrentUser} from "./CurrentUser";
-import {Router} from "aurelia-router";
+import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 
 
 @autoinject()
 export class AuthManager {
 
-    constructor (private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser, private router: Router) {
+    constructor(private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser, private authoringStoryConnector: AuthoringStoryConnector) {
 
         // On start, check if we are logged in already
         if (this.authService.authenticated) {
@@ -72,6 +72,7 @@ export class AuthManager {
     }
 
     logOut() {
+        this.authoringStoryConnector.empty();
         return this.currentUser.logOut();
     }
 }

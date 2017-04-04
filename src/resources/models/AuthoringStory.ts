@@ -45,7 +45,6 @@ import {AuthoringPageCollection} from "../collections/AuthoringPageCollection";
 import {AuthoringLocationCollection} from "../collections/AuthoringLocationCollection";
 
 @inject(
-    Factory.of(AuthoringUserCollection),
     Factory.of(AuthoringChapterCollection),
     Factory.of(AuthoringPageCollection),
     Factory.of(AuthoringLocationCollection),
@@ -53,21 +52,19 @@ import {AuthoringLocationCollection} from "../collections/AuthoringLocationColle
 )
 export class AuthoringStory extends BaseModel {
 
-
     private _title: string;
     private _description: string;
     private _createdDate: Date;
     private _modifiedDate: Date;
     private _audience: string;
-    private _authors: AuthoringUserCollection;
+    private _authorIds: Array<string>;
     private _chapters: AuthoringChapterCollection;
     private _pages: AuthoringPageCollection;
     private _locations: AuthoringLocationCollection;
     private _tags: Array<string>;
 
 
-    constructor(private authoringUserCollectionFactory: (any?) => AuthoringUserCollection,
-                private authoringChapterCollectionFactory: (any?) => AuthoringChapterCollection,
+    constructor(private authoringChapterCollectionFactory: (any?) => AuthoringChapterCollection,
                 private authoringPageCollectionFactory: (any?) => AuthoringPageCollection,
                 private authoringLocationCollectionFactory: (any?) => AuthoringLocationCollection,
                 typeChecker: TypeChecker,
@@ -83,18 +80,18 @@ export class AuthoringStory extends BaseModel {
     }
 
     public fromObject(data = {
-        id: undefined,
-        title: undefined,
-        description: undefined,
-        createdDate: undefined,
-        modifiedDate: undefined,
-        audience: undefined,
-        authors: undefined,
-        chapters: undefined,
-        pages: undefined,
-        locations: undefined,
-        tags: undefined
-    }) {
+                          id: undefined,
+                          title: undefined,
+                          description: undefined,
+                          createdDate: undefined,
+                          modifiedDate: undefined,
+                          audience: undefined,
+                          authorIds: undefined,
+                          chapters: undefined,
+                          pages: undefined,
+                          locations: undefined,
+                          tags: undefined
+                      }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.title = data.title;
@@ -102,7 +99,7 @@ export class AuthoringStory extends BaseModel {
         this.createdDate = new Date(data.createdDate);
         this.modifiedDate = new Date(data.modifiedDate);
         this.audience = data.audience;
-        this.authors = this.authoringUserCollectionFactory(data.authors);
+        this.authorIds = data.authorIds;
         this.chapters = this.authoringChapterCollectionFactory(data.chapters);
         this.pages = this.authoringPageCollectionFactory(data.pages);
         this.locations = this.authoringLocationCollectionFactory(data.locations);
@@ -118,7 +115,7 @@ export class AuthoringStory extends BaseModel {
             createdDate: this.createdDate.toISOString(),
             modifiedDate: this.modifiedDate.toISOString(),
             audience: this.audience,
-            authors: this.authors,
+            authorIds: this.authorIds,
             chapters: this.chapters,
             pages: this.pages,
             locations: this.locations,
@@ -161,13 +158,13 @@ export class AuthoringStory extends BaseModel {
         this._chapters = value;
     }
 
-    get authors(): AuthoringUserCollection {
-        return this._authors;
+    get authorIds(): Array<string> {
+        return this._authorIds;
     }
 
-    set authors(value: AuthoringUserCollection) {
-        this.typeChecker.validateAsObjectOrUndefined('Authors', value, 'AuthoringUserCollection', AuthoringUserCollection);
-        this._authors = value;
+    set authorIds(value: Array<string>) {
+        this.typeChecker.isArrayOf("authorIds", value, "string");
+        this._authorIds = value;
     }
 
     get audience(): string {
@@ -184,7 +181,7 @@ export class AuthoringStory extends BaseModel {
     }
 
     set modifiedDate(value: Date) {
-        if (isNaN(value.getTime())){
+        if (isNaN(value.getTime())) {
             this._modifiedDate = undefined;
             return;
         }
@@ -196,7 +193,7 @@ export class AuthoringStory extends BaseModel {
     }
 
     set createdDate(value: Date) {
-        if (isNaN(value.getTime())){
+        if (isNaN(value.getTime())) {
             this._createdDate = undefined;
             return;
         }

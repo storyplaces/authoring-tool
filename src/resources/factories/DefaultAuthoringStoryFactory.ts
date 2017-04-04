@@ -43,7 +43,7 @@ import {CurrentUser} from "../auth/CurrentUser";
 @inject(Factory.of(AuthoringStory), CurrentUser)
 export class DefaultAuthoringStoryFactory {
 
-    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private authoriser: CurrentUser) {
+    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private currentUser: CurrentUser) {
     }
 
     create(): AuthoringStory {
@@ -59,7 +59,7 @@ export class DefaultAuthoringStoryFactory {
             audience: "general",
             createdDate: now,
             modifiedDate: now,
-            authorIds: [this.authoriser.userId],
+            authorIds: [this.currentUser.userId],
             tags: [],
             pages: [{
                 // "id": "defaultPage",
