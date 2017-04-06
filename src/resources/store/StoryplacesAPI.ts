@@ -70,16 +70,29 @@ export class StoryPlacesAPI {
         });
     }
 
-    trigger(object: Identifiable, event: string): Promise<Response> {
+    delete(id: string): Promise<Response> {
+        return this.client.fetch(this.path + id, {
+            method: "delete"
+        });
+    }
+
+    trigger(object: Identifiable, event: string, fields: Array<string> = ['id']): Promise<Response> {
         if (object.id == undefined) {
             throw new Error("Unable to trigger event as no object ID passed");
         }
 
         let path = `${this.path}${object.id}/${event}`;
 
+        var body = {};
+        fields.forEach((field) => {
+            body[field] = object[field];
+        });
+
+        console.log(JSON.stringify(body));
+
         return this.client.fetch(path, {
             method: 'post',
-            body: JSON.stringify({id: object.id})
+            body: JSON.stringify(body)
         });
     }
 }

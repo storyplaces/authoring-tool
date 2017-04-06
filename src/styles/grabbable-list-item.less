@@ -14,6 +14,15 @@
   }
 }
 
+.grabbable-list-item-variable-height {
+  padding: 0;
+  width: 100%;
+
+  @media screen and (max-width: @screen-xs-max) {
+    height: 10em;
+  }
+}
+
 .grabbable-list-item-text {
   vertical-align: top;
   display: inline-block;
@@ -80,4 +89,20 @@ p.grabbable-list-item-text-body-small {
   padding: 0;
   border: 0;
   display: inline-block;
+}
+
+.grabbable-item-buttons-wide {
+  display: inline-block;
+  width: 9.2em;
+  vertical-align: top;
+  height: inherit;
+  text-align: right;
+  margin-top: 0.5em;
+  .btn {
+    width: 8em;
+    margin-top: 0.7em;
+    @media screen and (max-width: @screen-xs-max) {
+      width: 3em;
+    }
+  }
 }

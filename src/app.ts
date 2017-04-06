@@ -73,6 +73,8 @@ export class App {
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit', auth: true },
             {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new', auth: true },
 
+            {route: '/admin/story', moduleId: 'pages/admin/admin-story-list-page', title: 'Story Approval', name: 'admin-story-list', auth: true },
+
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/logout', moduleId: 'pages/auth/logout', title: 'Log Out', name: 'logout', auth: true },
             {route: '/user', moduleId: 'pages/user/user-edit-page', title: 'Your Details', name: 'user-edit', auth: true },
@@ -83,5 +85,9 @@ export class App {
     }
 
     activate() {
+    }
+
+    canSeeAdminMenu() {
+        return this.currentUser.hasPrivilege('adminMenu');
     }
 }
