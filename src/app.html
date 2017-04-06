@@ -47,7 +47,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" route-href="route: home"><img src="images/logo/StoryPlaces_40x40.png">StoryPlaces</a>
-                <sync-icon if.bind="authService.authenticated"></sync-icon>
+                <sync-icon if.bind="currentUser.loggedIn"></sync-icon>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

@@ -232,4 +232,8 @@ export class AuthoringStoryConnector {
     private inConflictingList(authoringStoryId: string): boolean {
         return this.conflictingAuthoringStoryIds.has(authoringStoryId);
     }
+
+    public empty() {
+        this.authoringStoryCollection.empty();
+    }
 }

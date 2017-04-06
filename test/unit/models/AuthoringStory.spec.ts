@@ -101,7 +101,7 @@ describe("Story model", () => {
         expect(model.createdDate).toEqual(jasmine.any(Date));
         expect(model.modifiedDate).toEqual(jasmine.any(Date));
         expect(model.audience).toEqual(undefined);
-        expect(model.authors).toEqual(undefined);
+        expect(model.authorIds).toEqual(undefined);
         expect(model.chapters).toEqual(undefined);
         expect(model.pages).toEqual(undefined);
         expect(model.locations).toEqual(undefined);
@@ -147,7 +147,7 @@ describe("Story model", () => {
 
         expect(model.pages).toEqual(undefined);
         expect(model.chapters).toEqual(undefined);
-        expect(model.authors).toEqual(undefined);
+        expect(model.authorIds).toEqual(undefined);
         expect(model.locations).toEqual(undefined);
         expect(authoringUserCollectionFactoryCalledWith).toEqual([{id: "author"}]);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);
@@ -188,7 +188,7 @@ describe("Story model", () => {
 
         expect(model.pages).toEqual(undefined);
         expect(model.chapters).toEqual(undefined);
-        expect(model.authors).toEqual(undefined);
+        expect(model.authorIds).toEqual(undefined);
         expect(model.locations).toEqual(undefined);
         expect(authoringUserCollectionFactoryCalledWith).toEqual([{id: "author"}]);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);

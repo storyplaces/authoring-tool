@@ -37,7 +37,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import * as jwtDecode from "jwt-decode";
-import {inject, NewInstance, Factory} from "aurelia-framework";
+import {Factory, inject, NewInstance} from "aurelia-framework";
 import {StoryPlacesAPI} from "../store/StoryplacesAPI";
 import {AuthoringUser} from "../models/AuthoringUser";
 import {TypeChecker} from "../utilities/TypeChecker";
@@ -60,18 +60,22 @@ export class CurrentUser {
 
         // Fetch user info from the server
         this.user.id = this._userId;
-        this.fetch().then((user) => {
-            this.user.bio = user.bio;
-            this.user.name = user.name;
-        });
-
-        this.loggedIn = true;
+        return this.fetch()
+            .then((user) => {
+                this.user.bio = user.bio;
+                this.user.name = user.name;
+                this.user.privileges = user.privileges || [];
+            })
+            .then(() => {
+                this.loggedIn = true;
+                return true
+            });
     }
 
     get userId(): string {
         return this._userId;
     }
-    
+
     get displayName(): string {
         return this.user.name;
     }
@@ -94,16 +98,16 @@ export class CurrentUser {
         return (this.user.privileges.indexOf(privilege) != -1);
     }
 
-    private clearData(){
+    private clearData() {
         this.user = this.authoringUserFactory();
         this.loggedIn = false;
     }
 
-    public logOut(){
+    public logOut() {
         this.clearData();
     }
 
-    public fetch(): Promise<any>{
+    public fetch(): Promise<any> {
         return this.storyPlacesAPI.getOne(this._userId).then((user) => {
             return user.json();
         })
