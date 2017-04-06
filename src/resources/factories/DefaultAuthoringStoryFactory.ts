@@ -81,7 +81,8 @@ Enjoy writing your story!`,
             }],
             chapters: [],
             locations: [],
-            version: 1
+            version: 1,
+            imageIds: []
         }
     }
 }

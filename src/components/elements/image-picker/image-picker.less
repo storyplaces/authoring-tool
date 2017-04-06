@@ -36,31 +36,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+@import (reference) "../../../../node_modules/bootstrap/less/bootstrap";
 
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../models/AuthoringPage";
+div.panel-image-picker {
+  .panel-default;
+  margin-bottom: 0;
 
-@inject(Factory.of(AuthoringPage))
-export class DefaultAuthoringPageFactory {
-
-    constructor(private authoringPageFactory: (data?) => AuthoringPage) {
-    }
-
-    create(): AuthoringPage {
-        return this.authoringPageFactory(this.defaultPage());
-    }
-
-    private defaultPage(): Object {
-        return {
-            name: "New Page",
-            content: "",
-            pageHint: "",
-            locationId: "",
-            allowMultipleReadings: false,
-            unlockedByPageIds: [],
-            unlockedByPagesOperator: "and",
-            finishesStory: false,
-            imageId: undefined
-        }
-    }
+  div.panel-body {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0.5em;
+  }
 }
+

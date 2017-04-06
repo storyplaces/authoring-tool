@@ -37,30 +37,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../models/AuthoringPage";
+import {bindable, bindingMode, autoinject} from "aurelia-framework";
+import {imageDownloadResponse, ImagesConnector} from "../../../resources/store/ImagesConnector";
 
-@inject(Factory.of(AuthoringPage))
-export class DefaultAuthoringPageFactory {
+@autoinject()
+export class ImagePickerItemCustomElement {
+    @bindable imageId: string;
+    @bindable storyId: string;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) checked: boolean;
 
-    constructor(private authoringPageFactory: (data?) => AuthoringPage) {
-    }
+    private imageContent;
 
-    create(): AuthoringPage {
-        return this.authoringPageFactory(this.defaultPage());
-    }
+    constructor(private imageConnector: ImagesConnector) {}
 
-    private defaultPage(): Object {
-        return {
-            name: "New Page",
-            content: "",
-            pageHint: "",
-            locationId: "",
-            allowMultipleReadings: false,
-            unlockedByPageIds: [],
-            unlockedByPagesOperator: "and",
-            finishesStory: false,
-            imageId: undefined
+    attached() {
+        if(this.imageId) {
+            this.imageConnector.fetch(this.storyId, this.imageId)
+                .then(response => {
+                    this.imageContent = `data:${response.contentType};base64,${response.content}`;
+                })
         }
     }
 }

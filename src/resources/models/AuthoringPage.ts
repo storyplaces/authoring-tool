@@ -45,6 +45,7 @@ import {TypeChecker} from "../utilities/TypeChecker";
     TypeChecker
 )
 export class AuthoringPage extends BaseModel {
+
     private _name: string;
     private _content: string;
     private _pageHint: string;
@@ -53,6 +54,7 @@ export class AuthoringPage extends BaseModel {
     private _unlockedByPageIds: Array<string>;
     private _unlockedByPagesOperator: string;
     private _finishesStory: boolean;
+    private _imageId: string;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -61,16 +63,17 @@ export class AuthoringPage extends BaseModel {
     }
 
     public fromObject(data = {
-        id: undefined,
-        name: undefined,
-        content: undefined,
-        pageHint: undefined,
-        locationId: undefined,
-        allowMultipleReadings: undefined,
-        unlockedByPageIds: undefined,
-        unlockedByPagesOperator: undefined,
-        finishesStory: undefined
-    }) {
+                          id: undefined,
+                          name: undefined,
+                          content: undefined,
+                          pageHint: undefined,
+                          locationId: undefined,
+                          allowMultipleReadings: undefined,
+                          unlockedByPageIds: undefined,
+                          unlockedByPagesOperator: undefined,
+                          finishesStory: undefined,
+                          imageId: undefined
+                      }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.content = data.content;
@@ -81,6 +84,7 @@ export class AuthoringPage extends BaseModel {
         this.unlockedByPageIds = data.unlockedByPageIds;
         this.unlockedByPagesOperator = data.unlockedByPagesOperator;
         this.finishesStory = data.finishesStory;
+        this.imageId = data.imageId;
     }
 
     public toJSON() {
@@ -93,7 +97,8 @@ export class AuthoringPage extends BaseModel {
             allowMultipleReadings: this.allowMultipleReadings,
             unlockedByPageIds: this.unlockedByPageIds,
             unlockedByPagesOperator: this.unlockedByPagesOperator,
-            finishesStory: this.finishesStory
+            finishesStory: this.finishesStory,
+            imageId: this.imageId
         }
     }
 
@@ -146,6 +151,7 @@ export class AuthoringPage extends BaseModel {
 
         this._unlockedByPagesOperator = value;
     }
+
     get unlockedByPageIds(): Array<string> {
         return this._unlockedByPageIds;
     }
@@ -153,6 +159,7 @@ export class AuthoringPage extends BaseModel {
     set unlockedByPageIds(value: Array<string>) {
         this._unlockedByPageIds = value;
     }
+
     get allowMultipleReadings(): boolean {
         return this._allowMultipleReadings;
     }
@@ -161,6 +168,7 @@ export class AuthoringPage extends BaseModel {
         this.typeChecker.validateAsBooleanOrUndefined('AllowMultipleReadings', value);
         this._allowMultipleReadings = value;
     }
+
     get locationId(): string {
         return this._locationId;
     }
@@ -168,6 +176,15 @@ export class AuthoringPage extends BaseModel {
     set locationId(value: string) {
         this.typeChecker.validateAsStringOrUndefined('LocationId', value);
         this._locationId = value;
+    }
+
+    get imageId(): string {
+        return this._imageId;
+    }
+
+    set imageId(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('ImageId', value);
+        this._imageId = value;
     }
 
 }

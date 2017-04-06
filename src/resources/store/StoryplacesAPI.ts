@@ -82,4 +82,11 @@ export class StoryPlacesAPI {
             body: JSON.stringify({id: object.id})
         });
     }
+
+    uploadItem(storyId: string, itemType: string, formData: FormData): Promise<Response> {
+        return this.client.fetch(`${this.path}${storyId}/${itemType}`, {
+            method: 'post',
+            body: formData
+        });
+    }
 }

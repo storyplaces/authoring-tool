@@ -37,30 +37,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../models/AuthoringPage";
+import {ImagesConnector} from "../../../resources/store/ImagesConnector";
+import {autoinject, bindable} from "aurelia-framework";
 
-@inject(Factory.of(AuthoringPage))
-export class DefaultAuthoringPageFactory {
+@autoinject()
+export class ImagePickerUploadCustomElement {
+    private fileButton: HTMLInputElement;
+    private formElement: HTMLFormElement;
 
-    constructor(private authoringPageFactory: (data?) => AuthoringPage) {
+    @bindable storyId: string;
+
+    constructor(private imagesConnector: ImagesConnector, private element:Element) {
     }
 
-    create(): AuthoringPage {
-        return this.authoringPageFactory(this.defaultPage());
+    private fileChanged() {
+        let formData = new FormData(this.formElement);
+        this.imagesConnector.upload(this.storyId, formData).then(response => {
+            this.uploadComplete(response.imageId);
+        });
     }
 
-    private defaultPage(): Object {
-        return {
-            name: "New Page",
-            content: "",
-            pageHint: "",
-            locationId: "",
-            allowMultipleReadings: false,
-            unlockedByPageIds: [],
-            unlockedByPagesOperator: "and",
-            finishesStory: false,
-            imageId: undefined
+    private uploadComplete(imageId: string) {
+        this.element.dispatchEvent(this.createUploadEvent(imageId));
+    }
+
+    private createUploadEvent(imageId: string) {
+        if ((window as any).CustomEvent) {
+            return new CustomEvent('upload', {bubbles: true, detail: imageId});
         }
+
+        let changeEvent = document.createEvent('CustomEvent');
+        changeEvent.initCustomEvent('upload', true, true, imageId);
+        return changeEvent;
     }
 }

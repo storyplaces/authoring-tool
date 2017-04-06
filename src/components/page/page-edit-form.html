@@ -45,6 +45,7 @@
     <require from="components/attributes/scroll-on-edit"></require>
     <require from="components/elements/mutable-list/mutable-list"></require>
     <require from="components/elements/toggle-switch/toggle-switch"></require>
+    <require from="components/elements/image-picker/image-picker"></require>
 
     <div class="padding">
         <div class="panel panel-default">
@@ -80,6 +81,17 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
+                Media
+            </div>
+            <div class="panel-body">
+                <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId" story-id.bind="story.id"></image-picker>
+
+
+
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 Narrative Constraints
             </div>
             <div class="panel-body">
@@ -109,7 +121,8 @@
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
                             <label>Unlocked By:</label>
-                            <information-icon help-text="Pages that must be read before this page becomes available"></information-icon>
+                            <information-icon
+                                    help-text="Pages that must be read before this page becomes available"></information-icon>
                             <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
                                            change.delegate="setDirty()"></toggle-switch>
                             <mutable-list available-items.bind="availablePages"
@@ -185,7 +198,8 @@
                         <div class="form-group">
                             <button class="btn btn-block" class.bind="droppingPin ? 'btn-danger' : 'btn-primary'"
                                     click.delegate="dropPinOnMap()"><span
-                                    class="glyphicon glyphicon-map-marker"></span> ${droppingPin ? 'Cancel dropping pin' : 'Drop pin on map'}
+                                    class="glyphicon glyphicon-map-marker"></span> ${droppingPin ? 'Cancel dropping pin'
+                                : 'Drop pin on map'}
                             </button>
                         </div>
                     </div>

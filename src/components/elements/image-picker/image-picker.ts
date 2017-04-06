@@ -37,30 +37,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../models/AuthoringPage";
+import {bindable, bindingMode, autoinject} from "aurelia-framework";
+import {Config} from "../../../config/Config";
 
-@inject(Factory.of(AuthoringPage))
-export class DefaultAuthoringPageFactory {
+@autoinject()
+export class ImagePickerCustomElement {
+    @bindable({defaultBindingMode: bindingMode.twoWay, defaultValue: "-1"}) selectedId;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) imageIds;
+    @bindable storyId: string;
 
-    constructor(private authoringPageFactory: (data?) => AuthoringPage) {
-    }
+    constructor(private config: Config) {}
 
-    create(): AuthoringPage {
-        return this.authoringPageFactory(this.defaultPage());
-    }
-
-    private defaultPage(): Object {
-        return {
-            name: "New Page",
-            content: "",
-            pageHint: "",
-            locationId: "",
-            allowMultipleReadings: false,
-            unlockedByPageIds: [],
-            unlockedByPagesOperator: "and",
-            finishesStory: false,
-            imageId: undefined
-        }
+    newImage(event: CustomEvent) {
+        let newImageId = event.detail;
+        this.imageIds.push(newImageId);
     }
 }

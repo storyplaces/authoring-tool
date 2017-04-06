@@ -39,7 +39,6 @@
 import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
-import {AuthoringUserCollection} from "../collections/AuthoringUserCollection";
 import {AuthoringChapterCollection} from "../collections/AuthoringChapterCollection";
 import {AuthoringPageCollection} from "../collections/AuthoringPageCollection";
 import {AuthoringLocationCollection} from "../collections/AuthoringLocationCollection";
@@ -62,6 +61,7 @@ export class AuthoringStory extends BaseModel {
     private _pages: AuthoringPageCollection;
     private _locations: AuthoringLocationCollection;
     private _tags: Array<string>;
+    private _imageIds: Array<string>;
 
 
     constructor(private authoringChapterCollectionFactory: (any?) => AuthoringChapterCollection,
@@ -90,7 +90,8 @@ export class AuthoringStory extends BaseModel {
                           chapters: undefined,
                           pages: undefined,
                           locations: undefined,
-                          tags: undefined
+                          tags: undefined,
+                          imageIds: undefined
                       }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -104,7 +105,7 @@ export class AuthoringStory extends BaseModel {
         this.pages = this.authoringPageCollectionFactory(data.pages);
         this.locations = this.authoringLocationCollectionFactory(data.locations);
         this.tags = data.tags;
-
+        this.imageIds = data.imageIds;
     }
 
     public toJSON() {
@@ -119,7 +120,8 @@ export class AuthoringStory extends BaseModel {
             chapters: this.chapters,
             pages: this.pages,
             locations: this.locations,
-            tags: this.tags
+            tags: this.tags,
+            imageIds: this.imageIds
         }
     }
 
@@ -128,6 +130,7 @@ export class AuthoringStory extends BaseModel {
     }
 
     set tags(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("Tags", value, "string");
         this._tags = value;
     }
 
@@ -217,6 +220,16 @@ export class AuthoringStory extends BaseModel {
         this.typeChecker.validateAsStringOrUndefined('Title', value);
         this._title = value;
     }
+
+    get imageIds(): Array<string> {
+        return this._imageIds;
+    }
+
+    set imageIds(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("Image Ids", value, "string");
+        this._imageIds = value;
+    }
+
 
 }
 

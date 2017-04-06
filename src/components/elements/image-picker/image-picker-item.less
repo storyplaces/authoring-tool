@@ -37,30 +37,68 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringPage} from "../models/AuthoringPage";
+label.image-picker-item {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  padding: 0;
+  margin: 0 0.5em 0 0;
 
-@inject(Factory.of(AuthoringPage))
-export class DefaultAuthoringPageFactory {
+  input {
+    display: none;
+  }
 
-    constructor(private authoringPageFactory: (data?) => AuthoringPage) {
-    }
+  input + .image {
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 1px;
+    border: lightgrey solid 1px;
+  }
 
-    create(): AuthoringPage {
-        return this.authoringPageFactory(this.defaultPage());
-    }
+  input + .spinner {
+    vertical-align: middle;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 34px;
+    border: lightgrey solid 1px;
 
-    private defaultPage(): Object {
-        return {
-            name: "New Page",
-            content: "",
-            pageHint: "",
-            locationId: "",
-            allowMultipleReadings: false,
-            unlockedByPageIds: [],
-            unlockedByPagesOperator: "and",
-            finishesStory: false,
-            imageId: undefined
-        }
-    }
+  }
+
+  input:checked + .image {
+    border: black solid 1px;
+  }
+
+  input:checked + .spinner {
+    border: black solid 1px;
+  }
+
+  input + .check-mark {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    height: 1.25em;
+    width: 1.25em;
+    color: green;
+    background-color: grey;
+    border-radius: 50%;
+    text-align: center;
+    vertical-align: baseline;
+    font-size: large;
+  }
+
+
+  input:checked + .check-mark {
+    opacity: 1;
+  }
+
+
+  input + .check-mark {
+    opacity: 0.2;
+  }
+
+
 }
