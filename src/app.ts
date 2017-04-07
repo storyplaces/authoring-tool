@@ -72,6 +72,8 @@ export class App {
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit', auth: true, privileges:{all:["editOwnStory"]}},
             {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new', auth: true, privileges:{all:["editOwnStory"]}},
 
+            {route: '/admin/story', moduleId: 'pages/admin/admin-story-list-page', title: 'Story Approval', name: 'admin-story-list', auth: true, privileges:{all:["updateReadingStoryPublishStatus"]} },
+
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/post-login', moduleId: 'pages/auth/postLogin', title: 'Post login', name: 'post-login'},
 
@@ -80,5 +82,12 @@ export class App {
         ]);
 
         this.router = router;
+    }
+
+    activate() {
+    }
+
+    canSeeAdminMenu() {
+        return this.currentUser.hasPrivilege('adminMenu');
     }
 }

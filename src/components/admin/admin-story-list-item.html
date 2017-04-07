@@ -1,0 +1,74 @@
+<!--
+  ~ ------------
+  ~ StoryPlaces
+  ~ ------------
+  ~ This application was developed as part of the Leverhulme Trust funded
+  ~ StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+  ~ Copyright (c) 2017 University of Southampton
+  ~
+  ~ David Millard, dem.soton.ac.uk
+  ~ Andy Day, a.r.day.soton.ac.uk
+  ~ Kevin Puplett, k.e.puplett.soton.ac.uk
+  ~ Charlie Hargood, chargood.bournemouth.ac.uk
+  ~ David Pepper, d.pepper.soton.ac.uk
+  ~
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without
+  ~ modification, are permitted provided that the following conditions are met:
+  ~ - Redistributions of source code must retain the above copyright
+  ~    notice, this list of conditions and the following disclaimer.
+  ~ - Redistributions in binary form must reproduce the above copyright
+  ~    notice, this list of conditions and the following disclaimer in the
+  ~    documentation and/or other materials provided with the distribution.
+  ~ - The name of the University of Southampton nor the name of its
+  ~    contributors may be used to endorse or promote products derived from
+  ~    this software without specific prior written permission.
+  ~
+  ~  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  ~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  ~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  ~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<template>
+    <require from="../attributes/bootstrap-tooltip"></require>
+    <require from="components/elements/toggle-switch/toggle-switch"></require>
+
+    <li class="list-group-item">
+        <div class="grabbable-list-item-text">
+            <h4>${story.name} -
+                <small>${story.author}</small>
+            </h4>
+
+            <p style="max-height: 10em; overflow: hidden">${story.description}</p>
+            <div class="well" if.bind="previewLink" style="overflow-wrap: break-word">
+                The following link is a one-time preview link, which will expire at midnight.
+                <br/>
+                <a href.bind="previewLink" target="_blank">${previewLink}</a>
+            </div>
+            <span if.bind="story.audience == 'family'" class="label label-success">Family Friendly</span>
+            <span if.bind="story.audience == 'general'" class="label label-info">General Audience</span>
+            <span if.bind="story.audience == 'advisory'" class="label label-danger">Advisory Content</span>
+            <span class="label label-default" repeat.for="tag of story.tags">${tag} </span>
+            <br/>
+
+        </div>
+        <div class="grabbable-item-buttons-wide">
+            <span>
+                    <toggle-switch checked.bind="publishState" on="Published" colourise="yes-no"
+                                   change.delegate="togglePublished()"></toggle-switch>
+                </span>
+            <button class="btn btn-primary" click.delegate="preview()"><span
+                    class="glyphicon glyphicon-eye-open"></span><span class="hidden-xs"> Preview</span></button>
+            <button class="btn btn-danger" click.delegate="delete()"><span
+                    class="glyphicon glyphicon-trash"></span><span class="hidden-xs"> Delete</span></button>
+        </div>
+    </li>
+</template>
