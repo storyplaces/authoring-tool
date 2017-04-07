@@ -61,6 +61,7 @@ export class AdminStoryListItem {
         let question = "Are you sure you wish to delete the story " + this.story.name + "?";
         this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
             if (!response.wasCancelled) {
+                this.previewId = undefined;
                 this.readingStoryConnector.delete(this.story);
             }
         });

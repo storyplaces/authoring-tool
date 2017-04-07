@@ -49,6 +49,7 @@ export class ReadingStory extends BaseModel {
     private _tags: Array<string>;
     private _audience: string;
     private _publishState: string;
+    private _publishDate: string;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -63,7 +64,8 @@ export class ReadingStory extends BaseModel {
         author: undefined,
         description: undefined,
         audience: undefined,
-        publishState: undefined
+        publishState: undefined,
+        publishDate: undefined
     }) {
         console.log(data);
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
@@ -74,6 +76,7 @@ export class ReadingStory extends BaseModel {
         this.tags = data.tags;
         this.audience = data.audience;
         this.publishState = data.publishState;
+        this.publishDate = data.publishDate;
     }
 
     public toJSON() {
@@ -84,7 +87,8 @@ export class ReadingStory extends BaseModel {
             name: this.name,
             tags: this.tags,
             audience: this.audience,
-            publishState: this.publishState
+            publishState: this.publishState,
+            publishDate: this.publishDate
         }
     }
 
@@ -104,6 +108,15 @@ export class ReadingStory extends BaseModel {
     set publishState(value: string) {
         this.typeChecker.validateAsStringOrUndefined("PublishState", value);
         this._publishState = value;
+    }
+
+    get publishDate(): string {
+        return this._publishDate;
+    }
+
+    set publishDate(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("PublishDate", value);
+        this._publishDate = value;
     }
 
     get author(): string {
