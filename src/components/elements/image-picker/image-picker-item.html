@@ -39,20 +39,9 @@
 
 <template>
     <require from="./image-picker-item.css" as="scoped"></require>
-    <label class="image-picker-item">
-        <input type="radio" name="selectedImage" model.bind="imageId" checked.bind="checked">
-
-        <div class="spinner" if.bind="!imageContent && imageId">
-            <img src="images/spinner.gif">
-        </div>
-
-        <div class="image" if.bind="!imageId">
-            <img src="images/no-image.png">
-        </div>
-
-        <img class="image" if.bind="imageContent && imageId" src.bind="imageContent">
-
-
-        <!--<div class="check-mark"><span class="glyphicon glyphicon-ok-circle"></span></div>-->
-    </label>
+    <div class="image-picker-item ${selectedId == imageId ? 'selected' : ''} ${deletable ? 'delete' : ''}" if.bind="imageContent || !deletable">
+        <img class="spinner" src="images/icons/image-upload/spinner.gif" if.bind="!imageContent && imageId">
+        <img class="image" src="images/icons/image-upload/no-image.png" if.bind="!imageId">
+        <img class="image" class.bind="deletable?'delete':''" if.bind="imageContent && imageId" src.bind="imageContent">
+    </div>
 </template>

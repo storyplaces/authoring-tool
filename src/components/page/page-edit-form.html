@@ -46,6 +46,7 @@
     <require from="components/elements/mutable-list/mutable-list"></require>
     <require from="components/elements/toggle-switch/toggle-switch"></require>
     <require from="components/elements/image-picker/image-picker"></require>
+    <require from="components/elements/image-picker/image-picker-item"></require>
 
     <div class="padding">
         <div class="panel panel-default">
@@ -76,20 +77,16 @@
                     <input type="text" class="form-control" id="hint-text" value.bind="page.pageHint & validate:rules"
                            scroll-on-edit change.delegate="setDirty()">
                 </div>
-
+                <div class="form-group">
+                <label>Page image:
+                    <information-icon
+                            help-text="The image shown at the top of the page - click to change"></information-icon></label><br>
+                <image-picker-item image-id.bind="page.imageId" story-id.bind="story.id" click.delegate="showImageLibrary()"></image-picker-item>
+                <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId" story-id.bind="story.id" pick.delegate="imagePicked()" if.bind="imageLibraryVisible"></image-picker>
+                </div>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Media
-            </div>
-            <div class="panel-body">
-                <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId" story-id.bind="story.id"></image-picker>
 
-
-
-            </div>
-        </div>
         <div class="panel panel-default">
             <div class="panel-heading">
                 Narrative Constraints

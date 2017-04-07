@@ -39,10 +39,11 @@
 <template>
     <require from="./image-picker-upload.css" as="scoped"></require>
     <form ref="formElement">
-        <label class="file-upload">
+        <label class="btn btn-success" class.bind="disabled ? 'disabled' : ''">
             <input class="file-upload" type="file" name="image" ref="fileButton"
-                   change.delegate="fileChanged()" accept="image/jpeg,image/png">
-            <img class="file-upload" src="images/icons/add-image.png">
+                   change.delegate="fileChanged()" accept="image/jpeg,image/png" disabled.bind="disabled" capture.bind="camera ? 'camera' : ''">
+            <span class="glyphicon glyphicon-plus" if.bind="!camera"></span>
+            <span class="glyphicon glyphicon-camera" if.bind="camera"></span>
         </label>
     </form>
 </template>

@@ -37,25 +37,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {bindable, bindingMode, autoinject} from "aurelia-framework";
+import {autoinject, bindable} from "aurelia-framework";
 import {imageDownloadResponse, ImagesConnector} from "../../../resources/store/ImagesConnector";
 
 @autoinject()
 export class ImagePickerItemCustomElement {
-    @bindable imageId: string;
+    @bindable imageId: string = "";
     @bindable storyId: string;
-    @bindable({defaultBindingMode: bindingMode.twoWay}) checked: boolean;
+    @bindable selectedId: string;
+    @bindable deletable: boolean;
 
     private imageContent;
 
-    constructor(private imageConnector: ImagesConnector) {}
+    constructor(private imageConnector: ImagesConnector, private element: Element) {
+    }
+
+    imageIdChanged() {
+        this.changeImage();
+    }
 
     attached() {
-        if(this.imageId) {
+        this.changeImage()
+    }
+
+    private changeImage() {
+        if (this.storyId && this.imageId) {
             this.imageConnector.fetch(this.storyId, this.imageId)
-                .then(response => {
+                .then((response: imageDownloadResponse) => {
                     this.imageContent = `data:${response.contentType};base64,${response.content}`;
                 })
+                .catch(error => {
+                    if (error instanceof Response && (error.status === 404 || error.status === 401)) {
+                        this.element.dispatchEvent(this.makeFailedEvent());
+                        return
+                    }
+
+                    this.imageContent = 'images/icons/image-upload/failed-load.png';
+                })
         }
+    }
+
+
+    private makeFailedEvent() {
+        if ((window as any).CustomEvent) {
+            return new CustomEvent('failed', {bubbles: true});
+        }
+
+        let changeEvent = document.createEvent('CustomEvent');
+        changeEvent.initCustomEvent('failed', true, true, {});
+        return changeEvent;
     }
 }

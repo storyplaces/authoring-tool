@@ -55,6 +55,8 @@ export interface imageDownloadResponse {
 @inject(NewInstance.of(HttpClient), Config, FetchConfig)
 export class ImagesConnector {
 
+    private cache : Map<string, imageDownloadResponse> = new Map<string, imageDownloadResponse>()
+
     constructor(protected client: HttpClient, protected config: Config, private fetchConfig: FetchConfig) {
         this.configure();
     }
@@ -86,8 +88,19 @@ export class ImagesConnector {
     }
 
     fetch(storyId: string, imageId: string) {
+
+        let key = `${storyId}.${imageId}`;
+
+        if (this.cache.has(key)) {
+            return Promise.resolve(this.cache.get(key));
+        }
+
         return this.client.fetch(this.makeUrl(storyId, imageId), {method: 'get'})
             .then(response => response.json() as Promise<imageDownloadResponse>)
+            .then(imageDownload => {
+                this.cache.set(key, imageDownload);
+                return imageDownload;
+            })
     }
 
     private makeUrl(storyId: string, imageId: string) {

@@ -60,7 +60,7 @@ export class DefaultAuthoringPageFactory {
             unlockedByPageIds: [],
             unlockedByPagesOperator: "and",
             finishesStory: false,
-            imageId: undefined
+            imageId: ""
         }
     }
 }

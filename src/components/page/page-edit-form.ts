@@ -83,6 +83,8 @@ export class PageEditFormCustomElement {
     private memberOfChapters: Array<string> = [];
     private memberOfChaptersSub: Disposable;
 
+    private imageLibraryVisible:boolean = false;
+
     /*** LIFECYCLE ***/
 
     constructor(private locationFactory: () => AuthoringLocation,
@@ -266,4 +268,11 @@ export class PageEditFormCustomElement {
         this.dirty = true;
     }
 
+    imagePicked() {
+        this.imageLibraryVisible = false;
+    }
+
+    showImageLibrary() {
+        this.imageLibraryVisible = !this.imageLibraryVisible;
+    }
 }

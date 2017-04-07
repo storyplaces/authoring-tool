@@ -43,9 +43,31 @@ div.panel-image-picker {
   margin-bottom: 0;
 
   div.panel-body {
-    overflow-x: auto;
-    white-space: nowrap;
+    width: 100%;
     padding: 0.5em;
+    min-height: 114px;
+
+    .image-picker-list {
+      width: calc(~"100% - 4em");
+      overflow-y: auto;
+      margin: 0;
+      display: inline-block;
+      max-height: 215px
+    }
+
+    .image-picker-buttons {
+      width: 3.5em;
+      display: inline-block;
+      vertical-align: top;
+      text-align: right;
+      margin: 0;
+      padding: 0;
+
+      .btn {
+        margin-bottom: 0.25em;
+      }
+    }
   }
+
 }
 

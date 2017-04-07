@@ -37,19 +37,63 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {bindable, bindingMode, autoinject} from "aurelia-framework";
+import {autoinject, bindable, bindingMode} from "aurelia-framework";
 import {Config} from "../../../config/Config";
 
 @autoinject()
 export class ImagePickerCustomElement {
-    @bindable({defaultBindingMode: bindingMode.twoWay, defaultValue: "-1"}) selectedId;
+    @bindable({defaultBindingMode: bindingMode.twoWay}) selectedId;
     @bindable({defaultBindingMode: bindingMode.twoWay}) imageIds;
     @bindable storyId: string;
 
-    constructor(private config: Config) {}
+    private delete: boolean = false;
 
-    newImage(event: CustomEvent) {
+    constructor(private config: Config, private element: Element) {
+    }
+
+    attached() {
+        if (this.imageIds.indexOf(this.selectedId) === -1) {
+            this.selectedId = "";
+        }
+    }
+
+    private newImage(event: CustomEvent) {
         let newImageId = event.detail;
         this.imageIds.push(newImageId);
+    }
+
+    private deleteToggle() {
+        this.delete = !this.delete;
+    }
+
+    private itemClicked(imageId) {
+        if (this.delete) {
+            this.deleteItem(imageId);
+            return;
+        }
+
+        this.selectedId = imageId;
+        this.element.dispatchEvent(this.makePickEvent());
+    }
+
+    private deleteItem(imageId) {
+        let index = this.imageIds.indexOf(imageId);
+        if (index !== -1) {
+            this.imageIds.splice(index, 1);
+
+            if (this.selectedId === imageId) {
+                this.selectedId = "";
+            }
+        }
+    }
+
+    private makePickEvent() {
+        if ((window as any).CustomEvent) {
+            return new CustomEvent('pick', {bubbles: true});
+        }
+
+        let changeEvent = document.createEvent('CustomEvent');
+        changeEvent.initCustomEvent('pick', true, true, {});
+        return changeEvent;
     }
 }

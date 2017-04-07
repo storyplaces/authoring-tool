@@ -46,6 +46,8 @@ export class ImagePickerUploadCustomElement {
     private formElement: HTMLFormElement;
 
     @bindable storyId: string;
+    @bindable disabled: boolean;
+    @bindable camera:string;
 
     constructor(private imagesConnector: ImagesConnector, private element:Element) {
     }
