@@ -87,7 +87,7 @@ export class ImagesConnector {
         }).then(response => response.json() as Promise<imageUploadResponse>);
     }
 
-    fetch(storyId: string, imageId: string) {
+    fetchThumb(storyId: string, imageId: string) {
 
         let key = `${storyId}.${imageId}`;
 
@@ -95,7 +95,7 @@ export class ImagesConnector {
             return Promise.resolve(this.cache.get(key));
         }
 
-        return this.client.fetch(this.makeUrl(storyId, imageId), {method: 'get'})
+        return this.client.fetch(this.makeThumbUrl(storyId, imageId), {method: 'get'})
             .then(response => response.json() as Promise<imageDownloadResponse>)
             .then(imageDownload => {
                 this.cache.set(key, imageDownload);
@@ -103,7 +103,20 @@ export class ImagesConnector {
             })
     }
 
-    private makeUrl(storyId: string, imageId: string) {
+    fetchFull(storyId: string, imageId: string) {
+        return this.client.fetch(this.makeFullUrl(storyId, imageId), {method: 'get'})
+            .then(response => response.json() as Promise<imageDownloadResponse>)
+            .then(imageDownload => {
+                return imageDownload;
+            })
+    }
+
+
+    private makeFullUrl(storyId: string, imageId: string) {
         return `/authoring/story/${storyId}/image/${imageId}`;
+    }
+
+    private makeThumbUrl(storyId: string, imageId: string) {
+        return `/authoring/story/${storyId}/image/${imageId}/thumb`;
     }
 }

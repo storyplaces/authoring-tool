@@ -62,7 +62,7 @@ export class ImagePickerItemCustomElement {
 
     private changeImage() {
         if (this.storyId && this.imageId) {
-            this.imageConnector.fetch(this.storyId, this.imageId)
+            this.imageConnector.fetchThumb(this.storyId, this.imageId)
                 .then((response: imageDownloadResponse) => {
                     this.imageContent = `data:${response.contentType};base64,${response.content}`;
                 })

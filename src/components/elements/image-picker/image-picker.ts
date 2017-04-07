@@ -85,6 +85,8 @@ export class ImagePickerCustomElement {
                 this.selectedId = "";
             }
         }
+
+        this.delete = false;
     }
 
     private makePickEvent() {

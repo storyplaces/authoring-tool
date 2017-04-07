@@ -43,7 +43,7 @@
 
     <div class="panel panel-image-picker">
         <div class="panel-body">
-            <label>Story image library:</label>
+            <label if.bind="!delete">Story image library:</label><label if.bind="delete">Click the image to delete:</label>
             <div class="image-picker-list">
             <image-picker-item story-id.bind="storyId" image-id="" selected-id.bind="selectedId" if.bind="!delete"
                                click.delegate="itemClicked('')"></image-picker-item>
