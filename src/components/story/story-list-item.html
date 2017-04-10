@@ -51,6 +51,7 @@
                 <span if.bind="story.audience == 'general'" class="label label-info">General Audience</span>
                 <span if.bind="story.audience == 'advisory'" class="label label-danger">Advisory Content</span>
                 <span class="label label-default" repeat.for="tag of story.tags">${tag} </span>
+                <span class="small">Modified ${modified}</span>
             </span>
         </div>
         <div class="grabbable-item-buttons">

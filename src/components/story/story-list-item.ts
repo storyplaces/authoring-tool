@@ -36,14 +36,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless, autoinject, computedFrom} from "aurelia-framework";
-import {AuthoringPage} from "../../resources/models/AuthoringPage";
-import {AuthoringChapter} from "../../resources/models/AuthoringChapter";
-import {StoryLookup} from "../../resources/utilities/StoryLookup";
+import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../modals/delete-confirm";
-import {EventAggregator, Subscription} from "aurelia-event-aggregator";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
+
+import * as moment from "moment"
+
 /**
  * Created by andy on 28/11/16.
  */
@@ -66,6 +65,19 @@ export class StoryListItem {
             if (!response.wasCancelled) {
                 console.info("Not yet implemented");
             }
+        });
+    }
+
+
+    @computedFrom('story.modifiedDate')
+    get modified() {
+        return moment(this.story.modifiedDate).calendar(null, {
+            sameDay: '[today at] HH:mm',
+            nextDay: '[tomorrow at] HH:mm',
+            nextWeek: 'dddd [at] HH:mm',
+            lastDay: '[yesterday at] HH:mm',
+            lastWeek: '[last] dddd [at] HH:mm',
+            sameElse: '[on] DD/MM/YYYY [at] HH:mm'
         });
     }
 }
