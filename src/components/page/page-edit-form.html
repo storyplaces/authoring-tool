@@ -55,22 +55,26 @@
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <label for="name">Page Name:
+                    <label for="name">Page name:
                         <information-icon help-text="The title of the page"></information-icon>
                     </label>
                     <input type="text" class="form-control" id="name" value.bind="page.name & validate:rules"
-                           scroll-on-edit change.delegate="setDirty()">
+                           scroll-on-edit change.delegate="setDirty()" placeholder="Enter the page title here">
                 </div>
 
                 <div class="form-group">
-                    <label for="content">Page Content:
-                        <information-icon help-text="The content of the page"></information-icon>
+                    <label for="content">Page content:
+                        <information-icon help-text=""></information-icon>
                     </label>
                     <textarea class="form-control" id="content" rows="5" value.bind="page.content & validate:rules"
-                              scroll-on-edit change.delegate="setDirty()"></textarea>
+                              scroll-on-edit change.delegate="setDirty()" placeholder="To help get you started, it is useful to know that your story pages may or may not be pinned to a location on the map. A page pinned to a location can only be read in that location. By default, pages can only be read once, although you can change this.
+
+Pages first appear as 'loose pages'. But if you want, you can organise your pages into chapters. Pages in a chapter are only accessible when that chapter is open - so chapters are a good way of managing progression through your story.
+
+Your start page should always be a 'loose page,' so that it can be read at the beginning of the story. You may choose to have more than one possible start page."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="hint-text">Hint Text:
+                    <label for="hint-text">Hint text:
                         <information-icon
                                 help-text="A brief hint shown to the reader before they select a page"></information-icon>
                     </label>
@@ -78,11 +82,15 @@
                            scroll-on-edit change.delegate="setDirty()">
                 </div>
                 <div class="form-group">
-                <label>Page image:
-                    <information-icon
-                            help-text="The image shown at the top of the page - click to change"></information-icon></label><br>
-                <image-picker-item image-id.bind="page.imageId" story-id.bind="story.id" click.delegate="showImageLibrary()"></image-picker-item>
-                <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId" story-id.bind="story.id" pick.delegate="imagePicked()" if.bind="imageLibraryVisible"></image-picker>
+                    <label>Page image:
+                        <information-icon
+                                help-text="The image shown at the top of the page - click to change"></information-icon>
+                    </label><br>
+                    <image-picker-item image-id.bind="page.imageId" story-id.bind="story.id"
+                                       click.delegate="showImageLibrary()"></image-picker-item>
+                    <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId"
+                                  story-id.bind="story.id" pick.delegate="imagePicked()"
+                                  if.bind="imageLibraryVisible"></image-picker>
                 </div>
             </div>
         </div>
@@ -92,54 +100,50 @@
                 Narrative Constraints
             </div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-group">
-                            <label>Allow Multiple Readings:</label>
-                            <information-icon
-                                    help-text="Is the reader allowed to read this page more than once?"></information-icon>
-                            <toggle-switch checked.bind="page.allowMultipleReadings" off="No" on="Yes"
-                                           colourise="yes-no"
-                                           change.delegate="setDirty()"></toggle-switch>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-group">
-                            <label>Finishes story:</label>
-                            <information-icon
-                                    help-text="Reading this page will end the story"></information-icon>
-                            <toggle-switch checked.bind="page.finishesStory" off="No" on="Yes"
-                                           colourise="yes-no"
-                                           change.delegate="setDirty()"></toggle-switch>
-                        </div>
-                    </div>
+                <div class="form-group">
+
+                    <label>Page can be read multiple times:</label>
+                    <information-icon
+                            help-text="Is the reader allowed to read this page more than once?"></information-icon>
+                    <br>
+                    <toggle-switch checked.bind="page.allowMultipleReadings" off="No" on="Yes"
+                                   colourise="yes-no"
+                                   change.delegate="setDirty()"></toggle-switch>
                 </div>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-group">
-                            <label>Unlocked By:</label>
-                            <information-icon
-                                    help-text="Pages that must be read before this page becomes available"></information-icon>
-                            <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
-                                           change.delegate="setDirty()"></toggle-switch>
-                            <mutable-list available-items.bind="availablePages"
-                                          selected-items.bind="page.unlockedByPageIds"
-                                          placeholder="Start typing a page name"
-                                          change.delegate="setDirty()"></mutable-list>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-group">
-                            <label class="moc-fudge">Member Of Chapters:
-                                <information-icon
-                                        help-text="Chapters which this page is a member of. Pages in a chapter can only be read when that chapter is active"></information-icon>
-                            </label>
-                            <mutable-list id="member-of" available-items.bind="availableChapters"
-                                          selected-items.bind="memberOfChapters"
-                                          placeholder="Start typing a chapter name"></mutable-list>
-                        </div>
-                    </div>
+
+                <div class="form-group">
+                    <label>Reading this page finishes the story:</label>
+                    <information-icon
+                            help-text="Reading this page will finish the story"></information-icon>
+                    <br>
+                    <toggle-switch checked.bind="page.finishesStory" off="No" on="Yes"
+                                   colourise="yes-no"
+                                   change.delegate="setDirty()"></toggle-switch>
                 </div>
+
+
+                <div class="form-group">
+                    <label>This page is unlocked by:</label>
+                    <information-icon
+                            help-text="Pages that must be read before this page becomes available"></information-icon>
+                    <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
+                                   change.delegate="setDirty()"></toggle-switch>
+                    <mutable-list available-items.bind="availablePages"
+                                  selected-items.bind="page.unlockedByPageIds"
+                                  placeholder="Start typing a page name"
+                                  change.delegate="setDirty()"></mutable-list>
+                </div>
+
+                <div class="form-group">
+                    <label class="moc-fudge">This page is a member of chapters:
+                        <information-icon
+                                help-text="Chapters which this page is a member of. Pages in a chapter can only be read when that chapter is active"></information-icon>
+                    </label>
+                    <mutable-list id="member-of" available-items.bind="availableChapters"
+                                  selected-items.bind="memberOfChapters"
+                                  placeholder="Start typing a chapter name"></mutable-list>
+                </div>
+
             </div>
         </div>
         <div class="panel panel-default">
