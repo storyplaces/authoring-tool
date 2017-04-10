@@ -189,11 +189,10 @@ Your start page should always be a 'loose page,' so that it can be read at the b
                                    change.delegate="setDirty()"></toggle-switch>
                 </div>
 
-
                 <div class="form-group">
                     <label>This page is unlocked by:</label>
                     <information-icon
-                            help-text="Pages that must be read before this page becomes available"></information-icon>
+                            help-text="Pages that must be read before this page becomes available"></information-icon><br>
                     <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
                                    change.delegate="setDirty()"></toggle-switch>
                     <mutable-list available-items.bind="availablePages"

@@ -48,23 +48,23 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="title">Story Title:
+                <label for="title">Story title:
                     <information-icon help-text="The title of the story"></information-icon>
                 </label>
                 <input type="text" class="form-control" id="title" value.bind="story.title & validate:rules"
-                       change.delegate="setDirty()">
+                       change.delegate="setDirty()" placeholder="The story's title">
             </div>
 
             <div class="form-group">
-                <label for="description">Story Description:
+                <label for="description">Story description:
                     <information-icon help-text="A brief description of the story."></information-icon>
                 </label>
                 <textarea type="textarea" class="form-control" id="description"
-                          value.bind="story.description & validate:rules" change.delegate="setDirty()"></textarea>
+                          value.bind="story.description & validate:rules" change.delegate="setDirty()" placeholder="A brief description of the story"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="audience">Audience Rating:
+                <label for="audience">Audience rating:
                     <information-icon help-text="The story's audience rating"></information-icon>
                 </label>
                 <div class="radio" repeat.for="audience of audiences">
