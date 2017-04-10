@@ -173,6 +173,16 @@ export class StoryDetailsForm {
         return this._results;
     }
 
+    get tags() {
+        return this.story.tags.join(', ');
+    }
+
+    set tags(tagString: string) {
+        let tags = tagString.split(',')
+
+        this.story.tags = tags.map(tag => tag.trim());
+    }
+
 }
 
 
