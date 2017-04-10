@@ -161,7 +161,7 @@ export class PageEditFormCustomElement {
     private validationRules() {
         return ValidationRules
             .ensure((page: AuthoringPage) => page.name).displayName("Page Name").required().maxLength(255)
-            .ensure((page: AuthoringPage) => page.content).displayName("Page Content").required()
+            // .ensure((page: AuthoringPage) => page.content).displayName("Page Content").required()
             .ensure((page: AuthoringPage) => page.pageHint).displayName("Hint Text").maxLength(255)
             .ensure((location: AuthoringLocation) => location.lat).displayName("Latitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -90 && parseFloat(value) <= 90)).withMessage(`\${$displayName} must be between -90 and 90 inclusive`)
             .ensure((location: AuthoringLocation) => location.long).displayName("Longitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -180 && parseFloat(value) <= 180)).withMessage(`\${$displayName} must be between -180 and 180 inclusive`)
