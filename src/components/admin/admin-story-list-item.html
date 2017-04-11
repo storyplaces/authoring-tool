@@ -56,7 +56,7 @@
             <span if.bind="story.audience == 'family'" class="label label-success">Family Friendly</span>
             <span if.bind="story.audience == 'general'" class="label label-info">General Audience</span>
             <span if.bind="story.audience == 'advisory'" class="label label-danger">Advisory Content</span>
-            <span class="label label-default" repeat.for="tag of story.tags">${tag} </span>
+            <span repeat.for="tag of story.tags"><span class="label label-default">${tag}</span> </span>
             <br/>
 
         </div>
