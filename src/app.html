@@ -63,7 +63,7 @@
                             </div></a></li>
                         </ul>
                     </li>
-                    <li class="dropdown" if.bind="currentUser.loggedIn && canSeeAdminMenu">
+                    <li class="dropdown" if.bind="currentUser.loggedIn && canSeeAdminMenu()">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a route-href="route: admin-story-list">Story Approvals</a></li>

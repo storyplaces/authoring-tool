@@ -53,13 +53,13 @@
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <label for="name">Chapter Name:
+                    <label for="name">Chapter name:
                         <information-icon help-text="The title of the chapter"></information-icon>
                     </label>
-                    <input type="text" class="form-control" id="name" value.bind="chapter.name & validate:rules" scroll-on-edit change.delegate="setDirty()">
+                    <input type="text" class="form-control" id="name" value.bind="chapter.name & validate:rules" scroll-on-edit change.delegate="setDirty()" placeholder="The chapter's name">
                 </div>
                 <div class="form-group">
-                    <label>Chapter Colour:
+                    <label>Chapter colour:
                         <information-icon
                                 help-text="The colour which will be used to represent this chapter in the authoring tool."></information-icon>
                     </label><br>
@@ -74,7 +74,7 @@
             <div class="panel-body">
                 <div>
                     <div class="form-group">
-                        <label for="chapter-pages">Pages in this Chapter:
+                        <label for="chapter-pages">Pages in this chapter:
                             <information-icon help-text="Pages which belong to this chapter."></information-icon>
                         </label>
                         <mutable-list available-items.bind="availablePages" selected-items.bind="chapter.pageIds"
@@ -84,9 +84,10 @@
                 </div>
                 <div>
                     <div class="form-group">
-                        <label for="chapter-pages">Unlocked By Pages:
+                        <label for="chapter-pages">Is unlocked when these pages are read:
                             <information-icon help-text="Pages which unlock this chapter when read."></information-icon>
                         </label>
+                        <br>
                         <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
                                        change.delegate="setDirty()"></toggle-switch>
                         <mutable-list available-items.bind="availableUnlockPages"
@@ -95,15 +96,16 @@
                                       change.delegate="setDirty()"></mutable-list>
                     </div>
                     <div class="form-group">
-                        <label for="chapter-pages">Locks All Other Chapters:
+                        <label for="chapter-pages">Unlocking this chapter locks all others:
                             <information-icon
                                     help-text="Are all other chapters locked when this chapter is entered?"></information-icon>
-                        </label>
+                        </label><br>
                         <toggle-switch checked.bind="chapter.locksAllOtherChapters" off="No" on="Yes" colourise="yes-no"
                                        change.delegate="setDirty()"></toggle-switch>
-                        <br/>
+                    </div>
+                    <div class="form-group">
                         <div hidden.bind="chapter.locksAllOtherChapters">
-                            <label for="chapter-pages">Locks Chapters:
+                            <label for="chapter-pages">Unlocking this chapter locks:
                                 <information-icon
                                         help-text="Other chapters which are locked when this chapter is opened."></information-icon>
                             </label>
