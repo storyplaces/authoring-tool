@@ -33,6 +33,23 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {inject} from "aurelia-framework";
+import {Router} from "aurelia-router";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
+
+@inject(CurrentUser, Router)
 export class HomeCustomElement {
+
+    constructor(private currentUser: CurrentUser, private router: Router) {
+
+    }m
+
+    activate() {
+        if (this.currentUser.loggedIn) {
+            this.router.navigateToRoute('story-list');
+        } else {
+            this.router.navigateToRoute('login');
+        }
+    }
 
 }

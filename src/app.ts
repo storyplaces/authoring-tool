@@ -59,6 +59,7 @@ export class App {
 
             {route: '/help', name: 'help', moduleId: 'pages/static/help', title: 'Help'},
             {route: '/about', name: 'about', moduleId: 'pages/static/about', title: 'About'},
+            {route: '/privacy', name: 'privacy', moduleId: 'pages/static/privacy', title: 'Privacy'},
 
             {route: '/story', moduleId: 'pages/story/story-list-page', title: 'Stories', name: 'story-list', auth: true, privileges:{all:["listOwnStories"]}},
             {route: '/story/new', moduleId: 'pages/story/story-create-page', title: 'New Story', name: 'story-create', auth: true, privileges:{all:["createStory"]}},
