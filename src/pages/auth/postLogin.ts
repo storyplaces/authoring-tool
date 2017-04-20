@@ -49,16 +49,16 @@ export class PostLogin {
      }
 
      attached() {
-         if (this.currentUser.loggedIn) {
-             this.redirect();
-             return
-         }
-
          this.sub = this.bindingEngine.propertyObserver(this.currentUser, 'loggedIn').subscribe(loggedIn => {
              if (loggedIn) {
                  this.redirect();
              }
          });
+
+         if (this.currentUser.loggedIn) {
+             this.redirect();
+             return
+         }
      }
 
     private redirect() {
@@ -70,6 +70,4 @@ export class PostLogin {
              this.sub.dispose();
          }
      }
-
-
  }
