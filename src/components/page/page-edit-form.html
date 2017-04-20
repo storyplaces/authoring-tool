@@ -87,7 +87,7 @@ Your start page should always be a 'loose page,' so that it can be read at the b
                                 help-text="The image shown at the top of the page - click to change"></information-icon>
                     </label><br>
                     <image-picker-item image-id.bind="page.imageId" story-id.bind="story.id"
-                                       click.delegate="showImageLibrary()"></image-picker-item>
+                                       click.delegate="showImageLibrary()" failed.delegate="imageFailed()"></image-picker-item>
                     <image-picker image-ids.bind="story.imageIds" selected-id.bind="page.imageId"
                                   story-id.bind="story.id" pick.delegate="imagePicked()"
                                   if.bind="imageLibraryVisible"></image-picker>

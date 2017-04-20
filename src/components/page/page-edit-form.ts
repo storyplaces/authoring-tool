@@ -268,11 +268,15 @@ export class PageEditFormCustomElement {
         this.dirty = true;
     }
 
-    imagePicked() {
+    private imagePicked() {
         this.imageLibraryVisible = false;
     }
 
-    showImageLibrary() {
+    private showImageLibrary() {
         this.imageLibraryVisible = !this.imageLibraryVisible;
+    }
+
+    private imageFailed() {
+        this.page.imageId = "";
     }
 }

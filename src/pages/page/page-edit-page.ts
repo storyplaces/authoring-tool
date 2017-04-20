@@ -155,6 +155,8 @@ export class PageEditPage {
         }
         this.story.pages.save(this.page);
 
+        this.cleanUpImages();
+
         this.storyConnector.save(this.story).then(() => {
             this.dirty = false;
             this.router.navigateToRoute("story-pages", {storyId: this.story.id});
@@ -163,5 +165,13 @@ export class PageEditPage {
 
     private cancel() {
         this.router.navigateToRoute("story-pages", {storyId: this.story.id});
+    }
+
+    private cleanUpImages() {
+        this.story.pages.forEach(page => {
+           if (this.story.imageIds.indexOf(page.imageId) === -1) {
+               page.imageId = "";
+           }
+        });
     }
 }
