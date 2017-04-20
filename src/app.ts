@@ -82,6 +82,8 @@ export class App {
             {route: '/user', moduleId: 'pages/user/user-edit-page', title: 'Your Details', name: 'user-edit', auth: true, privileges:{all:["updateOwnUser"]}}
         ]);
 
+        config.fallbackRoute('/story');
+
         this.router = router;
     }
 
