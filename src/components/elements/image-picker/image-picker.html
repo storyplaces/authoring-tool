@@ -41,9 +41,11 @@
     <require from="./image-picker-item"></require>
     <require from="./image-picker-upload"></require>
 
-    <div class="panel panel-image-picker">
+    <div class="panel panel-image-picker" class.bind="delete ? 'panel-danger' : 'panel-default'">
+        <div class="panel-heading">
+            <span if.bind="!delete">Story image library:</span><span if.bind="delete"><strong>Click the image to delete:</strong></span>
+        </div>
         <div class="panel-body">
-            <label if.bind="!delete">Story image library:</label><label if.bind="delete">Click the image to delete:</label>
             <div class="image-picker-list">
             <image-picker-item story-id.bind="storyId" image-id="" selected-id.bind="selectedId" if.bind="!delete"
                                click.delegate="itemClicked('')"></image-picker-item>
@@ -55,8 +57,8 @@
             <div class="image-picker-buttons">
                 <image-picker-upload story-id.bind="storyId" upload.delegate="newImage($event)"
                                      disabled.bind="delete"></image-picker-upload>
-                <image-picker-upload story-id.bind="storyId" upload.delegate="newImage($event)"
-                                     disabled.bind="delete" camera="true"></image-picker-upload>
+                <!--<image-picker-upload story-id.bind="storyId" upload.delegate="newImage($event)"-->
+                                     <!--disabled.bind="delete" camera="true"></image-picker-upload>-->
                 <button class="btn btn-danger" click.delegate="deleteToggle()"><span if.bind="!delete" class="glyphicon glyphicon-trash"></span><span if.bind="delete" class="glyphicon glyphicon-remove"></span>
                 </button>
             </div>

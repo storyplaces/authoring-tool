@@ -39,6 +39,8 @@
 
 import {autoinject, bindable, bindingMode} from "aurelia-framework";
 import {Config} from "../../../config/Config";
+import {DeleteConfirm} from "../../modals/delete-confirm";
+import {DialogService} from "aurelia-dialog";
 
 @autoinject()
 export class ImagePickerCustomElement {
@@ -48,7 +50,7 @@ export class ImagePickerCustomElement {
 
     private delete: boolean = false;
 
-    constructor(private config: Config, private element: Element) {
+    constructor(private config: Config, private element: Element, private dialogService: DialogService) {
     }
 
     attached() {
@@ -77,6 +79,15 @@ export class ImagePickerCustomElement {
     }
 
     private deleteItem(imageId) {
+        this.promptDelete().then(result => {
+            if (result) {
+                this.deleteItemFromStory(imageId);
+                this.delete = false;
+            }
+        });
+    }
+
+    private deleteItemFromStory(imageId) {
         let index = this.imageIds.indexOf(imageId);
         if (index !== -1) {
             this.imageIds.splice(index, 1);
@@ -85,8 +96,18 @@ export class ImagePickerCustomElement {
                 this.selectedId = "";
             }
         }
+    }
 
-        this.delete = false;
+    private promptDelete() {
+        let question = "Are you sure you wish to delete this image. It will be removed from all pages where it is in use.";
+
+        return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+            if (!response.wasCancelled) {
+                return true;
+            }
+            return false;
+        });
+
     }
 
     private makePickEvent() {

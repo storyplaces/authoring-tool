@@ -39,7 +39,7 @@
 
 <template>
     <require from="./image-picker-item.css" as="scoped"></require>
-    <div class="image-picker-item ${selectedId == imageId ? 'selected' : ''} ${deletable ? 'delete' : ''}" if.bind="imageContent || !deletable">
+    <div class="image-picker-item ${selectedId == imageId && !deletable ? 'selected' : ''} ${deletable ? 'delete' : ''}" if.bind="imageContent || !deletable">
         <img class="spinner" src="images/icons/image-upload/spinner.gif" if.bind="!imageContent && imageId">
         <img class="image" src="images/icons/image-upload/no-image.png" if.bind="!imageId">
         <img class="image" class.bind="deletable?'delete':''" if.bind="imageContent && imageId" src.bind="imageContent">
