@@ -57,6 +57,10 @@ export class AdminStoryListItem {
     constructor(private readingStoryConnector: ReadingStoryConnector, private dialogService: DialogService, private config: Config) {
     }
 
+    storyChanged(newStory) {
+        this.previewId = undefined;
+    }
+
     delete(): void {
         let question = "Are you sure you wish to delete the story " + this.story.name + "?";
         this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
