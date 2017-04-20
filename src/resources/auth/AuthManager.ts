@@ -44,6 +44,7 @@
 import {autoinject} from "aurelia-framework";
 import {EventAggregator} from "aurelia-event-aggregator";
 import {AuthService} from "aurelia-authentication";
+import {Router} from "aurelia-router";
 import {CurrentUser} from "./CurrentUser";
 import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 
@@ -51,27 +52,27 @@ import {AuthoringStoryConnector} from "../store/AuthoringStoryConnector";
 @autoinject()
 export class AuthManager {
 
-    constructor(private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser, private authoringStoryConnector: AuthoringStoryConnector) {
+    constructor(private eventAggregator: EventAggregator, private authService: AuthService, private currentUser: CurrentUser, private authoringStoryConnector: AuthoringStoryConnector, private router: Router) {
 
-        // On start, check if we are logged in already
+    }
+
+    init() {
+        this.eventAggregator.subscribe('authentication-change', (authenticated) => {
+            if (!authenticated) {
+                return this.logOut();
+            }
+        });
+
         if (this.authService.authenticated) {
             this.logIn();
         }
-
-        // Subscribe for login/out events
-        this.eventAggregator.subscribe('authentication-change', (authenticated) => {
-            if (authenticated) {
-                return this.logIn();
-            }
-            return this.logOut();
-        })
     }
 
-    logIn() {
-        return this.currentUser.setFromJwt(this.authService.getAccessToken());
+    private logIn() {
+        this.router.navigateToRoute('post-login');
     }
 
-    logOut() {
+    private logOut() {
         this.authoringStoryConnector.empty();
         return this.currentUser.logOut();
     }

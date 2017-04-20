@@ -55,7 +55,14 @@ export class CurrentUser {
     }
 
     public setFromJwt(jwt: string) {
-        let payload = jwtDecode(jwt);
+        let payload: any;
+
+        try {
+            payload = jwtDecode(jwt);
+        } catch (e) {
+            return Promise.reject("Bad token");
+        }
+
         this._userId = payload.sub;
 
         // Fetch user info from the server

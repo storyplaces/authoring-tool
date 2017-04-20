@@ -38,36 +38,24 @@
  */
 
 import {CurrentUser} from "../../resources/auth/CurrentUser";
-import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
+import {autoinject} from "aurelia-framework";
 import {Router} from "aurelia-router";
+import {AuthService} from "aurelia-authentication";
 
 @autoinject()
 export class PostLogin {
-    private sub: Disposable;
 
-     constructor(private currentUser: CurrentUser, private bindingEngine: BindingEngine, private router: Router) {
-     }
-
-     attached() {
-         this.sub = this.bindingEngine.propertyObserver(this.currentUser, 'loggedIn').subscribe(loggedIn => {
-             if (loggedIn) {
-                 this.redirect();
-             }
-         });
-
-         if (this.currentUser.loggedIn) {
-             this.redirect();
-             return
-         }
-     }
-
-    private redirect() {
-        this.router.navigateToRoute("story-list");
+    constructor(private currentUser: CurrentUser, private router: Router, private authService: AuthService) {
     }
 
-     detached() {
-         if (this.sub) {
-             this.sub.dispose();
-         }
-     }
- }
+    attached() {
+        this.currentUser.setFromJwt(this.authService.getAccessToken())
+            .then(() => {
+                return this.router.navigateToRoute('story-list');
+            })
+            .catch(() => {
+                this.router.navigateToRoute('home');
+            });
+    }
+
+}

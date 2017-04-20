@@ -45,7 +45,7 @@ import {AuthManager} from "./resources/auth/AuthManager";
 export class App {
     router: Router;
 
-    constructor(private userConfig: UserConfig, private currentUser: CurrentUser, authManager: AuthManager) {
+    constructor(private userConfig: UserConfig, private currentUser: CurrentUser, private authManager: AuthManager) {
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
@@ -87,7 +87,9 @@ export class App {
         this.router = router;
     }
 
-    activate() {
+
+    attached() {
+        this.authManager.init();
     }
 
     canSeeAdminMenu() {
