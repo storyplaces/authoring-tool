@@ -58,7 +58,7 @@ export class DefaultAuthoringChapterFactory {
             allowMultipleReadings: false,
             unlockedByPageIds: [],
             unlockedByPagesOperator: "and",
-            locksAllOtherChapters: false,
+            locksAllOtherChapters: true,
             locksChapterIds: []
         }
     }
