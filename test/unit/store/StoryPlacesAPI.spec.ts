@@ -43,6 +43,7 @@ import {HttpClient} from "aurelia-fetch-client";
 import {Identifiable} from "../../../src/resources/interfaces/Identifiable";
 import {JSONable} from "../../../src/resources/interfaces/JSONable";
 import {Config} from "../../../src/config/Config";
+import {FetchConfig} from "aurelia-authentication";
 
 describe("StoryPlacesAPI", () => {
 
@@ -57,13 +58,7 @@ describe("StoryPlacesAPI", () => {
 
     }
 
-    class MockAuthenticator {
-        userId: "ABCDEF1234";
-        jwt: "TestJWTNeedsToBeARealJWTWhenWeStartUsingThem";
-    }
-
     let config = new Config();
-    let authenticator = new MockAuthenticator();
 
     function resolve(object: Function, data?: any) {
         return container.invoke(object, [data]);
@@ -79,14 +74,14 @@ describe("StoryPlacesAPI", () => {
 
     it("can be instantiated and have an unset path", () => {
         let client = resolve(HttpClient);
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
 
         expect(api.path).toBeUndefined();
     });
 
     it("can have its path set using the path setter", () => {
         let client = resolve(HttpClient);
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories/"
 
         expect(api.path).toEqual("/stories/");
@@ -94,7 +89,7 @@ describe("StoryPlacesAPI", () => {
 
     it("adds a trailing slash when setting a path without one", () => {
         let client = resolve(HttpClient);
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories"
 
         expect(api.path).toEqual("/stories/");
@@ -106,7 +101,7 @@ describe("StoryPlacesAPI", () => {
                 return success(new Response("[]"));
             })
         );
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories/"
 
         api.getAll().then((result) => {
@@ -123,7 +118,7 @@ describe("StoryPlacesAPI", () => {
                 return success(new Response("[]"));
             })
         );
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories/"
 
         api.getOne("123").then((result) => {
@@ -140,7 +135,7 @@ describe("StoryPlacesAPI", () => {
                 return success(new Response("[]"));
             })
         );
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories/"
         let testObjectNoId = new TestIdentifiable();
 
@@ -161,7 +156,7 @@ describe("StoryPlacesAPI", () => {
                 return success(new Response("[]"));
             })
         );
-        let api = new StoryPlacesAPI(client, config, authenticator as any);
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
         api.path = "/stories/"
         let testObjectNoId = new TestIdentifiable();
         testObjectNoId.id = "1";

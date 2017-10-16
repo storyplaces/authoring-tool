@@ -75,7 +75,6 @@ describe("Story model", () => {
     }
 
     beforeEach(() => {
-        authoringUserCollectionFactoryCalledWith = "set to something random";
         authoringChapterCollectionFactoryCalledWith = "set to something random";
         authoringPageCollectionFactoryCalledWith = "set to something random";
         authoringLocationCollectionFactoryCalledWith = "set to something random";
@@ -89,8 +88,7 @@ describe("Story model", () => {
 
 
     it("can be instantiated with no data", () => {
-        let model = new AuthoringStory(authoringUserCollectionFactory,
-            authoringChapterCollectionFactory,
+        let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
             typeChecker);
@@ -107,7 +105,6 @@ describe("Story model", () => {
         expect(model.locations).toEqual(undefined);
         expect(model.tags).toEqual(undefined);
 
-        expect(authoringUserCollectionFactoryCalledWith).toBeUndefined();
         expect(authoringChapterCollectionFactoryCalledWith).toBeUndefined();
         expect(authoringPageCollectionFactoryCalledWith).toBeUndefined();
         expect(authoringLocationCollectionFactoryCalledWith).toBeUndefined();
@@ -121,16 +118,16 @@ describe("Story model", () => {
             createdDate: moment.unix(1111111),
             modifiedDate: moment.unix(1111112),
             audience: "general",
-            authors: [{id: "author"}],
+            authorIds: ["author"],
             pages: [{id: "page"}],
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
-            tags: ["tag"]
+            tags: ["tag"],
+            imageIds: [],
         };
 
 
-        let model = new AuthoringStory(authoringUserCollectionFactory,
-            authoringChapterCollectionFactory,
+        let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
             typeChecker,
@@ -147,9 +144,8 @@ describe("Story model", () => {
 
         expect(model.pages).toEqual(undefined);
         expect(model.chapters).toEqual(undefined);
-        expect(model.authorIds).toEqual(undefined);
+        expect(model.authorIds).toEqual(["author"]);
         expect(model.locations).toEqual(undefined);
-        expect(authoringUserCollectionFactoryCalledWith).toEqual([{id: "author"}]);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);
         expect(authoringPageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
@@ -164,15 +160,15 @@ describe("Story model", () => {
             createdDate: moment.unix(1111111),
             modifiedDate: moment.unix(1111112),
             audience: "general",
-            authors: [{id: "author"}],
+            authorIds: ["author"],
+            imageIds: [],
             pages: [{id: "page"}],
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
-            tags: ["tag"]
+            tags: ["tag"],
         };
 
-        let model = new AuthoringStory(authoringUserCollectionFactory,
-            authoringChapterCollectionFactory,
+        let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
             typeChecker);
@@ -188,9 +184,8 @@ describe("Story model", () => {
 
         expect(model.pages).toEqual(undefined);
         expect(model.chapters).toEqual(undefined);
-        expect(model.authorIds).toEqual(undefined);
+        expect(model.authorIds).toEqual(["author"]);
         expect(model.locations).toEqual(undefined);
-        expect(authoringUserCollectionFactoryCalledWith).toEqual([{id: "author"}]);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);
         expect(authoringPageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
@@ -198,8 +193,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new AuthoringStory(authoringUserCollectionFactory,
-            authoringChapterCollectionFactory,
+        let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
             typeChecker);
@@ -215,8 +209,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if title is not set to a string or undefined", () => {
-        let model = new AuthoringStory(authoringUserCollectionFactory,
-            authoringChapterCollectionFactory,
+        let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
             typeChecker);
@@ -235,7 +228,7 @@ describe("Story model", () => {
             createdDate: moment.unix(1111111),
             modifiedDate: moment.unix(1111112),
             audience: "general",
-            authors: [{id: "author"}],
+            authorIds: ["author"],
             pages: [{id: "page"}],
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
@@ -246,6 +239,6 @@ describe("Story model", () => {
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authors":[{"id":"author"}],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"]}');
+        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"]}');
     });
 });

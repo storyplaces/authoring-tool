@@ -51,6 +51,7 @@ describe("Story List Item Custom Component", () => {
     const storyFamilyRatingLong = "Family Friendly";
     const storyAdvisoryRating = 'advisory';
     const storyAdvisoryRatingLong = "Advisory Content";
+    const storyAuthorIds = ["andy"];
     const storyId = "abcdefg123456";
 
     let component;
@@ -63,7 +64,8 @@ describe("Story List Item Custom Component", () => {
             title: storyTitle,
             description: storyDescription,
             tags: storyTags,
-            audience: rating
+            audience: rating,
+            authorIds: storyAuthorIds
         }]);
 
         component = StageComponent

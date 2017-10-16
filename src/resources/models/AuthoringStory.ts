@@ -166,7 +166,7 @@ export class AuthoringStory extends BaseModel {
     }
 
     set authorIds(value: Array<string>) {
-        this.typeChecker.isArrayOf("authorIds", value, "string");
+        this.typeChecker.isUndefinedOrArrayOf("authorIds", value, "string");
         this._authorIds = value;
     }
 

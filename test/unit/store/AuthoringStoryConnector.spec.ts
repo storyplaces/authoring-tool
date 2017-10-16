@@ -42,6 +42,7 @@ import {AuthoringStoryCollection} from "../../../src/resources/collections/Autho
 import {StoryPlacesAPI} from "../../../src/resources/store/StoryplacesAPI";
 import {DefaultAuthoringStoryFactory} from "../../../src/resources/factories/DefaultAuthoringStoryFactory";
 import {Identifiable} from "../../../src/resources/interfaces/Identifiable";
+import {AuthoringStory} from "../../../src/resources/models/AuthoringStory";
 
 describe("AuthoringStoryConnector", () => {
     let container: Container = new Container().makeGlobal();
@@ -128,11 +129,13 @@ describe("AuthoringStoryConnector", () => {
     it("can create a new story", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
         let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
+        let mockCurrentUser = {userId: "12345"} as any;
+        let defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory = new DefaultAuthoringStoryFactory(() => resolve(AuthoringStory), mockCurrentUser);
+
 
         apiReturnsSuccessfulSave(storyPlacesAPI, "123");
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
 
         authoringStoryConnector
             .newAuthoringStory()
@@ -321,14 +324,14 @@ describe("AuthoringStoryConnector", () => {
 
     it("will download stories from the server if they don't already exist", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
-        let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
+        let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);let mockCurrentUser = {userId: "12345"} as any;
+        let defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory = new DefaultAuthoringStoryFactory(() => resolve(AuthoringStory), mockCurrentUser);
 
-        let authoringStory = authoringStoryFactory.create();
+        let authoringStory = defaultAuthoringStoryFactory.create();
         authoringStory.id = "123";
-        let authoringStory2 = authoringStoryFactory.create();
+        let authoringStory2 = defaultAuthoringStoryFactory.create();
         authoringStory2.id = "456";
-        let authoringStory3 = authoringStoryFactory.create();
+        let authoringStory3 = defaultAuthoringStoryFactory.create();
         authoringStory3.id = "789";
 
         spyOn(storyPlacesAPI, 'getAll').and.callFake(() => {
@@ -336,7 +339,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.resolve(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
 
         authoringStoryConnector.fetchAll().then(() => {
             expect(authoringStoryConnector.byId("123")).not.toBeUndefined();
@@ -353,15 +356,15 @@ describe("AuthoringStoryConnector", () => {
 
     it("will download stories from the server if they already exist, they are newer on the server and not marked as modified", (done) => {
         let authoringStoryCollection: AuthoringStoryCollection = resolve(AuthoringStoryCollection);
-        let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);
-        let authoringStoryFactory: DefaultAuthoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
+        let storyPlacesAPI: StoryPlacesAPI = resolve(StoryPlacesAPI);let mockCurrentUser = {userId: "12345"} as any;
+        let defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory = new DefaultAuthoringStoryFactory(() => resolve(AuthoringStory), mockCurrentUser);
 
-        let authoringStoryRemote = authoringStoryFactory.create();
+        let authoringStoryRemote = defaultAuthoringStoryFactory.create();
         authoringStoryRemote.id = "123";
         authoringStoryRemote.title = "Remote";
         authoringStoryRemote.modifiedDate = new Date(Date.now() + 100000);
 
-        let authoringStoryLocal = authoringStoryFactory.create();
+        let authoringStoryLocal = defaultAuthoringStoryFactory.create();
         authoringStoryLocal.id = "123";
         authoringStoryLocal.title = "Local";
 
@@ -372,7 +375,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.resolve(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
 
         authoringStoryConnector.fetchAll().then(() => {
             expect(storyPlacesAPI.getAll).toHaveBeenCalled();
