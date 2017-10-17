@@ -50,9 +50,11 @@ import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConne
 import {PublishingConnector} from "../../resources/store/PublishingConnector";
 import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
 import {Config} from "../../config/Config";
+import {StoryJsonConnector} from "../../resources/store/StoryJsonConnector";
 
-@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector, Config)
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector, StoryJsonConnector, Config)
 export class StoryDetailsForm {
+
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
     @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
@@ -62,10 +64,14 @@ export class StoryDetailsForm {
     public rules: Rule<AuthoringStory, any>[][];
 
     private _results: string = "";
+    private _jsonDownloadResults: string = "";
 
     private publishing: boolean = false;
     private buildingPreview: boolean = false;
+    private buildingJson: boolean = false;
     private isPreviewLink: boolean = false;
+
+    private downloadJsonLink: HTMLAnchorElement;
 
     constructor(private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
@@ -73,6 +79,7 @@ export class StoryDetailsForm {
                 private authoringStoryConnector: AuthoringStoryConnector,
                 private publishingConnector: PublishingConnector,
                 private previewConnector: PreviewingConnector,
+                private storyJsonConnector: StoryJsonConnector,
                 private config: Config) {
         this.setupValidation();
     }
@@ -154,9 +161,26 @@ export class StoryDetailsForm {
                 return
             }
 
-            this.results = "Sorry it has not been possible to request a preview at this time due to a network issue";
+            this.results = "Sorry it has not been possible to request a preview at this time due to a network issue.";
         });
 
+    }
+
+    downloadJson() {
+        this.buildingJson = true;
+        this.jsonDownloadResults = "";
+        this.storyJsonConnector.downloadJson(this.story).then(result => {
+            this.buildingJson = false;
+
+            if (typeof result !== 'boolean') {
+                var file = new Blob([JSON.stringify(result)], {type: "application/octet-stream"});
+                this.downloadJsonLink.download = "download.json";
+                this.downloadJsonLink.href = URL.createObjectURL(file);
+                this.downloadJsonLink.click();
+                return;
+            }
+            this.jsonDownloadResults = "Sorry it has not been possible to request your story JSON at this time due to a network issue.";
+        });
     }
 
     private makePreviewLink(id: string) {
@@ -171,6 +195,14 @@ export class StoryDetailsForm {
 
     get results() {
         return this._results;
+    }
+
+    get jsonDownloadResults(): string {
+        return this._jsonDownloadResults;
+    }
+
+    set jsonDownloadResults(value: string) {
+        this._jsonDownloadResults = value;
     }
 
     get tags() {

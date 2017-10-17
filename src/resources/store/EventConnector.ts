@@ -36,18 +36,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, NewInstance} from "aurelia-framework";
+import {inject, Factory, NewInstance} from "aurelia-framework";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {AuthoringStory} from "../models/AuthoringStory";
-import {EventConnector} from "./EventConnector";
 
 @inject(NewInstance.of(StoryPlacesAPI))
-export class PreviewingConnector extends EventConnector {
+export class EventConnector {
 
-    previewStory(story: AuthoringStory): Promise<string | boolean> {
-        return this.triggerStoryEvent(story, 'preview').then((result) => {
-            return result.id || result
-        });
+    private _numberOfNetworkConnections;
+    private _serverOK: boolean;
+
+    constructor(private api: StoryPlacesAPI, ) {
+        api.path = "/authoring/story/";
+        this._numberOfNetworkConnections = 0;
     }
 
+    triggerStoryEvent(story: AuthoringStory, event: string): Promise<Response | boolean> {
+        this._numberOfNetworkConnections++;
+        return this.api.trigger(story, event)
+            .then(response => response.json() as any)
+            .then(jsonObject => {
+                this._numberOfNetworkConnections--;
+                this._serverOK = true;
+                return jsonObject || false;
+            })
+            .catch(() => {
+                this._numberOfNetworkConnections--;
+                this._serverOK = false;
+                return false;
+            });
+    }
+
+    get numberOfNetworkConnections() {
+        return this._numberOfNetworkConnections;
+    }
+
+    get serverOK(): boolean {
+        return this._serverOK;
+    }
 }
