@@ -1,4 +1,3 @@
-------------
 StoryPlaces
 ------------
 This application was developed as part of the Leverhulme Trust funded
@@ -34,3 +33,14 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Installing the authoring tool
+-----------------------------
+See the server repository README file for a suggested directory structure.
+* Copy the `/src/config/Config.ts.default` file as `/src/config/Config.ts`
+* Update the `server` path to be the relative path from the reading tool to the server API.
+* Update the `reading_tool_url` to be the relative or absolute path to the reading tool url.
+* Update the `google_oauth_client_id` to be the client id of your oAuth2 google credential. You will also need to enable to google+ API for your application
+
+* run `npm install`
