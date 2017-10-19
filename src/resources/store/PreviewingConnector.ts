@@ -46,7 +46,10 @@ export class PreviewingConnector extends EventConnector {
 
     previewStory(story: AuthoringStory): Promise<string | boolean> {
         return this.triggerStoryEvent(story, 'preview').then((result) => {
-            return result.id || result
+            if (typeof result == "object"){
+                return (result as any).id;
+            }
+            return result;
         });
     }
 

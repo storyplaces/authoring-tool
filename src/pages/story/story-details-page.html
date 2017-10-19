@@ -38,7 +38,7 @@
   -->
 
 <template>
-    <require from="../../components/story/story-details-form"></require>
+    <require from="../../components/story/story-detail-tab"></require>
     <require from="../../components/elements/story-tabs"></require>
     <require from="../templates/two-pane-template.html"></require>
     <require from="../../components/scrollable-list-with-header/scrollable-list-with-header"></require>
@@ -71,7 +71,7 @@
                     </div>
                     <div slot="content">
                         <div class="padding">
-                            <story-details-form story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-details-form>
+                            <story-detail-tab story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-detail-tab>
                         </div>
                     </div>
                 </scrollable-list-with-header>

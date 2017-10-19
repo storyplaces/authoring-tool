@@ -64,14 +64,10 @@ export class StoryDetailsForm {
     public rules: Rule<AuthoringStory, any>[][];
 
     private _results: string = "";
-    private _jsonDownloadResults: string = "";
 
     private publishing: boolean = false;
     private buildingPreview: boolean = false;
-    private buildingJson: boolean = false;
     private isPreviewLink: boolean = false;
-
-    private downloadJsonLink: HTMLAnchorElement;
 
     constructor(private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
@@ -79,7 +75,6 @@ export class StoryDetailsForm {
                 private authoringStoryConnector: AuthoringStoryConnector,
                 private publishingConnector: PublishingConnector,
                 private previewConnector: PreviewingConnector,
-                private storyJsonConnector: StoryJsonConnector,
                 private config: Config) {
         this.setupValidation();
     }
@@ -166,23 +161,6 @@ export class StoryDetailsForm {
 
     }
 
-    downloadJson() {
-        this.buildingJson = true;
-        this.jsonDownloadResults = "";
-        this.storyJsonConnector.downloadJson(this.story).then(result => {
-            this.buildingJson = false;
-
-            if (typeof result !== 'boolean') {
-                var file = new Blob([JSON.stringify(result)], {type: "application/octet-stream"});
-                this.downloadJsonLink.download = "download.json";
-                this.downloadJsonLink.href = URL.createObjectURL(file);
-                this.downloadJsonLink.click();
-                return;
-            }
-            this.jsonDownloadResults = "Sorry it has not been possible to request your story JSON at this time due to a network issue.";
-        });
-    }
-
     private makePreviewLink(id: string) {
         let previewUrl = this.config.read('reading_tool_url') + 'story/' + id;
         return previewUrl;
@@ -195,14 +173,6 @@ export class StoryDetailsForm {
 
     get results() {
         return this._results;
-    }
-
-    get jsonDownloadResults(): string {
-        return this._jsonDownloadResults;
-    }
-
-    set jsonDownloadResults(value: string) {
-        this._jsonDownloadResults = value;
     }
 
     get tags() {

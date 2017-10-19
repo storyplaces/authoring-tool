@@ -131,29 +131,5 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            Advanced
-        </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    <p>
-                        <button class="btn btn-primary btn-block" data-toggle="tooltip"
-                                title="Download the JSON version of your story in its reading format."
-                                click.delegate="downloadJson()" if.bind="!buildingJSON"
-                                disabled.bind="canNotPublish || dirty"><span
-                                class="glyphicon glyphicon-download-alt"></span> Download Story JSON
-                        </button>
-                        <button class="btn btn-danger btn-block" disabled if.bind="buildingPreview"><span
-                                class="glyphicon glyphicon-refresh"></span> Building JSON...
-                        </button>
-                    </p>
-                    <a ref="downloadJsonLink" hidden="true" download></a>
-                </div>
-            </div>
-            <div class="well" if.bind="jsonDownloadResults">
-                <div if.bind="jsonDownloadResults">${jsonDownloadResults}</div>
-            </div>
-        </div>
+
 </template>

@@ -51,7 +51,7 @@ export class EventConnector {
         this._numberOfNetworkConnections = 0;
     }
 
-    triggerStoryEvent(story: AuthoringStory, event: string): Promise<Response | boolean> {
+    triggerStoryEvent(story: AuthoringStory, event: string): Promise<Object | boolean> {
         this._numberOfNetworkConnections++;
         return this.api.trigger(story, event)
             .then(response => response.json() as any)

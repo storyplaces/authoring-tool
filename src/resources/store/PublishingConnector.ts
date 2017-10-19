@@ -46,7 +46,10 @@ export class PublishingConnector extends EventConnector {
 
     publishStory(story: AuthoringStory): Promise<string | boolean> {
         return this.triggerStoryEvent(story, 'publish').then(result => {
-            return result.message || result
+            if (typeof result == "object"){
+                return (result as any).message;
+            }
+            return result;
         });
     }
 
