@@ -42,12 +42,10 @@ import {AuthoringStory} from "../models/AuthoringStory";
 import {EventConnector} from "./EventConnector";
 
 @inject(NewInstance.of(StoryPlacesAPI))
-export class PreviewingConnector extends EventConnector {
+export class StoryJsonConnector extends EventConnector {
 
-    previewStory(story: AuthoringStory): Promise<string | boolean> {
-        return this.triggerStoryEvent(story, 'preview').then((result) => {
-            return result.id || result
-        });
+    downloadJson(story: AuthoringStory): Promise<Response | boolean> {
+        return this.triggerStoryEvent(story, 'downloadJson');
     }
 
 }
