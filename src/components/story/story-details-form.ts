@@ -52,7 +52,7 @@ import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
 import {Config} from "../../config/Config";
 import {StoryJsonConnector} from "../../resources/store/StoryJsonConnector";
 
-@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector, StoryJsonConnector, Config)
+@inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, AuthoringStoryConnector, PublishingConnector, PreviewingConnector, Config)
 export class StoryDetailsForm {
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
