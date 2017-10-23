@@ -40,14 +40,16 @@
 <template>
     <require from="../attributes/bootstrap-tooltip"></require>
 
-    <li class="list-group-item grabbable-list-item ${pageStyle}">
-        <div class="grabbable-list-item-grab-bar" click.delegate="select()"></div>
-        <div class="grabbable-list-item-text" click.trigger="select($event)">
-            <h4>${chapter.name} <span class="chapter-symbol ${chapter.colour}" title="${chapter.name}"></span></h4>
-            <p class="grabbable-list-item-text-body">
+    <li class="list-group-item grabbable-list-item ${pageStyle}" click.delegate="select()">
+        <div class="grabbable-list-item-heading" >
+            <div class="grabbable-list-item-grab-bar"></div>
+            <div class="grabbable-list-item-heading-text">
+                <h4>${chapter.name} <span class="chapter-symbol ${chapter.colour}" title="${chapter.name}"></span></h4>
+            </div>
+        </div>
+        <div class="grabbable-list-item-body overflow" click.delegate="select($event)">
                 <span role="button" class="label label-default page-label" repeat.for="page of pages"
-                      click.trigger="clickLink($event, page)">${page.name}</span>
-            </p>
+                      click.delegate="clickLink($event, page)">${page.name}</span>
         </div>
         <div class="grabbable-item-buttons">
             <a class="btn btn-primary"

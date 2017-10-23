@@ -1,51 +1,52 @@
 @import (reference) "../../node_modules/bootstrap/less/bootstrap";
 
 .grabbable-list-item {
-  height: 8em;
-}
-
-.grabbable-list-item {
-  padding: 0;
-  height: 8em;
+  padding: 0 0 1em 0;
+  min-height: 8em;
   width: 100%;
 
   @media screen and (max-width: @screen-xs-max) {
-    height: 5em;
+    min-height: 5em;
   }
 }
 
-.grabbable-list-item-variable-height {
-  padding: 0;
+.grabbable-list-item-heading {
+  display: inline-block;
   width: 100%;
-
-  @media screen and (max-width: @screen-xs-max) {
-    height: 10em;
-  }
+  height: 3em;
 }
 
-.grabbable-list-item-text {
+.grabbable-list-item-heading-text {
+  display: inline-block;
+  width: calc(~"100% - 2em");
+  vertical-align: top;
+  padding-top: 0.2em;
+}
+
+.grabbable-list-item-body {
+  padding-left: 1em;
   vertical-align: top;
   display: inline-block;
-  width: calc(~"100% - 10em");
-  height: inherit;
-}
+  width: calc(~"100% - 7.5em");
+  min-height: 4.5em;
+  overflow-y: auto;
+  max-height: 8em;
 
-p.grabbable-list-item-text-body {
-  height: 4.5em;
-  overflow: hidden;
-  margin-bottom: 0px;
   @media screen and (max-width: @screen-xs-max) {
-    height: 1.25em;
+    min-height: 1.25em;
+    max-height: 4em;
   }
 }
 
-p.grabbable-list-item-text-body-small {
-  height: 2.5em;
-  overflow: hidden;
-  margin-bottom: 8px;
+.grabbable-list-item-text-body-small {
+  min-height: 2.5em;
+  overflow-y: auto;
+  max-height: 5em;
+  margin-bottom: 0.75em;
 
   @media screen and (max-width: @screen-xs-max) {
-    height: 1.25em;
+    min-height: 1.25em;
+    max-height: 4em;
   }
 }
 
@@ -53,14 +54,19 @@ p.grabbable-list-item-text-body-small {
   display: inline-block;
   width: 7em;
   vertical-align: top;
-  height: inherit;
   text-align: right;
-  margin-top: 0.5em;
+  padding-right: 1em;
+
   .btn {
     width: 6em;
-    margin-top: 0.7em;
     @media screen and (max-width: @screen-xs-max) {
       width: 3em;
+    }
+  }
+  .btn:not(:last-child) {
+    margin-bottom: 0.5em;
+    @media screen and (max-width: @screen-xs-max) {
+      margin-bottom: 0;
     }
   }
 }
@@ -73,29 +79,23 @@ p.grabbable-list-item-text-body-small {
           #465298 10px,
           #465298 20px
   );
-  height: inherit;
+  height: 3em;
   width: 1em;
   margin: 0 0.5em 0 0;
   padding: 0;
   border: 0;
   display: inline-block;
-}
 
-.grabbable-list-item-dummy-bar {
-  background: lightgray;
-  height: inherit;
-  width: 1em;
-  margin: 0 0.5em 0 0;
-  padding: 0;
-  border: 0;
-  display: inline-block;
+  &.dummy {
+    background: lightgray;
+  }
 }
 
 .grabbable-item-buttons-wide {
   display: inline-block;
   width: 9.2em;
   vertical-align: top;
-  height: inherit;
+  min-height: inherit;
   text-align: right;
   margin-top: 0.5em;
   .btn {
