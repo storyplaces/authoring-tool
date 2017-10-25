@@ -82,7 +82,7 @@ describe("Story List Item Custom Component", () => {
         buildComponent(storyGeneralRating);
 
         component.create(bootstrap).then(() => {
-            const element = document.querySelector('.grabbable-list-item-text > h4');
+            const element = document.querySelector('.grabbable-list-item-heading-text > h4');
             expect(element.innerHTML).toEqual(storyTitle);
             done();
         });
@@ -91,7 +91,7 @@ describe("Story List Item Custom Component", () => {
     it("will show the story description", (done) => {
         buildComponent(storyGeneralRating);
         component.create(bootstrap).then(() => {
-            const element = document.querySelector('p.grabbable-list-item-text-body-small');
+            const element = document.querySelector('.grabbable-list-item-text-body-small');
             expect(element.innerHTML).toEqual(storyDescription);
             done();
         });

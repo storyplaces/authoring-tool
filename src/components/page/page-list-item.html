@@ -40,13 +40,17 @@
 <template>
     <require from="../attributes/bootstrap-tooltip"></require>
 
-    <li class="list-group-item grabbable-list-item ${pageStyle}">
-        <div class="grabbable-list-item-grab-bar" click.delegate="select()"></div>
-        <div class="grabbable-list-item-text" click.delegate="select()">
-            <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
-                                   class="chapter-symbol ${chapter.colour}" title="${chapter.name}"
-                                   data-toggle="tooltip" data-placement="bottom"></span></h4>
-            <p class="grabbable-list-item-text-body">${page.content}</p>
+    <li class="list-group-item grabbable-list-item ${pageStyle}" click.trigger="select()">
+        <div class="grabbable-list-item-heading">
+            <div class="grabbable-list-item-grab-bar"></div>
+            <div class="grabbable-list-item-heading-text">
+                <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
+                                       class="chapter-symbol ${chapter.colour}" title="${chapter.name}"
+                                       data-toggle="tooltip" data-placement="bottom"></span></h4>
+            </div>
+        </div>
+        <div class="grabbable-list-item-body">
+            ${page.content}
         </div>
         <div class="grabbable-item-buttons">
             <a class="btn btn-primary"
