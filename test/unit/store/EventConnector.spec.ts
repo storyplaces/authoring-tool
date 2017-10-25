@@ -77,4 +77,4 @@ describe("EventConnector", () => {
             done();
         });
     });
-}
+});

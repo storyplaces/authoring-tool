@@ -41,7 +41,7 @@ import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 import {Container} from "aurelia-framework";
 import * as moment from "moment";
 
-describe("Story model", () => {
+describe("Authoring Story model", () => {
     let authoringUserCollectionFactoryCalledWith;
     let authoringChapterCollectionFactoryCalledWith;
     let authoringPageCollectionFactoryCalledWith;
@@ -104,6 +104,7 @@ describe("Story model", () => {
         expect(model.pages).toEqual(undefined);
         expect(model.locations).toEqual(undefined);
         expect(model.tags).toEqual(undefined);
+        expect(model.logLocations).toEqual(undefined);
 
         expect(authoringChapterCollectionFactoryCalledWith).toBeUndefined();
         expect(authoringPageCollectionFactoryCalledWith).toBeUndefined();
@@ -124,6 +125,7 @@ describe("Story model", () => {
             locations: [{id: "location", type: "null"}],
             tags: ["tag"],
             imageIds: [],
+            logLocations: true
         };
 
 
@@ -146,6 +148,7 @@ describe("Story model", () => {
         expect(model.chapters).toEqual(undefined);
         expect(model.authorIds).toEqual(["author"]);
         expect(model.locations).toEqual(undefined);
+        expect(model.logLocations).toEqual(true);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);
         expect(authoringPageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
@@ -166,6 +169,7 @@ describe("Story model", () => {
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
             tags: ["tag"],
+            logLocations: true
         };
 
         let model = new AuthoringStory(authoringChapterCollectionFactory,
@@ -186,6 +190,7 @@ describe("Story model", () => {
         expect(model.chapters).toEqual(undefined);
         expect(model.authorIds).toEqual(["author"]);
         expect(model.locations).toEqual(undefined);
+        expect(model.logLocations).toEqual(true);
         expect(authoringChapterCollectionFactoryCalledWith).toEqual([{id: "chapter"}]);
         expect(authoringPageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
@@ -232,13 +237,14 @@ describe("Story model", () => {
             pages: [{id: "page"}],
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
-            tags: ["tag"]
+            tags: ["tag"],
+            logLocations: true
         };
 
         let model = resolve(AuthoringStory, data);
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"]}');
+        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"],"logLocations":true}');
     });
 });

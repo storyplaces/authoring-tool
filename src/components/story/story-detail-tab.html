@@ -1,5 +1,9 @@
 <template>
-<require from="../../components/story/story-details-form"></require>
+    <require from="../../components/story/story-details-form"></require>
+    <require from="../icons/information-icon.html"></require>
+    <require from="components/elements/toggle-switch/toggle-switch"></require>
+
+
     <story-details-form story.bind="story" dirty.bind="dirty" valid.bind="valid"></story-details-form>
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -24,6 +28,15 @@
             </div>
             <div class="well" if.bind="jsonDownloadResults">
                 <div if.bind="jsonDownloadResults">${jsonDownloadResults}</div>
+            </div>
+            <div>
+                <label for="logLocations">Log Reader Locations:
+                    <information-icon
+                            help-text="If enabled, this will allow admins to track the locations of readers as they read the story."></information-icon>
+                </label>
+                <toggle-switch id="logLocations" checked.bind="story.logLocations" off="No" on="Yes"
+                               colourise="yes-no"
+                               change.delegate="setDirty()"></toggle-switch>
             </div>
         </div>
 </template>

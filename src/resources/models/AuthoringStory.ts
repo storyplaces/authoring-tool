@@ -62,6 +62,7 @@ export class AuthoringStory extends BaseModel {
     private _locations: AuthoringLocationCollection;
     private _tags: Array<string>;
     private _imageIds: Array<string>;
+    private _logLocations: boolean;
 
 
     constructor(private authoringChapterCollectionFactory: (any?) => AuthoringChapterCollection,
@@ -80,19 +81,20 @@ export class AuthoringStory extends BaseModel {
     }
 
     public fromObject(data = {
-                          id: undefined,
-                          title: undefined,
-                          description: undefined,
-                          createdDate: undefined,
-                          modifiedDate: undefined,
-                          audience: undefined,
-                          authorIds: undefined,
-                          chapters: undefined,
-                          pages: undefined,
-                          locations: undefined,
-                          tags: undefined,
-                          imageIds: undefined
-                      }) {
+        id: undefined,
+        title: undefined,
+        description: undefined,
+        createdDate: undefined,
+        modifiedDate: undefined,
+        audience: undefined,
+        authorIds: undefined,
+        chapters: undefined,
+        pages: undefined,
+        locations: undefined,
+        tags: undefined,
+        imageIds: undefined,
+        logLocations: undefined,
+    }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.title = data.title;
@@ -106,6 +108,7 @@ export class AuthoringStory extends BaseModel {
         this.locations = this.authoringLocationCollectionFactory(data.locations);
         this.tags = data.tags;
         this.imageIds = data.imageIds;
+        this.logLocations = data.logLocations;
     }
 
     public toJSON() {
@@ -121,7 +124,8 @@ export class AuthoringStory extends BaseModel {
             pages: this.pages,
             locations: this.locations,
             tags: this.tags,
-            imageIds: this.imageIds
+            imageIds: this.imageIds,
+            logLocations: this.logLocations
         }
     }
 
@@ -228,6 +232,15 @@ export class AuthoringStory extends BaseModel {
     set imageIds(value: Array<string>) {
         this.typeChecker.isUndefinedOrArrayOf("Image Ids", value, "string");
         this._imageIds = value;
+    }
+
+    get logLocations(): boolean {
+        return this._logLocations;
+    }
+
+    set logLocations(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("logLocations", value);
+        this._logLocations = value;
     }
 
 
