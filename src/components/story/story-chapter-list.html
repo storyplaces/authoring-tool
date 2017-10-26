@@ -42,18 +42,16 @@
     <ul class="list-group">
         <li class="list-group-item grabbable-list-item">
             <div class="grabbable-list-item-heading">
-                <div class="grabbable-list-item-grab-bar dummy" click.delegate="select()"></div>
+                <div class="grabbable-list-item-grab-bar dummy"></div>
                 <div class="grabbable-list-item-heading-text">
                     <h4>Loose Pages
                         <small>(Pages not in a chapter)</small>
                     </h4>
                 </div>
-            </div>grabbable-list-item-body
-            <div class="">
-                <span role="button" class="label label-default page-label" repeat.for="page of loosePages"
-                      click.trigger="clickLink($event, page)">${page.name}</span>
             </div>
-            <div class="grabbable-item-buttons">
+            <div class="grabbable-list-item-body">
+                <span role="button" class="label label-default page-label" repeat.for="page of loosePages"
+                      click.delegate="clickLink($event, page)">${page.name}</span>
             </div>
         </li>
         <chapter-list-item repeat.for="chapter of story.chapters.all" chapter.bind="chapter"

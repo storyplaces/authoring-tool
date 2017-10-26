@@ -40,8 +40,8 @@
 <template>
     <require from="../attributes/bootstrap-tooltip"></require>
 
-    <li class="list-group-item grabbable-list-item ${pageStyle}" click.trigger="select()">
-        <div class="grabbable-list-item-heading">
+    <li class="list-group-item grabbable-list-item ${pageStyle}">
+        <div class="grabbable-list-item-heading" click.trigger="select()">
             <div class="grabbable-list-item-grab-bar"></div>
             <div class="grabbable-list-item-heading-text">
                 <h4>${page.name} <span bootstrap-tooltip repeat.for="chapter of chapters"
@@ -49,7 +49,7 @@
                                        data-toggle="tooltip" data-placement="bottom"></span></h4>
             </div>
         </div>
-        <div class="grabbable-list-item-body">
+        <div class="grabbable-list-item-body" click.trigger="select()">
             ${page.content}
         </div>
         <div class="grabbable-item-buttons">
