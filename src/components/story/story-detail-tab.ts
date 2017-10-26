@@ -67,6 +67,10 @@ export class StoryDetailTab {
                 private config: Config) {
     }
 
+    setDirty() {
+        this.dirty = true;
+    }
+
     downloadJson() {
         this.buildingJson = true;
         this.jsonDownloadResults = "";
