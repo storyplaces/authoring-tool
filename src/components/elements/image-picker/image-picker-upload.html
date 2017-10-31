@@ -41,7 +41,7 @@
     <form ref="formElement">
         <label class="btn btn-success" class.bind="disabled ? 'disabled' : ''">
             <input class="file-upload" type="file" name="image" ref="fileButton"
-                   change.delegate="fileChanged()" accept="image/jpeg,image/png" disabled.bind="disabled" capture.bind="camera ? 'camera' : ''">
+                   change.delegate="fileChanged($event)" accept="image/jpeg,image/png" disabled.bind="disabled" capture.bind="camera ? 'camera' : ''">
             <span class="glyphicon glyphicon-arrow-up" if.bind="!camera"></span>
             <span class="glyphicon glyphicon-camera" if.bind="camera"></span>
         </label>
