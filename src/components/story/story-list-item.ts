@@ -61,7 +61,7 @@ export class StoryListItem {
 
     delete(): void {
         let question = "Are you sure you wish to delete the story " + this.story.title + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
                 console.info("Not yet implemented");
             }

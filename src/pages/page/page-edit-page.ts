@@ -106,7 +106,7 @@ export class PageEditPage {
     canDeactivate() {
         let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
         if (this.dirty) {
-            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
                 if (!response.wasCancelled) {
                     return true;
                 }

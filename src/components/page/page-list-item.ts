@@ -83,7 +83,7 @@ export class PageListItem {
 
     delete(): void {
         let question = "Are you sure you wish to delete the page " + this.page.name + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
                 this.storyLookup.deletePageFromStory(this.story, this.page.id);
             }

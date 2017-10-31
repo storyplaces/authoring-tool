@@ -101,7 +101,8 @@ export class ImagePickerCustomElement {
     private promptDelete() {
         let question = "Are you sure you wish to delete this image. It will be removed from all pages where it is in use.";
 
-        return this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+        return this.dialogService.open({viewModel: DeleteConfirm, model: question})
+            .whenClosed(response => {
             if (!response.wasCancelled) {
                 return true;
             }

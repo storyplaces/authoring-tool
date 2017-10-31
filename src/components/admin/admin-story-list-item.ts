@@ -63,7 +63,7 @@ export class AdminStoryListItem {
 
     delete(): void {
         let question = "Are you sure you wish to delete the story " + this.story.name + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
                 this.previewId = undefined;
                 this.readingStoryConnector.delete(this.story);

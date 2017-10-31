@@ -75,7 +75,7 @@ export class ChapterListItem {
 
     delete(): void {
         let question = "Are you sure you wish to delete the chapter " + this.chapter.name + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).then(response => {
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
                 this.story.chapters.remove(this.chapter.id);
             }
