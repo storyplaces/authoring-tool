@@ -36,12 +36,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, containerless} from "aurelia-framework";
+import {bindable, containerless, inject, computedFrom} from "aurelia-framework";
+import {UserConfig} from "../../resources/store/UserConfig";
 
 @containerless()
+@inject(UserConfig)
 export class StoryTabsCustomElement{
+
+    private userConfig: UserConfig;
+
+    constructor(userConfig: UserConfig) {
+        this.userConfig = userConfig;
+    }
 
     @bindable selected: string;
     @bindable storyId: string;
+
+    @computedFrom('userConfig.advancedMode')
+    get advancedMode() {
+        return this.userConfig.advancedMode;
+    }
 
 }
