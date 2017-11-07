@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
   ~ ------------
   ~ StoryPlaces
@@ -38,36 +39,19 @@
   -->
 
 <template>
-    <require from="components/elements/story-tabs"></require>
-    <require from="../templates/two-pane-template.html"></require>
-    <require from="components/elements/mapping/map"></require>
-    <require from="components/story/story-advanced-form"></require>
-    <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
-
-
-    <two-pane-template map-hidden.bind="mapHidden">
-        <div slot="map-pane" class="fill-space">
-            <map story.two-way="story"></map>
-        </div>
-        <div slot="content-pane" class="fill-space">
-            <story-tabs selected="advanced" story-id.bind="story.id"></story-tabs>
-            <div class="story-nav-body">
-                <scrollable-list-with-header>
-                    <div slot="heading">
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
-                                show.bind="mapHidden"><span
-                                class="glyphicon glyphicon-resize-full"></span> Show Map
-                        </button>
-                        <button class="btn btn-default pull-right" click.delegate="mapHidden = true"
-                                show.bind="!mapHidden"><span
-                                class="glyphicon glyphicon-resize-small"></span> Hide Map
-                        </button>
-                    </div>
-                    <div slot="content">
-                        <story-advanced-form story.bind="story"></story-advanced-form>
-                    </div>
-                </scrollable-list-with-header>
+    <ai-dialog>
+        <ai-dialog-body>
+            <div class="form-group" class.bind="error == '' ? '' : 'has-error'">
+                <label for="name">Variable Name: </label>
+                <input class="form-control" id="name" value.bind="name" ref="inputElement">
+                <div class="help-block" if.bind="error != ''">${error}</div>
             </div>
-        </div>
-    </two-pane-template>
+        </ai-dialog-body>
+
+        <ai-dialog-footer>
+            <button class="btn btn-warning" click.trigger="submit()">Ok</button>
+            <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
+        </ai-dialog-footer>
+
+    </ai-dialog>
 </template>

@@ -35,5 +35,5 @@
 
 export class UserConfig {
     locationDemo: boolean = false;
-    advancedMode: boolean = false;
+    advancedMode: boolean = true;
 }

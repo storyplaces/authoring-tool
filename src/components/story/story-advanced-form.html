@@ -1,0 +1,66 @@
+<!--
+  ~ ------------
+  ~ StoryPlaces
+  ~ ------------
+  ~ This application was developed as part of the Leverhulme Trust funded
+  ~ StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+  ~ Copyright (c) 2017 University of Southampton
+  ~
+  ~ David Millard, dem.soton.ac.uk
+  ~ Andy Day, a.r.day.soton.ac.uk
+  ~ Kevin Puplett, k.e.puplett.soton.ac.uk
+  ~ Charlie Hargood, chargood.bournemouth.ac.uk
+  ~ David Pepper, d.pepper.soton.ac.uk
+  ~
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without
+  ~ modification, are permitted provided that the following conditions are met:
+  ~ - Redistributions of source code must retain the above copyright
+  ~   notice, this list of conditions and the following disclaimer.
+  ~ - Redistributions in binary form must reproduce the above copyright
+  ~   notice, this list of conditions and the following disclaimer in the
+  ~   documentation and/or other materials provided with the distribution.
+  ~ - The name of the University of Southampton nor the name of its
+  ~   contributors may be used to endorse or promote products derived from
+  ~   this software without specific prior written permission.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  ~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  ~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  ~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<template>
+
+    <require from="components/icons/information-icon.html"></require>
+    <require from="resources/value-converters/FloatToString"></require>
+    <require from="resources/value-converters/IntToString"></require>
+    <require from="components/attributes/scroll-on-edit"></require>
+    <require from="components/elements/creatable-list/creatable-list"></require>
+    <require from="components/elements/toggle-switch/toggle-switch"></require>
+
+    <div class="padding">
+        <div class="alert alert-danger" role="alert">
+            These are advanced settings and could easily leave your story in an unusable state. Only use them if you
+            have to.
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Variables
+            </div>
+            <div class="panel-body">
+                <creatable-list items.bind="variables" create-item.call="createVariable()"
+                                 edit-item.call="editVariable(item)"></creatable-list>
+            </div>
+        </div>
+
+    </div>
+
+</template>
