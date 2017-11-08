@@ -58,7 +58,6 @@ export class AuthoringAdvancedVariableEdit {
 
     activate(item: Identifiable & HasName) {
         this.item = item;
-        this.name = item.name;
     }
 
     attached() {
@@ -66,12 +65,11 @@ export class AuthoringAdvancedVariableEdit {
     }
 
     submit() {
-        if (!this.name || this.name == "") {
+        if (!this.item.name || this.item.name == "") {
             this.error = "Please enter a name for the variable";
             return;
         }
 
-        this.item.name = this.name;
         this.dialogController.ok(this.item);
     }
 }

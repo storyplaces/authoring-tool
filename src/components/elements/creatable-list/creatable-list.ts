@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, bindingMode, inject} from "aurelia-framework";
+import {bindable, bindingMode, inject, computedFrom} from "aurelia-framework";
 import {HasName} from "../../../resources/interfaces/HasName";
 import {Identifiable} from "../../../resources/interfaces/Identifiable";
 import {BaseCollection} from "../../../resources/collections/BaseCollection";
@@ -54,14 +54,17 @@ export class CreatableListCustomElement {
 
     edit(event: CustomEvent) {
         event.stopPropagation();
-        let item = this.items.get(event.detail.id);
+        let item = this.items.getClone(event.detail.id);
 
         this.editItem({item:item}).then(item => {
             if (!item) {
                 return;
             }
 
+            console.log(item);
+
             this.items.save(item);
+            console.log(this.items.all);
             this.fireEvent('changed');
             this.fireEvent('created', {id: item.id})
         });

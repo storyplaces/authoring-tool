@@ -43,7 +43,7 @@
         <ai-dialog-body>
             <div class="form-group" class.bind="error == '' ? '' : 'has-error'">
                 <label for="name">Variable Name: </label>
-                <input class="form-control" id="name" value.bind="name" ref="inputElement">
+                <input class="form-control" id="name" value.bind="item.name" ref="inputElement">
                 <div class="help-block" if.bind="error != ''">${error}</div>
             </div>
         </ai-dialog-body>
