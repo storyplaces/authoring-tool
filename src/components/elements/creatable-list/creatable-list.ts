@@ -61,10 +61,7 @@ export class CreatableListCustomElement {
                 return;
             }
 
-            console.log(item);
-
             this.items.save(item);
-            console.log(this.items.all);
             this.fireEvent('changed');
             this.fireEvent('created', {id: item.id})
         });
@@ -86,7 +83,6 @@ export class CreatableListCustomElement {
             }
 
             this.items.save(item);
-            console.log(this.items.all);
             this.fireEvent('changed');
             this.fireEvent('created', {id: item.id})
         });

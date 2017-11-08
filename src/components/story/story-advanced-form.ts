@@ -109,7 +109,6 @@ export class StoryAdvancedFormCustomElement {
 
     editVariable(variable: Identifiable & HasName): Promise<Identifiable & HasName> {
         return this.dialogService.open({viewModel: AuthoringAdvancedVariableEdit, model: variable}).whenClosed(response => {
-            console.log(response);
             if (!response.wasCancelled) {
                 return response.output;
             }
