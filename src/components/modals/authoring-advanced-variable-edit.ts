@@ -48,7 +48,6 @@ export class AuthoringAdvancedVariableEdit {
 
     private item: Identifiable & HasName;
     private error: string = '';
-    private name: string;
 
     private inputElement: HTMLInputElement;
 
@@ -70,6 +69,6 @@ export class AuthoringAdvancedVariableEdit {
             return;
         }
 
-        this.dialogController.ok(this.item);
+        return this.dialogController.ok(this.item);
     }
 }
