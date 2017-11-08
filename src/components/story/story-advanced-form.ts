@@ -100,7 +100,6 @@ export class StoryAdvancedFormCustomElement {
         let newVariable = this.variableFactory();
 
         return this.dialogService.open({viewModel: AuthoringAdvancedVariableEdit, model: newVariable}).whenClosed(response => {
-            console.log(response);
             if (!response.wasCancelled) {
                 return response.output;
             }
