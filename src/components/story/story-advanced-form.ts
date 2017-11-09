@@ -52,10 +52,15 @@ import {AuthoringAdvancedVariableCollection} from "../../resources/collections/A
 import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
 import {DialogService} from "aurelia-dialog";
 import {AuthoringAdvancedVariableEdit} from "../modals/authoring-advanced-variable-edit";
+import {AuthoringAdvancedFunctionEdit} from "../modals/authoring-advanced-function-edit";
+import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
+import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
 
 @inject(
     Factory.of(AuthoringAdvancedVariableCollection),
     Factory.of(AuthoringAdvancedVariable),
+    Factory.of(AuthoringAdvancedFunctionCollection),
+    Factory.of(AuthoringAdvancedFunction),
     DialogService,
     StoryLookup,
     EventAggregator,
@@ -70,9 +75,12 @@ export class StoryAdvancedFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
 
     private variables: AuthoringAdvancedVariableCollection;
+    private functions: AuthoringAdvancedFunctionCollection;
 
     constructor(private variableCollectionFactory: () => AuthoringAdvancedVariableCollection,
                 private variableFactory: () => AuthoringAdvancedVariable,
+                private functionCollectionFactory: () => AuthoringAdvancedFunctionCollection,
+                private functionFactory: () => AuthoringAdvancedFunction,
                 private dialogService: DialogService,
                 private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
@@ -88,6 +96,7 @@ export class StoryAdvancedFormCustomElement {
     attached() {
         this.dirty = false;
         this.variables = this.variableCollectionFactory();
+        this.functions = this.functionCollectionFactory();
         console.log(this.variableFactory);
     }
 
@@ -99,21 +108,53 @@ export class StoryAdvancedFormCustomElement {
     createVariable(): Promise<Identifiable & HasName> {
         let newVariable = this.variableFactory();
 
-        return this.dialogService.open({viewModel: AuthoringAdvancedVariableEdit, model: newVariable}).whenClosed(response => {
-            if (!response.wasCancelled) {
-                return response.output;
-            }
-            return null;
-        });
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedVariableEdit,
+                model: newVariable
+            }).whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
     }
 
     editVariable(variable: Identifiable & HasName): Promise<Identifiable & HasName> {
-        return this.dialogService.open({viewModel: AuthoringAdvancedVariableEdit, model: variable}).whenClosed(response => {
-            if (!response.wasCancelled) {
-                return response.output;
-            }
-            return null;
-        });
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedVariableEdit,
+                model: variable
+            }).whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
+    }
+
+    createFunction(): Promise<Identifiable & HasName> {
+        let newFunc = this.functionFactory();
+
+        return this.dialogService
+            .open({viewModel: AuthoringAdvancedFunctionEdit, model: {func: newFunc, variables: this.variables, functions: this.functions}})
+            .whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
+    }
+
+    editFunction(func: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.dialogService
+            .open({viewModel: AuthoringAdvancedFunctionEdit, model: {func: func, variables: this.variables, functions: this.functions}})
+            .whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
     }
 
 }
