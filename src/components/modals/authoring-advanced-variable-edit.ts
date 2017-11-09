@@ -41,12 +41,13 @@ import {inject} from 'aurelia-framework';
 import {DialogController} from 'aurelia-dialog';
 import {Identifiable} from "../../resources/interfaces/Identifiable";
 import {HasName} from "../../resources/interfaces/HasName";
+import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
 
 @inject(DialogController)
 
 export class AuthoringAdvancedVariableEdit {
 
-    private item: Identifiable & HasName;
+    private item: AuthoringAdvancedVariable;
     private error: string = '';
 
     private inputElement: HTMLInputElement;
@@ -55,7 +56,7 @@ export class AuthoringAdvancedVariableEdit {
         this.dialogController.settings.centerHorizontalOnly = true;
     }
 
-    activate(item: Identifiable & HasName) {
+    activate(item: AuthoringAdvancedVariable) {
         this.item = item;
     }
 

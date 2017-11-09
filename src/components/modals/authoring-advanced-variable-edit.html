@@ -39,7 +39,7 @@
   -->
 
 <template>
-    <ai-dialog>
+    <ai-dialog class="advanced-edit-dialog">
         <ai-dialog-body>
             <div class="form-group" class.bind="error == '' ? '' : 'has-error'">
                 <label for="name">Variable Name: </label>
@@ -49,7 +49,7 @@
         </ai-dialog-body>
 
         <ai-dialog-footer>
-            <button class="btn btn-warning" click.trigger="submit()">Ok</button>
+            <button class="btn btn-primary" click.trigger="submit()">Ok</button>
             <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
         </ai-dialog-footer>
 
