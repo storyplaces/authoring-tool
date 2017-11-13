@@ -39,17 +39,22 @@
   -->
 
 <template>
+    <require from="components/elements/text-input/text-input"></require>
+
     <ai-dialog class="advanced-edit-dialog">
+        <ai-dialog-header>
+            <strong>${variable.id ? 'Edit' : 'Create'} Variable</strong>
+        </ai-dialog-header>
         <ai-dialog-body>
-            <div class="form-group" class.bind="error == '' ? '' : 'has-error'">
-                <label for="name">Variable Name: </label>
-                <input class="form-control" id="name" value.bind="item.name" ref="inputElement">
-                <div class="help-block" if.bind="error != ''">${error}</div>
-            </div>
+
+            <form id="variableForm">
+                <text-input name="name" label="Name" value.bind="variable.name" error.bind="error" focus-on></text-input>
+            </form>
+
         </ai-dialog-body>
 
         <ai-dialog-footer>
-            <button class="btn btn-primary" click.trigger="submit()">Ok</button>
+            <button class="btn btn-primary" type="submit" form="variableForm" click.trigger="submit()">Ok</button>
             <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
         </ai-dialog-footer>
 

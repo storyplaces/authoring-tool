@@ -55,12 +55,17 @@ import {AuthoringAdvancedVariableEdit} from "../modals/authoring-advanced-variab
 import {AuthoringAdvancedFunctionEdit} from "../modals/authoring-advanced-function-edit";
 import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
 import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
+import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
+import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
+import {AuthoringAdvancedConditionEdit} from "../modals/authoring-advanced-condition-edit";
 
 @inject(
     Factory.of(AuthoringAdvancedVariableCollection),
     Factory.of(AuthoringAdvancedVariable),
     Factory.of(AuthoringAdvancedFunctionCollection),
     Factory.of(AuthoringAdvancedFunction),
+    Factory.of(AuthoringAdvancedConditionCollection),
+    Factory.of(AuthoringAdvancedCondition),
     DialogService,
     StoryLookup,
     EventAggregator,
@@ -76,11 +81,14 @@ export class StoryAdvancedFormCustomElement {
 
     private variables: AuthoringAdvancedVariableCollection;
     private functions: AuthoringAdvancedFunctionCollection;
+    private conditions: AuthoringAdvancedConditionCollection;
 
     constructor(private variableCollectionFactory: () => AuthoringAdvancedVariableCollection,
                 private variableFactory: () => AuthoringAdvancedVariable,
                 private functionCollectionFactory: () => AuthoringAdvancedFunctionCollection,
                 private functionFactory: () => AuthoringAdvancedFunction,
+                private conditionCollectionFactory: () => AuthoringAdvancedConditionCollection,
+                private conditionFactory: () => AuthoringAdvancedCondition,
                 private dialogService: DialogService,
                 private storyLookup: StoryLookup,
                 private eventAggregator: EventAggregator,
@@ -97,7 +105,7 @@ export class StoryAdvancedFormCustomElement {
         this.dirty = false;
         this.variables = this.variableCollectionFactory();
         this.functions = this.functionCollectionFactory();
-        console.log(this.variableFactory);
+        this.conditions = this.conditionCollectionFactory();
     }
 
     /*** DIRTY ***/
@@ -111,8 +119,10 @@ export class StoryAdvancedFormCustomElement {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedVariableEdit,
-                model: newVariable
-            }).whenClosed(response => {
+                model: newVariable,
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
                 if (!response.wasCancelled) {
                     return response.output;
                 }
@@ -124,8 +134,10 @@ export class StoryAdvancedFormCustomElement {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedVariableEdit,
-                model: variable
-            }).whenClosed(response => {
+                model: variable,
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
                 if (!response.wasCancelled) {
                     return response.output;
                 }
@@ -137,7 +149,11 @@ export class StoryAdvancedFormCustomElement {
         let newFunc = this.functionFactory();
 
         return this.dialogService
-            .open({viewModel: AuthoringAdvancedFunctionEdit, model: {func: newFunc, variables: this.variables, functions: this.functions}})
+            .open({
+                viewModel: AuthoringAdvancedFunctionEdit,
+                model: {func: newFunc, variables: this.variables, functions: this.functions, conditions: this.conditions},
+                keyboard: 'Escape'
+            })
             .whenClosed(response => {
                 if (!response.wasCancelled) {
                     return response.output;
@@ -148,7 +164,43 @@ export class StoryAdvancedFormCustomElement {
 
     editFunction(func: Identifiable & HasName): Promise<Identifiable & HasName> {
         return this.dialogService
-            .open({viewModel: AuthoringAdvancedFunctionEdit, model: {func: func, variables: this.variables, functions: this.functions}})
+            .open({
+                viewModel: AuthoringAdvancedFunctionEdit,
+                model: {func: func, variables: this.variables, functions: this.functions, conditions: this.conditions},
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
+    }
+
+    createCondition(): Promise<Identifiable & HasName> {
+        let newCondition = this.conditionFactory();
+
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedConditionEdit,
+                model: {condition: newCondition, variables: this.variables, functions: this.functions, conditions: this.conditions},
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return response.output;
+                }
+                return null;
+            });
+    }
+
+    editCondition(condition: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedConditionEdit,
+                model: {condition: condition, variables: this.variables, functions: this.functions, conditions: this.conditions},
+                keyboard: 'Escape'
+            })
             .whenClosed(response => {
                 if (!response.wasCancelled) {
                     return response.output;

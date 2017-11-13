@@ -43,35 +43,35 @@ import {HasName} from "../interfaces/HasName";
 
 @inject(TypeChecker)
 export class AuthoringAdvancedCondition extends BaseModel implements HasName {
-    static allowedTypes: Array<{ internal: string, display: string }> =
+    static allowedTypes: Array<{ id: string, name: string }> =
         [
-            {internal: 'comparison', display: 'ComparisonCondition'},
-            {internal: 'check', display: 'CheckCondition'},
-            {internal: 'location', display: 'LocationCondition'},
-            {internal: 'logical', display: 'LogicalCondition'},
-            {internal: 'timepassed', display: 'TimePassedCondition'},
-            {internal: 'timerange', display: 'TimeRangeCondition'},
+            {id: 'comparison', name: 'Comparison'},
+            {id: 'check', name: 'Check a variable exists'},
+            {id: 'location', name: 'User in location'},
+            {id: 'logical', name: 'Logical'},
+            {id: 'timepassed', name: 'Time Passed'},
+            {id: 'timerange', name: 'Time Range'},
 
         ];
-    static allowedLogicalOperands: Array<{ internal: string, display: string }> =
+    static allowedLogicalOperands: Array<{ id: string, name: string }> =
         [
-            {internal: 'AND', display: 'and'},
-            {internal: 'OR', display: 'or'},
+            {id: 'AND', name: 'and'},
+            {id: 'OR', name: 'or'},
         ];
-    static allowedVariableTypes: Array<{ internal: string, display: string }> =
+    static allowedVariableTypes: Array<{ id: string, name: string }> =
         [
-            {internal: 'Integer', display: 'Integer'},
-            {internal: 'String', display: 'String'},
-            {internal: 'Variable', display: 'Variable'},
+            {id: 'Integer', name: 'Integer'},
+            {id: 'String', name: 'String'},
+            {id: 'Variable', name: 'Variable'},
         ];
-    static allowedComparisonOperands: Array<{ internal: string, display: string }> =
+    static allowedComparisonOperands: Array<{ id: string, name: string }> =
         [
-            {internal: '==', display: 'equals'},
-            {internal: '!=', display: 'not equal to'},
-            {internal: '<', display: 'less than'},
-            {internal: '>', display: 'greater than'},
-            {internal: '<=', display: 'less than or equal to'},
-            {internal: '>=', display: 'greater than or equal to'},
+            {id: '==', name: 'equals'},
+            {id: '!=', name: 'not equal to'},
+            {id: '<', name: 'less than'},
+            {id: '>', name: 'greater than'},
+            {id: '<=', name: 'less than or equal to'},
+            {id: '>=', name: 'greater than or equal to'},
         ];
     private _name: string; // for all
     private _variableId: string; // for check and time passed
@@ -99,7 +99,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
     set variableBType(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Variable B Type", value);
 
-        if (value != undefined && AuthoringAdvancedCondition.allowedVariableTypes.findIndex(item => item.internal == value) == -1) {
+        if (value != undefined && AuthoringAdvancedCondition.allowedVariableTypes.findIndex(item => item.id == value) == -1) {
             throw new Error("Unsupported variable type");
         }
 
@@ -114,7 +114,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
 
         this.typeChecker.validateAsStringOrUndefined("Variable A Type", value);
 
-        if (value != undefined && AuthoringAdvancedCondition.allowedVariableTypes.findIndex(item => item.internal == value) == -1) {
+        if (value != undefined && AuthoringAdvancedCondition.allowedVariableTypes.findIndex(item => item.id == value) == -1) {
             throw new Error("Unsupported variable type");
         }
 
@@ -156,7 +156,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
 
     set conditionIds(value: Array<string>) {
         this.typeChecker.isUndefinedOrArrayOf("Condition Ids", value, "string");
-        this._conditionIds = value;
+        this._conditionIds = value || [];
     }
 
     get operand(): string {
@@ -167,8 +167,8 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
         this.typeChecker.validateAsStringOrUndefined("Operand", value);
 
         if (value != undefined &&
-            AuthoringAdvancedCondition.allowedComparisonOperands.findIndex(item => item.internal == value) == -1 &&
-            AuthoringAdvancedCondition.allowedLogicalOperands.findIndex(item => item.internal == value) == -1
+            AuthoringAdvancedCondition.allowedComparisonOperands.findIndex(item => item.id == value) == -1 &&
+            AuthoringAdvancedCondition.allowedLogicalOperands.findIndex(item => item.id == value) == -1
         ) {
             throw new Error("Unsupported opearand type");
         }
@@ -190,7 +190,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
 
     set end(value: string) {
         this.typeChecker.validateAsStringOrUndefined("end", value);
-        if (value.match(/^[0-2]?[0-9]:[0-6]?[0-9]$/) == null) {
+        if (value != undefined && value.match(/^[0-2]?[0-9]:[0-6]?[0-9]$/) == null) {
             throw new Error("End time not in hh:mm format");
         }
 
@@ -203,7 +203,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
 
     set start(value: string) {
         this.typeChecker.validateAsStringOrUndefined("start", value);
-        if (value.match(/^[0-2]?[0-9]:[0-6]?[0-9]$/) == null) {
+        if (value != undefined && value.match(/^[0-2]?[0-9]:[0-6]?[0-9]$/) == null) {
             throw new Error("Start time not in hh:mm format");
         }
 
@@ -226,7 +226,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
     set type(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Type", value);
 
-        if (value != undefined && AuthoringAdvancedCondition.allowedTypes.findIndex(item => item.internal == value) == -1) {
+        if (value != undefined && AuthoringAdvancedCondition.allowedTypes.findIndex(item => item.id == value) == -1) {
             throw new Error("Unsupported condition type");
         }
 

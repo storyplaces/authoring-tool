@@ -36,37 +36,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {BaseCollection} from "./BaseCollection";
+import {Factory, inject} from "aurelia-framework";
+import {AuthoringAdvancedCondition} from "../models/AuthoringAdvancedCondition";
 
-import {inject} from 'aurelia-framework';
-import {DialogController} from 'aurelia-dialog';
-import {Identifiable} from "../../resources/interfaces/Identifiable";
-import {HasName} from "../../resources/interfaces/HasName";
-import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
+@inject(Factory.of(AuthoringAdvancedCondition))
+export class AuthoringAdvancedConditionCollection extends BaseCollection<AuthoringAdvancedCondition> {
+    constructor(private factory: (any?) => AuthoringAdvancedCondition, data?: any[]) {
+        super();
 
-@inject(DialogController)
+        data = this.checkIfCollection(data);
 
-export class AuthoringAdvancedVariableEdit {
-
-    private variable: AuthoringAdvancedVariable;
-    private error: string = '';
-
-    constructor(private dialogController: DialogController) {
-        this.dialogController.settings.centerHorizontalOnly = true;
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
-    activate(variable: AuthoringAdvancedVariable) {
-        this.variable = variable;
-    }
+    protected itemFromObject(item: any): AuthoringAdvancedCondition {
 
-    attached() {
-    }
-
-    submit() {
-        if (!this.variable.name || this.variable.name == "") {
-            this.error = "Please enter a name for the variable";
-            return;
+        if (item instanceof AuthoringAdvancedCondition) {
+            return item;
         }
 
-        return this.dialogController.ok(this.variable);
+        return this.factory(item);
     }
 }

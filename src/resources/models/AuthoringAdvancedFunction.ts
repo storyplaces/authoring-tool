@@ -43,12 +43,12 @@ import {HasName} from "../interfaces/HasName";
 
 @inject(TypeChecker)
 export class AuthoringAdvancedFunction extends BaseModel implements HasName {
-    static allowedTypes: Array<{ internal: string, display: string }> =
+    static allowedTypes: Array<{ id: string, name: string }> =
         [
-            {internal: "set", display: "Set"},
-            {internal: "settimestamp", display: "Set to current time"},
-            {internal: "increment", display: "Increment"},
-            {internal: "chain", display: "Chain"}
+            {id: "set", name: "Set variable to value"},
+            {id: "settimestamp", name: "Set variable to current time"},
+            {id: "increment", name: "Increment variable"},
+            {id: "chain", name: "Call a group of other functions"}
         ];
     private _name: string;
     private _variableId: string;
@@ -78,7 +78,7 @@ export class AuthoringAdvancedFunction extends BaseModel implements HasName {
     set type(value: string | string) {
         this.typeChecker.validateAsStringOrUndefined("Type", value);
 
-        if (value != undefined && AuthoringAdvancedFunction.allowedTypes.findIndex(item => item.internal == value) == -1) {
+        if (value != undefined && AuthoringAdvancedFunction.allowedTypes.findIndex(item => item.id == value) == -1) {
             throw new Error("Unsupported function type");
         }
         this._type = value;

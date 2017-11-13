@@ -41,54 +41,46 @@
 
 <template>
     <require from="components/elements/mutable-list/mutable-list"></require>
+    <require from="components/elements/text-input/text-input"></require>
+    <require from="components/elements/list-picker/list-picker"></require>
 
     <ai-dialog class="advanced-edit-dialog">
+        <ai-dialog-header>
+            <strong>${func.id ? 'Edit' : 'Create'} Function</strong>
+        </ai-dialog-header>
         <ai-dialog-body>
-            <div class="form-group" class.bind="!errors.name ? '' : 'has-error'">
-                <label for="name">Function Name: </label>
-                <input class="form-control" id="name" value.bind="func.name" ref="nameElement"
-                       change.delegate="setDirty()">
-                <div class="help-block" if.bind="errors.name">${errors.name}</div>
-            </div>
+            <form id="functionForm">
+            <text-input name="name" label="Name" value.bind="func.name" error.bind="errors.name" focus-on></text-input>
+
+            <list-picker label="Type" items.bind="availableTypes" value.bind="func.type"></list-picker>
 
             <div class="form-group">
-                <label for="type">Type: </label>
-                <select value.bind="func.type" id="type" class="form-control" change.delegate="setDirty()">
-                    <option repeat.for="type of availableTypes" value.bind="type.internal">${type.display}</option>
-                </select>
+                <label>Conditions:</label>
+                <mutable-list available-items.bind="availableConditions" selected-items.bind="func.conditionIds"
+                              placeholder="Start typing a condition name"></mutable-list>
             </div>
 
-            <div class="form-group" if.bind="func.type != 'chain'">
-                <label for="variable">Variable: </label>
-                <select value.bind="func.variableId" id="variable" class="form-control" change.delegate="setDirty()">
-                    <option repeat.for="variable of availableVariables" value.bind="variable.id">${variable.name}
-                    </option>
-                </select>
-            </div>
+            <hr>
 
-            <div class="form-group" if.bind="func.type=='set' || func.type=='increment'">
-                <label for="value">${func.type == 'set' ? 'To:' : 'By:'}</label>
-                <input id="value" value.bind="func.value" class="form-control" change.delegate="setDirty()">
-            </div>
+            <list-picker if.bind="func.type != 'chain'" label="Variable"
+                         placeholder="Pick a variable" items.bind="availableVariables"
+                         value.bind="func.variableId" error.bind="errors.variableId"></list-picker>
+
+            <text-input if.bind="func.type=='set' || func.type=='increment'" name="value"
+                        label.bind="func.type == 'set' ? 'Set to' : 'Increment by'" value.bind="func.value"
+                        error.bind="errors.value"></text-input>
 
             <div class="form-group" if.bind="func.type=='chain'">
                 <label>Chain functions:</label>
                 <mutable-list available-items.bind="availableFunctions" selected-items.bind="func.chainFunctionIds"
-                              placeholder="Start typing a function name"
-                              change.delegate="setDirty()"></mutable-list>
+                              placeholder="Start typing a function name"></mutable-list>
             </div>
-            <hr>
-            <div class="form-group">
-                <label>Conditions:</label>
-                <mutable-list available-items.bind="availableConditions" selected-items.bind="func.conditionIds"
-                              placeholder="Start typing a condition name"
-                              change.delegate="setDirty()"></mutable-list>
-            </div>
+            </form>
 
         </ai-dialog-body>
 
         <ai-dialog-footer>
-            <button class="btn btn-primary" click.trigger="submit()">Ok</button>
+            <button class="btn btn-primary" click.trigger="submit()" form="functionForm" type="submit">Ok</button>
             <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
         </ai-dialog-footer>
 

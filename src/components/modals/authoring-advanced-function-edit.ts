@@ -42,6 +42,7 @@ import {DialogController} from 'aurelia-dialog';
 import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
 import {AuthoringAdvancedVariableCollection} from "../../resources/collections/AuthoringAdvancedVariableCollection";
 import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
+import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
 
 @inject(DialogController)
 
@@ -50,9 +51,8 @@ export class AuthoringAdvancedFunctionEdit {
     private func: AuthoringAdvancedFunction;
     private errors;
 
-    private nameElement: HTMLInputElement;
     private variables: AuthoringAdvancedVariableCollection;
-    private conditions: Array<any>;
+    private conditions: AuthoringAdvancedConditionCollection;
     private errorCount: number;
     private functions: AuthoringAdvancedFunctionCollection;
 
@@ -78,18 +78,28 @@ export class AuthoringAdvancedFunctionEdit {
                     id: func.id,
                     name: func.name,
                     suggestion: `<div>${func.name}</div>`,
-                    search: func.name};
+                    search: func.name
+                };
             });
     }
 
+    @computedFrom('conditions.all')
     get availableConditions() {
-        return [];
+        return this.conditions.all
+            .map(condition => {
+                return {
+                    id: condition.id,
+                    name: condition.name,
+                    suggestion: `<div>${condition.name}</div>`,
+                    search: condition.name
+                };
+            });
     }
 
     activate(model: {
         func: AuthoringAdvancedFunction,
         variables: AuthoringAdvancedVariableCollection,
-        conditions: null,
+        conditions: AuthoringAdvancedConditionCollection,
         functions: AuthoringAdvancedFunctionCollection
     }) {
         this.func = model.func;
@@ -99,7 +109,6 @@ export class AuthoringAdvancedFunctionEdit {
     }
 
     attached() {
-        this.nameElement.focus();
         this.clearErrors();
     }
 
@@ -119,6 +128,37 @@ export class AuthoringAdvancedFunctionEdit {
         if (!this.func.name || this.func.name == "") {
             this.errorCount++;
             this.errors.name = "Please enter a name for the function";
+        }
+
+
+        if (this.func.type == undefined || this.func.type == null || this.func.type == "") {
+            this.errorCount++;
+            this.errors.type = "Please select a valid type";
+        }
+
+        if (this.func.type == 'increment') {
+            this.checkForIncrementErrors();
+        }
+
+        if (this.func.type != 'chain') {
+            if (!this.func.variableId || this.func.variableId == "") {
+                this.errorCount++;
+                this.errors.variableId = "Please select a variable";
+            }
+        }
+
+    }
+
+    private checkForIncrementErrors() {
+        if (!this.func.value || this.func.value == "") {
+            this.errorCount++;
+            this.errors.value = "Please enter a value to increment by";
+            return;
+        }
+
+        if (this.func.value.match(/^-?[0-9]+$/) == null) {
+            this.errorCount++;
+            this.errors.value = "Only positive or negative integers are allowed";
         }
     }
 

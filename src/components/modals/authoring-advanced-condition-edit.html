@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+  ~ ------------
+  ~ StoryPlaces
+  ~ ------------
+  ~ This application was developed as part of the Leverhulme Trust funded
+  ~ StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+  ~ Copyright (c) 2017 University of Southampton
+  ~
+  ~ David Millard, dem.soton.ac.uk
+  ~ Andy Day, a.r.day.soton.ac.uk
+  ~ Kevin Puplett, k.e.puplett.soton.ac.uk
+  ~ Charlie Hargood, chargood.bournemouth.ac.uk
+  ~ David Pepper, d.pepper.soton.ac.uk
+  ~
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without
+  ~ modification, are permitted provided that the following conditions are met:
+  ~ - Redistributions of source code must retain the above copyright
+  ~    notice, this list of conditions and the following disclaimer.
+  ~ - Redistributions in binary form must reproduce the above copyright
+  ~    notice, this list of conditions and the following disclaimer in the
+  ~    documentation and/or other materials provided with the distribution.
+  ~ - The name of the University of Southampton nor the name of its
+  ~    contributors may be used to endorse or promote products derived from
+  ~    this software without specific prior written permission.
+  ~
+  ~  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ~ ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  ~ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  ~ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  ~ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ~ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+
+<template>
+    <require from="components/elements/mutable-list/mutable-list"></require>
+    <require from="components/elements/list-picker/list-picker"></require>
+    <require from="components/elements/text-input/text-input"></require>
+    <require from="resources/value-converters/IntToString"></require>
+
+
+    <ai-dialog class="advanced-edit-dialog">
+        <ai-dialog-header>
+            <strong>${condition.id ? 'Edit' : 'Create'} Condition</strong>
+        </ai-dialog-header>
+        <ai-dialog-body>
+            <form id="conditionForm">
+
+                <text-input name="name" label="Name" value.bind="condition.name" error.bind="errors.name"
+                            focus-on></text-input>
+
+                <list-picker label="Type" name="type" items.bind="availableTypes" value.bind="condition.type" error.bind="errors.type"></list-picker>
+
+                <hr>
+
+                <div if.bind="condition.type == 'comparison'">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <list-picker label="A Type" items.bind="availableVariableTypes"
+                                         value.bind="condition.variableAType"
+                                         change.delegate="aTypeChanged()"></list-picker>
+                        </div>
+                        <div class="col-sm-8">
+                            <text-input if.bind="condition.variableAType != 'Variable'" name="aValue" label="A Value"
+                                        value.bind="condition.variableA" error.bind="errors.variableA"></text-input>
+
+                            <list-picker if.bind="condition.variableAType == 'Variable'" name="aVariable" label="A Variable"
+                                         placeholder="Pick a variable" items.bind="availableVariables"
+                                         value.bind="condition.variableA" error.bind="errors.variableA"></list-picker>
+                        </div>
+                    </div>
+
+                    <list-picker name="comparison" label="Comparison"
+                                 items.bind="availableComparisonOperands" value.bind="condition.operand" error.bind="errors.operand"></list-picker>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <list-picker label="B Type" items.bind="availableVariableTypes"
+                                         value.bind="condition.variableBType"
+                                         change.delegate="bTypeChanged()"></list-picker>
+                        </div>
+                        <div class="col-sm-8">
+                            <text-input if.bind="condition.variableBType != 'Variable'" name="bValue" label="B Value"
+                                        value.bind="condition.variableB" error.bind="errors.variableB"></text-input>
+
+                            <list-picker if.bind="condition.variableBType == 'Variable'" name="bVariable" label="B Variable"
+                                         placeholder="Pick a variable" items.bind="availableVariables"
+                                         value.bind="condition.variableB" error.bind="errors.variableB"></list-picker>
+                        </div>
+                    </div>
+                </div>
+
+                <div if.bind="condition.type == 'check'">
+                    <list-picker name="variable" label="Variable"
+                                 placeholder="Pick a variable" items.bind="availableVariables"
+                                 value.bind="condition.variableId" error.bind="errors.variableId"></list-picker>
+                </div>
+
+                <div if.bind="condition.type == 'timerange'">
+                    <list-picker name="variable" label="Variable"
+                                 placeholder="Pick a variable" items.bind="availableVariables"
+                                 value.bind="condition.variableId" error.bind="errors.variableId"></list-picker>
+
+                    <text-input name="start" label="Start" value.bind="condition.start" placeholder="HH:MM"
+                                error.bind="errors.start"></text-input>
+
+                    <text-input name="end" label="End" value.bind="condition.end" placeholder="HH:MM"
+                                error.bind="errors.end"></text-input>
+                </div>
+
+
+                <div if.bind="condition.type == 'timepassed'">
+                    <list-picker name="variable" label="Variable"
+                                 placeholder="Pick a variable" items.bind="availableVariables"
+                                 value.bind="condition.variableId" error.bind="errors.variableId"></list-picker>
+                    <text-input name="timePassed" label="Minutes" value.bind="condition.minutes | intToString"
+                                error.bind="errors.minutes"></text-input>
+                </div>
+
+                <div if.bind="condition.type == 'location'">
+                    <list-picker name="location" label="Location"
+                                 placeholder="Pick a location" items.bind="availableLocations"
+                                 value.bind="condition.locationId" error.bind="errors.locationId"></list-picker>
+                </div>
+
+                <div if.bind="condition.type == 'logical'">
+                    <list-picker name="operandType" label="Operand"
+                                 items.bind="availableLogicalOperands" value.bind="condition.operand"></list-picker>
+
+                    <mutable-list available-items.bind="availableConditions" selected-items.bind="condition.conditionIds"
+                                  placeholder="Start typing a condition name"></mutable-list>
+                </div>
+            </form>
+        </ai-dialog-body>
+        <ai-dialog-footer>
+            <button class="btn btn-primary" click.trigger="submit()" form="conditionForm" type="submit">Ok</button>
+            <button class="btn btn-default" click.trigger="dialogController.cancel()">Cancel</button>
+        </ai-dialog-footer>
+
+    </ai-dialog>
+</template>

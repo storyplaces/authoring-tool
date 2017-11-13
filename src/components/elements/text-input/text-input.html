@@ -1,0 +1,7 @@
+<template>
+    <div class="form-group" class.bind="hasError ? 'has-error' : ''">
+        <label for.one-way="name">${label}: </label>
+        <input id.one-way="name" class="form-control" value.bind="value" placeholder.bind="placeholderText" ref="inputElement">
+        <div class="help-block" if.bind="hasError">${error}</div>
+    </div>
+</template>
