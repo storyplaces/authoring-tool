@@ -36,23 +36,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, inject, Factory, bindingMode, BindingEngine, Disposable, computedFrom} from "aurelia-framework";
-import {AuthoringStory, audiences} from "../../resources/models/AuthoringStory";
-import {
-    ValidationControllerFactory,
-    ValidationController,
-    ValidationRules,
-    validateTrigger,
-    Rule
-} from "aurelia-validation";
-import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
-import {PublishingConnector} from "../../resources/store/PublishingConnector";
-import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
+import {bindable, bindingMode, computedFrom, inject} from "aurelia-framework";
+import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {Config} from "../../config/Config";
 import {StoryJsonConnector} from "../../resources/store/StoryJsonConnector";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
+import {AuthoringUserConnector} from "../../resources/store/AuthoringUserConnector";
+import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
+import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
+import {PublishingConnector} from "../../resources/store/PublishingConnector";
 
-@inject(StoryJsonConnector, Config)
+@inject(StoryJsonConnector, Config, CurrentUser, AuthoringUserConnector, PreviewingConnector, AuthoringStoryConnector, PublishingConnector)
 export class StoryDetailTab {
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
@@ -63,8 +57,19 @@ export class StoryDetailTab {
     private buildingJson: boolean = false;
     private downloadJsonLink: HTMLAnchorElement;
 
+    private _results: string = "";
+
+    private publishing: boolean = false;
+    private buildingPreview: boolean = false;
+    private isPreviewLink: boolean = false;
+
     constructor(private storyJsonConnector: StoryJsonConnector,
-                private config: Config) {
+                private config: Config,
+                private currentUser: CurrentUser,
+                private authoringUserConnector: AuthoringUserConnector,
+                private previewConnector: PreviewingConnector,
+                private authoringStoryConnector: AuthoringStoryConnector,
+                private publishingConnector: PublishingConnector) {
     }
 
     setDirty() {
@@ -94,6 +99,78 @@ export class StoryDetailTab {
 
     set jsonDownloadResults(value: string) {
         this._jsonDownloadResults = value;
+    }
+
+    canSeeAdminPanel() {
+        return this.currentUser.hasPrivilege('adminMenu');
+    }
+
+    attached() {
+        this.authoringUserConnector.fetchAll();
+    }
+
+    //@computedFrom('authoringUserConnector.all')
+    get users() {
+        return this.authoringUserConnector.all;
+    }
+
+    @computedFrom("this.story.authorIds")
+    get storyOwner() {
+        return this.story.authorIds[0];
+    }
+
+    set storyOwner(owner: string) {
+        this.story.authorIds.splice(0, 1, owner);
+        this.setDirty();
+    }
+
+    preview() {
+        this.buildingPreview = true;
+        this.previewConnector.previewStory(this.story).then(result => {
+            this.buildingPreview = false;
+
+            if (typeof result !== 'boolean') {
+                this.results = this.makePreviewLink(result);
+                this.isPreviewLink = true;
+                return
+            }
+
+            this.results = "Sorry it has not been possible to request a preview at this time due to a network issue.";
+        });
+
+    }
+
+    private makePreviewLink(id: string) {
+        let previewUrl = this.config.read('reading_tool_url') + 'story/' + id;
+        return previewUrl;
+    }
+
+    set results(value: string){
+        this._results = value;
+        this.isPreviewLink = false;
+    }
+
+    get results() {
+        return this._results;
+    }
+
+    @computedFrom('authoringStoryConnector.hasUnSyncedStories')
+    get canNotPublish(): boolean {
+        return this.authoringStoryConnector.hasUnSyncedStories;
+    }
+
+    publish() {
+        this.publishing = true;
+        this.publishingConnector.publishStory(this.story).then(result => {
+            this.publishing = false;
+
+            if (typeof result !== 'boolean') {
+                this.results = result;
+                return
+            }
+
+            this.results = "Sorry it has not been possible to request publication at this time due to a network issue";
+        });
     }
 
 }
