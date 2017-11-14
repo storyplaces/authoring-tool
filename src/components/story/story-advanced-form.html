@@ -71,6 +71,11 @@
                     <creatable-list items.bind="functions" create-item.call="createFunction()"
                                     edit-item.call="editFunction(item)"></creatable-list>
                 </div>
+                <div class="form-group">
+                    <label>Locations:</label>
+                    <creatable-list items.bind="locations" create-item.call="createLocation()"
+                                    edit-item.call="editLocation(item)"></creatable-list>
+                </div>
             </div>
         </div>
 

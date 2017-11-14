@@ -36,37 +36,87 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {inject} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {Identifiable} from "../interfaces/Identifiable";
+import {HasName} from "../interfaces/HasName";
 
-import {inject} from 'aurelia-framework';
-import {DialogController} from 'aurelia-dialog';
-import {Identifiable} from "../../resources/interfaces/Identifiable";
-import {HasName} from "../../resources/interfaces/HasName";
-import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
 
-@inject(DialogController)
+@inject(
+    TypeChecker
+)
+export class AuthoringAdvancedLocation extends BaseModel implements Identifiable, HasName {
+    private _name: string;
+    private _lat: number;
+    private _long: number;
+    private _radius: number;
 
-export class AuthoringAdvancedVariableEdit {
-
-    private variable: AuthoringAdvancedVariable;
-    private error: string = '';
-
-    constructor(private dialogController: DialogController) {
-        this.dialogController.settings.centerHorizontalOnly = true;
+    constructor(typeChecker: TypeChecker,
+                data?: any) {
+        super(typeChecker);
+        this.fromObject(data);
     }
 
-    activate(model: { variable: AuthoringAdvancedVariable }) {
-        this.variable = model.variable;
+    get name(): string {
+        return this._name;
     }
 
-    attached() {
+    set name(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Name", name);
+        this._name = value;
     }
 
-    submit() {
-        if (!this.variable.name || this.variable.name == "") {
-            this.error = "Please enter a name for the variable";
-            return;
+    get radius(): number {
+        return this._radius;
+    }
+
+    set radius(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Radius", value);
+        this._radius = value;
+    }
+
+    get long(): number {
+        return this._long;
+    }
+
+    set long(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Long", value);
+        this._long = value;
+    }
+
+    get lat(): number {
+        return this._lat;
+    }
+
+    set lat(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Lat", value);
+        this._lat = value;
+    }
+
+    public fromObject(data = {
+        id: undefined,
+        lat: undefined,
+        long: undefined,
+        radius: undefined,
+        name: undefined
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.lat = data.lat;
+        this.long = data.long;
+        this.radius = data.radius;
+        this.name = data.name;
+    }
+
+    public toJSON() {
+        return {
+            id: this.id,
+            lat: this.lat,
+            long: this.long,
+            radius: this.radius,
+            name: this.name,
         }
-
-        return this.dialogController.ok(this.variable);
     }
+
 }
