@@ -125,7 +125,7 @@ export class StoryAdvancedFormCustomElement {
         }
     };
 
-    private mouseListner = (evt: MouseEvent) => {
+    private mouseListener = (evt: MouseEvent) => {
         if((evt as any).path.indexOf(this.mapPane) == -1) {
             this.resolveLocationUpdatePromise(null);
         }
@@ -138,7 +138,7 @@ export class StoryAdvancedFormCustomElement {
         this.conditions = this.conditionCollectionFactory();
         this.locations = this.locationCollectionFactory();
         window.addEventListener('keyup', this.keyListener);
-        window.addEventListener('click', this.mouseListner);
+        window.addEventListener('click', this.mouseListener);
 
         this.location = null;
 
@@ -154,7 +154,7 @@ export class StoryAdvancedFormCustomElement {
         }
 
         window.removeEventListener('keyup', this.keyListener);
-        window.removeEventListener('click', this.mouseListner);
+        window.removeEventListener('click', this.mouseListener);
 
     }
 
@@ -233,7 +233,7 @@ export class StoryAdvancedFormCustomElement {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedConditionEdit,
-                model: {condition: condition, variables: this.variables, functions: this.functions, conditions: this.conditions},
+                model: {condition: condition, variables: this.variables, functions: this.functions, conditions: this.conditions, locations: this.locations},
                 keyboard: 'Escape'
             })
             .whenClosed(response => {

@@ -43,6 +43,7 @@ import {AuthoringAdvancedVariableCollection} from "../../resources/collections/A
 import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
 import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
 import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
+import {AuthoringAdvancedLocationCollection} from "../../resources/collections/AuthoringAdvancedLocationCollection";
 
 @inject(DialogController)
 
@@ -56,6 +57,7 @@ export class AuthoringAdvancedConditionEdit {
     private conditions: AuthoringAdvancedConditionCollection;
     private errorCount: number;
     private functions: AuthoringAdvancedFunctionCollection;
+    private locations: AuthoringAdvancedLocationCollection;
 
     constructor(private dialogController: DialogController) {
         this.dialogController.settings.centerHorizontalOnly = true;
@@ -80,6 +82,11 @@ export class AuthoringAdvancedConditionEdit {
     @computedFrom('variables.all')
     get availableVariables() {
         return this.variables.all;
+    }
+
+    @computedFrom('locations.all')
+    get availableLocations() {
+        return this.locations.all
     }
 
     @computedFrom('functions.all')
@@ -113,12 +120,14 @@ export class AuthoringAdvancedConditionEdit {
         condition: AuthoringAdvancedCondition,
         variables: AuthoringAdvancedVariableCollection,
         conditions: AuthoringAdvancedConditionCollection,
-        functions: AuthoringAdvancedFunctionCollection
+        functions: AuthoringAdvancedFunctionCollection,
+        locations: AuthoringAdvancedLocationCollection
     }) {
         this.condition = model.condition;
         this.variables = model.variables;
         this.conditions = model.conditions;
         this.functions = model.functions;
+        this.locations = model.locations;
     }
 
     attached() {
