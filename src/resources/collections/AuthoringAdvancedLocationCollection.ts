@@ -60,4 +60,8 @@ export class AuthoringAdvancedLocationCollection extends BaseCollection<Authorin
 
         return this.factory(item);
     }
+
+    public guid(): string {
+        return 'adv-' + super.guid();
+    }
 }

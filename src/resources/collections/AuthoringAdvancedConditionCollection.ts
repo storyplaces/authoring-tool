@@ -60,4 +60,8 @@ export class AuthoringAdvancedConditionCollection extends BaseCollection<Authori
 
         return this.factory(item);
     }
+
+    public guid(): string {
+        return 'adv-' + super.guid();
+    }
 }
