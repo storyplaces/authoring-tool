@@ -54,6 +54,7 @@ import {AuthoringAdvancedConditionEdit} from "../modals/authoring-advanced-condi
 import {AuthoringAdvancedLocationEdit} from "../modals/authoring-advanced-location-edit";
 import {AuthoringAdvancedLocation} from "../../resources/models/AuthoringAdvancedLocation";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
+import {StoryComponentCreator} from "../../resources/utilities/StoryComponentCreator";
 
 @inject(
     Factory.of(AuthoringAdvancedVariable),
@@ -63,7 +64,8 @@ import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateF
     DialogService,
     EventAggregator,
     RequestPinDropEvent,
-    CancelPinDropEvent)
+    CancelPinDropEvent,
+    StoryComponentCreator)
 export class StoryAdvancedFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
@@ -102,7 +104,8 @@ export class StoryAdvancedFormCustomElement {
                 private dialogService: DialogService,
                 private eventAggregator: EventAggregator,
                 private requestPinDropEvent: RequestPinDropEvent,
-                private cancelPinDropEvent: CancelPinDropEvent) {
+                private cancelPinDropEvent: CancelPinDropEvent,
+                private storyComponentCreator: StoryComponentCreator) {
     }
 
     @computedFrom('storyVariables', 'story.advancedVariables.all')
@@ -121,15 +124,13 @@ export class StoryAdvancedFormCustomElement {
     }
 
     attached() {
-
-        window.addEventListener('keyup', this.keyListener);
-        window.addEventListener('click', this.mouseListener);
-
         this.location = null;
-
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
             this.resolveLocationUpdatePromise(event);
         });
+
+        window.addEventListener('keyup', this.keyListener);
+        window.addEventListener('click', this.mouseListener);
 
         this.makeStoryComponents();
     }
@@ -239,9 +240,9 @@ export class StoryAdvancedFormCustomElement {
     }
 
     private makeStoryComponents() {
-        this.storyVariables = this.makeStoryVariables(this.story);
-        this.storyConditions = this.makeStoryConditions(this.story);
-        this.storyLocations = this.makeStoryLocations(this.story);
+        this.storyVariables = this.storyComponentCreator.makeStoryVariables(this.story);
+        this.storyConditions = this.storyComponentCreator.makeStoryConditions(this.story);
+        this.storyLocations = this.storyComponentCreator.makeStoryLocations(this.story);
     }
 
     private resolveLocationUpdatePromise(event?: LocationUpdateFromMapEvent) {
@@ -307,70 +308,5 @@ export class StoryAdvancedFormCustomElement {
         }
     }
 
-    private makeStoryVariables(story: AuthoringStory): Array<Identifiable & HasName> {
-        let pageReadVariables = story.pages.all.map(page => {
-            return {
-                id: `page-read-${page.id}-variable`,
-                name: `Auto: Page '${page.name}' read`
-            }
-        });
 
-        let chapterUnlockedVariables = story.chapters.all.map(chapter => {
-            return {
-                id: `chapter-unlocked${chapter.id}-variable`,
-                name: `Auto: Chapter '${chapter.name}' unlocked`
-            }
-        });
-
-        return chapterUnlockedVariables.concat(pageReadVariables);
-    }
-
-    private makeStoryConditions(story: AuthoringStory): Array<Identifiable & HasName> {
-        let pageReadConditions = story.pages.all.map(page => {
-            return {
-                id: `page-read-${page.id}`,
-                name: `Auto: Page '${page.name}' read`
-            }
-        });
-
-        let pageNotReadConditions = story.pages.all.map(page => {
-            return {
-                id: `page-not-read-${page.id}`,
-                name: `Auto: Page '${page.name}' not read`
-            }
-        });
-
-        let chapterUnlockedConditions = story.chapters.all.map(chapter => {
-            return {
-                id: `chapter-unlocked-${chapter.id}`,
-                name: `Auto: Chapter '${chapter.name}' unlocked`
-            }
-        });
-
-        let locationConditions = story.pages.all
-            .filter(page => {
-                return page.locationId !== null && page.locationId !== undefined && page.locationId !== "";
-            })
-            .map(page => {
-                return {
-                    id: `location-${page.locationId}`,
-                    name: `Auto: User at page '${page.name}' location`
-                }
-            });
-
-        return chapterUnlockedConditions.concat(pageReadConditions).concat(pageNotReadConditions).concat(locationConditions);
-    }
-
-    private makeStoryLocations(story: AuthoringStory): Array<Identifiable & HasName> {
-        return story.pages.all
-            .filter(page => {
-                return page.locationId !== null && page.locationId !== undefined && page.locationId !== "";
-            })
-            .map(page => {
-                return {
-                    id: `${page.locationId}`,
-                    name: `Auto: Page '${page.name}' location`
-                }
-            });
-    }
 }

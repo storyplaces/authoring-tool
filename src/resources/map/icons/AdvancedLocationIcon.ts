@@ -36,47 +36,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapManager} from "../../../resources/map/MapManager";
-import {bindable, BindingEngine, inject} from "aurelia-framework";
-import {MarkerManager} from "../../../resources/map/MarkerManager";
-import {AuthoringStory} from "../../../resources/models/AuthoringStory";
-import {AuthoringPage} from "../../../resources/models/AuthoringPage";
-import {AuthoringLocation} from "../../../resources/models/AuthoringLocation";
-import {AdvancedLocationMarkerManager} from "../../../resources/map/AdvancedLocationMarkerManager";
+import {MapIcon} from "../../mapping/icons/MapIcon";
+import {inject} from "aurelia-framework";
+import {MapIconDefaults} from "../../mapping/settings/MapIconDefaults";
 
-@inject(
-    MapManager,
-    MarkerManager,
-    AdvancedLocationMarkerManager,
-    BindingEngine
-)
-export class MapCustomElement {
-    mapElement: HTMLElement;
-
-    @bindable story: AuthoringStory;
-    @bindable currentPage: AuthoringPage;
-    @bindable currentLocation: AuthoringLocation;
-    @bindable activePageIds: Array<string>;
-
-    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private advancedLocationMarkerManager: AdvancedLocationMarkerManager, private bindingEngine: BindingEngine) {
-    }
-
-    attached() {
-        this.mapManager.attach(this.mapElement);
-        this.markerManager.attach(this.story, this.currentPage, this.currentLocation, this.activePageIds);
-        this.advancedLocationMarkerManager.attach(this.story);
-
-        this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => {
-            this.markerManager.selectedLocation = newLocation
+@inject(MapIconDefaults)
+export class AdvancedLocationIcon extends MapIcon {
+    constructor(defaults: MapIconDefaults) {
+        super(defaults, {
+            iconUrl: 'images/icons/markers/marker-icon-advanced.png',
+            iconRetinaUrl: 'images/icons/markers/marker-icon-advanced-2x.png'
         });
-        this.bindingEngine.propertyObserver(this, 'activePageIds').subscribe(newPageIds => {
-            this.markerManager.activePageIds = newPageIds
-        });
-    }
-
-    detached() {
-        this.advancedLocationMarkerManager.detach();
-        this.markerManager.detach();
-        this.mapManager.detach()
     }
 }

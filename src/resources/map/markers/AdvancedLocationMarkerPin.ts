@@ -36,47 +36,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapManager} from "../../../resources/map/MapManager";
-import {bindable, BindingEngine, inject} from "aurelia-framework";
-import {MarkerManager} from "../../../resources/map/MarkerManager";
-import {AuthoringStory} from "../../../resources/models/AuthoringStory";
-import {AuthoringPage} from "../../../resources/models/AuthoringPage";
-import {AuthoringLocation} from "../../../resources/models/AuthoringLocation";
-import {AdvancedLocationMarkerManager} from "../../../resources/map/AdvancedLocationMarkerManager";
+import {MapMarker} from "../../mapping/markers/MapMarker";
+import {MapMarkerDefaults} from "../../mapping/settings/MapMarkerDefaults";
+import {inject} from "aurelia-framework";
+import {PopupMarker} from "../interfaces/PopupMarker";
+import {InactiveIcon} from "../icons/InactiveIcon";
+import {ActiveIcon} from "../icons/ActiveIcon";
+import {SelectedIcon} from "../icons/SelectedIcon";
+import {AdvancedLocationIcon} from "../icons/AdvancedLocationIcon";
 
-@inject(
-    MapManager,
-    MarkerManager,
-    AdvancedLocationMarkerManager,
-    BindingEngine
-)
-export class MapCustomElement {
-    mapElement: HTMLElement;
+@inject(MapMarkerDefaults, AdvancedLocationIcon)
+export class AdvancedLocationMarkerPin extends MapMarker implements PopupMarker {
 
-    @bindable story: AuthoringStory;
-    @bindable currentPage: AuthoringPage;
-    @bindable currentLocation: AuthoringLocation;
-    @bindable activePageIds: Array<string>;
-
-    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private advancedLocationMarkerManager: AdvancedLocationMarkerManager, private bindingEngine: BindingEngine) {
+    constructor(markerDefaults: MapMarkerDefaults, private advancedIcon: AdvancedLocationIcon,
+                latitude: number, longitude: number, popupText: string) {
+        super(markerDefaults, latitude, longitude, {icon: advancedIcon.leafletIcon});
+        this.popupText = popupText;
     }
 
-    attached() {
-        this.mapManager.attach(this.mapElement);
-        this.markerManager.attach(this.story, this.currentPage, this.currentLocation, this.activePageIds);
-        this.advancedLocationMarkerManager.attach(this.story);
-
-        this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => {
-            this.markerManager.selectedLocation = newLocation
-        });
-        this.bindingEngine.propertyObserver(this, 'activePageIds').subscribe(newPageIds => {
-            this.markerManager.activePageIds = newPageIds
-        });
-    }
-
-    detached() {
-        this.advancedLocationMarkerManager.detach();
-        this.markerManager.detach();
-        this.mapManager.detach()
+    set popupText(text: string) {
+        this.marker.unbindPopup();
+        this.marker.bindPopup(text);
     }
 }
