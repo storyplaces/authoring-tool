@@ -52,7 +52,6 @@ export class StoryAdvancedPage {
     private mapHidden: boolean = false;
     private story: AuthoringStory;
     private dirty: boolean;
-    private valid: boolean;
     private saving: boolean = false;
     private saved: boolean = false;
 
@@ -108,10 +107,6 @@ export class StoryAdvancedPage {
 
 
     save() {
-        if (!this.valid) {
-            return;
-        }
-
         this.saving = true;
         this.saved = false;
         this.storyConnector.save(this.story).then(() => {

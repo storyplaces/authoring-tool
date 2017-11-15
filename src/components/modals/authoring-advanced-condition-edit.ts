@@ -39,11 +39,10 @@
 
 import {computedFrom, inject} from 'aurelia-framework';
 import {DialogController} from 'aurelia-dialog';
-import {AuthoringAdvancedVariableCollection} from "../../resources/collections/AuthoringAdvancedVariableCollection";
-import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
-import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
 import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
-import {AuthoringAdvancedLocationCollection} from "../../resources/collections/AuthoringAdvancedLocationCollection";
+import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
+import {AuthoringAdvancedLocation} from "../../resources/models/AuthoringAdvancedLocation";
+import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
 
 @inject(DialogController)
 
@@ -53,11 +52,11 @@ export class AuthoringAdvancedConditionEdit {
     private errors;
 
     private nameElement: HTMLInputElement;
-    private variables: AuthoringAdvancedVariableCollection;
-    private conditions: AuthoringAdvancedConditionCollection;
+    private variables: Array<AuthoringAdvancedVariable>;
+    private conditions: Array<AuthoringAdvancedCondition>;
     private errorCount: number;
-    private functions: AuthoringAdvancedFunctionCollection;
-    private locations: AuthoringAdvancedLocationCollection;
+    private functions: Array<AuthoringAdvancedFunction>;
+    private locations: Array<AuthoringAdvancedLocation>;
 
     constructor(private dialogController: DialogController) {
         this.dialogController.settings.centerHorizontalOnly = true;
@@ -79,19 +78,19 @@ export class AuthoringAdvancedConditionEdit {
         return AuthoringAdvancedCondition.allowedLogicalOperands;
     }
 
-    @computedFrom('variables.all')
+    @computedFrom('variables')
     get availableVariables() {
-        return this.variables.all;
+        return this.variables;
     }
 
-    @computedFrom('locations.all')
+    @computedFrom('locations')
     get availableLocations() {
-        return this.locations.all
+        return this.locations
     }
 
-    @computedFrom('functions.all')
+    @computedFrom('functions')
     get availableFunctions() {
-        return this.functions.all
+        return this.functions
             .map(func => {
                 return {
                     id: func.id,
@@ -102,9 +101,9 @@ export class AuthoringAdvancedConditionEdit {
             });
     }
 
-    @computedFrom('conditions.all')
+    @computedFrom('conditions')
     get availableConditions() {
-        return this.conditions.all
+        return this.conditions
             .filter(conditionToTest => conditionToTest.id != this.condition.id)
             .map(condition => {
                 return {
@@ -118,10 +117,10 @@ export class AuthoringAdvancedConditionEdit {
 
     activate(model: {
         condition: AuthoringAdvancedCondition,
-        variables: AuthoringAdvancedVariableCollection,
-        conditions: AuthoringAdvancedConditionCollection,
-        functions: AuthoringAdvancedFunctionCollection,
-        locations: AuthoringAdvancedLocationCollection
+        variables: Array<AuthoringAdvancedVariable>,
+        conditions: Array<AuthoringAdvancedCondition>,
+        functions: Array<AuthoringAdvancedFunction>,
+        locations: Array<AuthoringAdvancedLocation>
     }) {
         this.condition = model.condition;
         this.variables = model.variables;

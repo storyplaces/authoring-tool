@@ -42,15 +42,22 @@ import {TypeChecker} from "../utilities/TypeChecker";
 import {AuthoringChapterCollection} from "../collections/AuthoringChapterCollection";
 import {AuthoringPageCollection} from "../collections/AuthoringPageCollection";
 import {AuthoringLocationCollection} from "../collections/AuthoringLocationCollection";
+import {AuthoringAdvancedVariableCollection} from "../collections/AuthoringAdvancedVariableCollection";
+import {AuthoringAdvancedFunctionCollection} from "../collections/AuthoringAdvancedFunctionCollection";
+import {AuthoringAdvancedConditionCollection} from "../collections/AuthoringAdvancedConditionCollection";
+import {AuthoringAdvancedLocationCollection} from "../collections/AuthoringAdvancedLocationCollection";
 
 @inject(
     Factory.of(AuthoringChapterCollection),
     Factory.of(AuthoringPageCollection),
     Factory.of(AuthoringLocationCollection),
+    Factory.of(AuthoringAdvancedVariableCollection),
+    Factory.of(AuthoringAdvancedFunctionCollection),
+    Factory.of(AuthoringAdvancedConditionCollection),
+    Factory.of(AuthoringAdvancedLocationCollection),
     TypeChecker
 )
 export class AuthoringStory extends BaseModel {
-
     private _title: string;
     private _description: string;
     private _createdDate: Date;
@@ -63,11 +70,18 @@ export class AuthoringStory extends BaseModel {
     private _tags: Array<string>;
     private _imageIds: Array<string>;
     private _logLocations: boolean;
-
+    private _advancedVariables: AuthoringAdvancedVariableCollection;
+    private _advancedLocations: AuthoringAdvancedLocationCollection;
+    private _advancedFunctions: AuthoringAdvancedFunctionCollection;
+    private _advancedConditions: AuthoringAdvancedConditionCollection;
 
     constructor(private authoringChapterCollectionFactory: (any?) => AuthoringChapterCollection,
                 private authoringPageCollectionFactory: (any?) => AuthoringPageCollection,
                 private authoringLocationCollectionFactory: (any?) => AuthoringLocationCollection,
+                private authoringAdvancedVariableCollectionFactory: (any?) => AuthoringAdvancedVariableCollection,
+                private authoringAdvancedFunctionCollectionFactory: (any?) => AuthoringAdvancedFunctionCollection,
+                private authoringAdvancedConditionCollectionFactory: (any?) => AuthoringAdvancedConditionCollection,
+                private authoringAdvancedLocationCollectionFactory: (any?) => AuthoringAdvancedLocationCollection,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
@@ -80,53 +94,41 @@ export class AuthoringStory extends BaseModel {
         }
     }
 
-    public fromObject(data = {
-        id: undefined,
-        title: undefined,
-        description: undefined,
-        createdDate: undefined,
-        modifiedDate: undefined,
-        audience: undefined,
-        authorIds: undefined,
-        chapters: undefined,
-        pages: undefined,
-        locations: undefined,
-        tags: undefined,
-        imageIds: undefined,
-        logLocations: undefined,
-    }) {
-        this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.id = data.id;
-        this.title = data.title;
-        this.description = data.description;
-        this.createdDate = new Date(data.createdDate);
-        this.modifiedDate = new Date(data.modifiedDate);
-        this.audience = data.audience;
-        this.authorIds = data.authorIds;
-        this.chapters = this.authoringChapterCollectionFactory(data.chapters);
-        this.pages = this.authoringPageCollectionFactory(data.pages);
-        this.locations = this.authoringLocationCollectionFactory(data.locations);
-        this.tags = data.tags;
-        this.imageIds = data.imageIds;
-        this.logLocations = data.logLocations;
+    get advancedVariables(): AuthoringAdvancedVariableCollection {
+        return this._advancedVariables;
     }
 
-    public toJSON() {
-        return {
-            id: this.id,
-            title: this.title,
-            description: this.description,
-            createdDate: this.createdDate.toISOString(),
-            modifiedDate: this.modifiedDate.toISOString(),
-            audience: this.audience,
-            authorIds: this.authorIds,
-            chapters: this.chapters,
-            pages: this.pages,
-            locations: this.locations,
-            tags: this.tags,
-            imageIds: this.imageIds,
-            logLocations: this.logLocations
-        }
+    set advancedVariables(value: AuthoringAdvancedVariableCollection) {
+        this.typeChecker.validateAsObjectOrUndefined('Advanced Variables', value, 'AuthoringAdvancedVariableCollection', AuthoringAdvancedVariableCollection);
+        this._advancedVariables = value;
+    }
+
+    get advancedLocations(): AuthoringAdvancedLocationCollection {
+        return this._advancedLocations;
+    }
+
+    set advancedLocations(value: AuthoringAdvancedLocationCollection) {
+        this.typeChecker.validateAsObjectOrUndefined('Advanced Locations', value, 'AuthoringAdvancedLocationCollection', AuthoringAdvancedLocationCollection);
+
+        this._advancedLocations = value;
+    }
+
+    get advancedFunctions(): AuthoringAdvancedFunctionCollection {
+        return this._advancedFunctions;
+    }
+
+    set advancedFunctions(value: AuthoringAdvancedFunctionCollection) {
+        this.typeChecker.validateAsObjectOrUndefined('Advanced Functions', value, 'AuthoringAdvancedFunctionCollection', AuthoringAdvancedFunctionCollection);
+        this._advancedFunctions = value;
+    }
+
+    get advancedConditions(): AuthoringAdvancedConditionCollection {
+        return this._advancedConditions;
+    }
+
+    set advancedConditions(value: AuthoringAdvancedConditionCollection) {
+        this.typeChecker.validateAsObjectOrUndefined('Advanced Conditions', value, 'AuthoringAdvancedConditionCollection', AuthoringAdvancedConditionCollection);
+        this._advancedConditions = value;
     }
 
     get tags(): Array<string> {
@@ -241,6 +243,67 @@ export class AuthoringStory extends BaseModel {
     set logLocations(value: boolean) {
         this.typeChecker.validateAsBooleanOrUndefined("logLocations", value);
         this._logLocations = value;
+    }
+
+    public fromObject(data = {
+        id: undefined,
+        title: undefined,
+        description: undefined,
+        createdDate: undefined,
+        modifiedDate: undefined,
+        audience: undefined,
+        authorIds: undefined,
+        chapters: undefined,
+        pages: undefined,
+        locations: undefined,
+        tags: undefined,
+        imageIds: undefined,
+        logLocations: undefined,
+        advancedFunctions: undefined,
+        advancedConditions: undefined,
+        advancedVariables: undefined,
+        advancedLocations: undefined,
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.title = data.title;
+        this.description = data.description;
+        this.createdDate = new Date(data.createdDate);
+        this.modifiedDate = new Date(data.modifiedDate);
+        this.audience = data.audience;
+        this.authorIds = data.authorIds;
+        this.chapters = this.authoringChapterCollectionFactory(data.chapters);
+        this.pages = this.authoringPageCollectionFactory(data.pages);
+        this.locations = this.authoringLocationCollectionFactory(data.locations);
+        this.tags = data.tags;
+        this.imageIds = data.imageIds;
+        this.logLocations = data.logLocations;
+        this.advancedConditions = this.authoringAdvancedConditionCollectionFactory(data.advancedConditions);
+        this.advancedFunctions = this.authoringAdvancedFunctionCollectionFactory(data.advancedFunctions);
+        this.advancedLocations = this.authoringAdvancedLocationCollectionFactory(data.advancedLocations);
+        this.advancedVariables = this.authoringAdvancedVariableCollectionFactory(data.advancedVariables);
+    }
+
+    public toJSON() {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            createdDate: this.createdDate.toISOString(),
+            modifiedDate: this.modifiedDate.toISOString(),
+            audience: this.audience,
+            authorIds: this.authorIds,
+            chapters: this.chapters,
+            pages: this.pages,
+            locations: this.locations,
+            tags: this.tags,
+            imageIds: this.imageIds,
+            logLocations: this.logLocations,
+            advancedFunctions: this.advancedFunctions,
+            advancedConditions: this.advancedConditions,
+            advancedVariables: this.advancedVariables,
+            advancedLocations: this.advancedLocations,
+        }
     }
 
 

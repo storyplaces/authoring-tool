@@ -36,81 +36,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, BindingEngine, bindingMode, Factory, inject} from "aurelia-framework";
+import {bindable, bindingMode, computedFrom, Factory, inject} from "aurelia-framework";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import "typeahead.js";
 import {EventAggregator, Subscription} from "aurelia-event-aggregator";
-import {RequestCurrentLocationEvent} from "../../resources/events/RequestCurrentLocationEvent";
 import {RequestPinDropEvent} from "../../resources/events/RequestPinDropEvent";
-import {StoryLookup} from "../../resources/utilities/StoryLookup";
 import {CancelPinDropEvent} from "../../resources/events/CancelPinDropEvent";
-import {ValidationControllerFactory} from "aurelia-validation";
-import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 import {Identifiable} from "../../resources/interfaces/Identifiable";
 import {HasName} from "../../resources/interfaces/HasName";
-import {AuthoringAdvancedVariableCollection} from "../../resources/collections/AuthoringAdvancedVariableCollection";
 import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
 import {DialogService} from "aurelia-dialog";
 import {AuthoringAdvancedVariableEdit} from "../modals/authoring-advanced-variable-edit";
 import {AuthoringAdvancedFunctionEdit} from "../modals/authoring-advanced-function-edit";
 import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
-import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
-import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
 import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
 import {AuthoringAdvancedConditionEdit} from "../modals/authoring-advanced-condition-edit";
 import {AuthoringAdvancedLocationEdit} from "../modals/authoring-advanced-location-edit";
-import {AuthoringAdvancedLocationCollection} from "../../resources/collections/AuthoringAdvancedLocationCollection";
 import {AuthoringAdvancedLocation} from "../../resources/models/AuthoringAdvancedLocation";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
 
 @inject(
-    Factory.of(AuthoringAdvancedVariableCollection),
     Factory.of(AuthoringAdvancedVariable),
-    Factory.of(AuthoringAdvancedFunctionCollection),
     Factory.of(AuthoringAdvancedFunction),
-    Factory.of(AuthoringAdvancedConditionCollection),
     Factory.of(AuthoringAdvancedCondition),
-    Factory.of(AuthoringAdvancedLocationCollection),
     Factory.of(AuthoringAdvancedLocation),
     DialogService,
-    StoryLookup,
     EventAggregator,
-    RequestCurrentLocationEvent,
     RequestPinDropEvent,
-    CancelPinDropEvent,
-    ValidationControllerFactory,
-    Factory.of(BootstrapValidationRenderer),
-    BindingEngine)
+    CancelPinDropEvent)
 export class StoryAdvancedFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) story: AuthoringStory;
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
     @bindable mapPane: HTMLDivElement;
 
-    private variables: AuthoringAdvancedVariableCollection;
-    private functions: AuthoringAdvancedFunctionCollection;
-    private conditions: AuthoringAdvancedConditionCollection;
-    private locations: AuthoringAdvancedLocationCollection;
     private eventSub: Subscription;
     private resolve: (value?: (PromiseLike<any> | any)) => void;
     private location: AuthoringAdvancedLocation;
-
-    constructor(private variableCollectionFactory: () => AuthoringAdvancedVariableCollection,
-                private variableFactory: () => AuthoringAdvancedVariable,
-                private functionCollectionFactory: () => AuthoringAdvancedFunctionCollection,
-                private functionFactory: () => AuthoringAdvancedFunction,
-                private conditionCollectionFactory: () => AuthoringAdvancedConditionCollection,
-                private conditionFactory: () => AuthoringAdvancedCondition,
-                private locationCollectionFactory: () => AuthoringAdvancedLocationCollection,
-                private locationFactory: () => AuthoringAdvancedLocation,
-                private dialogService: DialogService,
-                private storyLookup: StoryLookup,
-                private eventAggregator: EventAggregator,
-                private requestCurrentLocationEvent: RequestCurrentLocationEvent,
-                private requestPinDropEvent: RequestPinDropEvent,
-                private cancelPinDropEvent: CancelPinDropEvent) {
-
-    }
-
     private keyListener = (evt) => {
         evt = evt || window.event;
 
@@ -119,24 +80,48 @@ export class StoryAdvancedFormCustomElement {
             return;
         }
 
-        if (evt.keyCode == 27){
+        if (evt.keyCode == 27) {
             this.resolveLocationUpdatePromise(null);
             return;
         }
     };
-
     private mouseListener = (evt: MouseEvent) => {
-        if((evt as any).path.indexOf(this.mapPane) == -1) {
+        if ((evt as any).path.indexOf(this.mapPane) == -1) {
             this.resolveLocationUpdatePromise(null);
         }
     };
 
+    private storyVariables: Array<Identifiable & HasName>;
+    private storyConditions: Array<Identifiable & HasName>;
+    private storyLocations: Array<Identifiable & HasName>;
+
+    constructor(private variableFactory: () => AuthoringAdvancedVariable,
+                private functionFactory: () => AuthoringAdvancedFunction,
+                private conditionFactory: () => AuthoringAdvancedCondition,
+                private locationFactory: () => AuthoringAdvancedLocation,
+                private dialogService: DialogService,
+                private eventAggregator: EventAggregator,
+                private requestPinDropEvent: RequestPinDropEvent,
+                private cancelPinDropEvent: CancelPinDropEvent) {
+    }
+
+    @computedFrom('storyVariables', 'story.advancedVariables.all')
+    get availableVariables() {
+        return this.story.advancedVariables.all.concat(this.storyVariables as any);
+    }
+
+    @computedFrom('storyConditions', 'story.advancedConditions.all')
+    get availableConditions() {
+        return this.story.advancedConditions.all.concat(this.storyConditions as any);
+    }
+
+    @computedFrom('storyLocations', 'story.advancedLocations.all')
+    get availableLocations() {
+        return this.story.advancedLocations.all.concat(this.storyLocations as any);
+    }
+
     attached() {
-        this.dirty = false;
-        this.variables = this.variableCollectionFactory();
-        this.functions = this.functionCollectionFactory();
-        this.conditions = this.conditionCollectionFactory();
-        this.locations = this.locationCollectionFactory();
+
         window.addEventListener('keyup', this.keyListener);
         window.addEventListener('click', this.mouseListener);
 
@@ -145,6 +130,8 @@ export class StoryAdvancedFormCustomElement {
         this.eventSub = this.eventAggregator.subscribe(LocationUpdateFromMapEvent, (event: LocationUpdateFromMapEvent) => {
             this.resolveLocationUpdatePromise(event);
         });
+
+        this.makeStoryComponents();
     }
 
     detached() {
@@ -156,6 +143,105 @@ export class StoryAdvancedFormCustomElement {
         window.removeEventListener('keyup', this.keyListener);
         window.removeEventListener('click', this.mouseListener);
 
+    }
+
+    /*** DIRTY ***/
+    setDirty() {
+        this.dirty = true;
+    }
+
+    createVariable(): Promise<Identifiable & HasName> {
+        let newVariable = this.variableFactory();
+        return this.editVariable(newVariable);
+    }
+
+    editVariable(variable: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedVariableEdit,
+                model: {
+                    variable: variable
+                },
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (response.wasCancelled) {
+                    return null;
+                }
+
+                this.dirty = true;
+                return response.output;
+            });
+    }
+
+    createFunction(): Promise<Identifiable & HasName> {
+        let newFunc = this.functionFactory();
+        return this.editFunction(newFunc);
+    }
+
+    editFunction(func: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedFunctionEdit,
+                model: {
+                    func: func,
+                    variables: this.story.advancedVariables.all,
+                    functions: this.story.advancedFunctions.all,
+                    conditions: this.availableConditions
+                },
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (response.wasCancelled) {
+                    return null;
+                }
+
+                this.dirty = true;
+                return response.output;
+            });
+    }
+
+    createCondition(): Promise<Identifiable & HasName> {
+        let newCondition = this.conditionFactory();
+        return this.editCondition(newCondition)
+    }
+
+    editCondition(condition: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedConditionEdit,
+                model: {
+                    condition: condition,
+                    variables: this.availableVariables,
+                    functions: this.story.advancedFunctions.all,
+                    conditions: this.availableConditions,
+                    locations: this.availableLocations,
+                },
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (response.wasCancelled) {
+                    return null;
+                }
+
+                this.dirty = true;
+                return response.output;
+            });
+    }
+
+    createLocation(): Promise<Identifiable & HasName> {
+        let newLocation = this.locationFactory();
+        return this.editLocation(newLocation);
+    }
+
+    editLocation(location: Identifiable & HasName): Promise<Identifiable & HasName> {
+        return this.openLocationDialog(location);
+    }
+
+    private makeStoryComponents() {
+        this.storyVariables = this.makeStoryVariables(this.story);
+        this.storyConditions = this.makeStoryConditions(this.story);
+        this.storyLocations = this.makeStoryLocations(this.story);
     }
 
     private resolveLocationUpdatePromise(event?: LocationUpdateFromMapEvent) {
@@ -177,88 +263,13 @@ export class StoryAdvancedFormCustomElement {
         resolveToCall(locationToReturn);
     }
 
-    /*** DIRTY ***/
-    setDirty() {
-        this.dirty = true;
-    }
-
-    createVariable(): Promise<Identifiable & HasName> {
-        let newVariable = this.variableFactory();
-        return this.editVariable(newVariable);
-    }
-
-    editVariable(variable: Identifiable & HasName): Promise<Identifiable & HasName> {
-        return this.dialogService
-            .open({
-                viewModel: AuthoringAdvancedVariableEdit,
-                model: {variable: variable},
-                keyboard: 'Escape'
-            })
-            .whenClosed(response => {
-                if (response.wasCancelled) {
-                    return null;
-                }
-
-                return response.output;
-            });
-    }
-
-    createFunction(): Promise<Identifiable & HasName> {
-        let newFunc = this.functionFactory();
-        return this.editFunction(newFunc);
-    }
-
-    editFunction(func: Identifiable & HasName): Promise<Identifiable & HasName> {
-        return this.dialogService
-            .open({
-                viewModel: AuthoringAdvancedFunctionEdit,
-                model: {func: func, variables: this.variables, functions: this.functions, conditions: this.conditions},
-                keyboard: 'Escape'
-            })
-            .whenClosed(response => {
-                if (response.wasCancelled) {
-                    return null;
-                }
-
-                return response.output;
-            });
-    }
-
-    createCondition(): Promise<Identifiable & HasName> {
-        let newCondition = this.conditionFactory();
-        return this.editCondition(newCondition)
-    }
-
-    editCondition(condition: Identifiable & HasName): Promise<Identifiable & HasName> {
-        return this.dialogService
-            .open({
-                viewModel: AuthoringAdvancedConditionEdit,
-                model: {condition: condition, variables: this.variables, functions: this.functions, conditions: this.conditions, locations: this.locations},
-                keyboard: 'Escape'
-            })
-            .whenClosed(response => {
-                if (response.wasCancelled) {
-                    return null;
-                }
-
-                return response.output;
-            });
-    }
-
-    createLocation(): Promise<Identifiable & HasName> {
-        let newLocation = this.locationFactory();
-        return this.editLocation(newLocation);
-    }
-
-    editLocation(location: Identifiable & HasName): Promise<Identifiable & HasName> {
-        return this.openLocationDialog(location);
-    }
-
     private openLocationDialog(location: Identifiable & HasName) {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedLocationEdit,
-                model: {location: location},
+                model: {
+                    location: location
+                },
                 keyboard: 'Escape'
             })
             .whenClosed(response => {
@@ -267,6 +278,7 @@ export class StoryAdvancedFormCustomElement {
                 }
 
                 if (response.output.status == "complete") {
+                    this.dirty = true;
                     return response.output.location;
                 }
 
@@ -293,5 +305,72 @@ export class StoryAdvancedFormCustomElement {
         if (!location.radius) {
             location.radius = 30;
         }
+    }
+
+    private makeStoryVariables(story: AuthoringStory): Array<Identifiable & HasName> {
+        let pageReadVariables = story.pages.all.map(page => {
+            return {
+                id: `page-read-${page.id}-variable`,
+                name: `Auto: Page '${page.name}' read`
+            }
+        });
+
+        let chapterUnlockedVariables = story.chapters.all.map(chapter => {
+            return {
+                id: `chapter-unlocked${chapter.id}-variable`,
+                name: `Auto: Chapter '${chapter.name}' unlocked`
+            }
+        });
+
+        return chapterUnlockedVariables.concat(pageReadVariables);
+    }
+
+    private makeStoryConditions(story: AuthoringStory): Array<Identifiable & HasName> {
+        let pageReadConditions = story.pages.all.map(page => {
+            return {
+                id: `page-read-${page.id}`,
+                name: `Auto: Page '${page.name}' read`
+            }
+        });
+
+        let pageNotReadConditions = story.pages.all.map(page => {
+            return {
+                id: `page-not-read-${page.id}`,
+                name: `Auto: Page '${page.name}' not read`
+            }
+        });
+
+        let chapterUnlockedConditions = story.chapters.all.map(chapter => {
+            return {
+                id: `chapter-unlocked-${chapter.id}`,
+                name: `Auto: Chapter '${chapter.name}' unlocked`
+            }
+        });
+
+        let locationConditions = story.pages.all
+            .filter(page => {
+                return page.locationId !== null && page.locationId !== undefined && page.locationId !== "";
+            })
+            .map(page => {
+                return {
+                    id: `location-${page.locationId}`,
+                    name: `Auto: User at page '${page.name}' location`
+                }
+            });
+
+        return chapterUnlockedConditions.concat(pageReadConditions).concat(pageNotReadConditions).concat(locationConditions);
+    }
+
+    private makeStoryLocations(story: AuthoringStory): Array<Identifiable & HasName> {
+        return story.pages.all
+            .filter(page => {
+                return page.locationId !== null && page.locationId !== undefined && page.locationId !== "";
+            })
+            .map(page => {
+                return {
+                    id: `${page.locationId}`,
+                    name: `Auto: Page '${page.name}' location`
+                }
+            });
     }
 }

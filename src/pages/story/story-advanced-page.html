@@ -54,6 +54,12 @@
             <div class="story-nav-body">
                 <scrollable-list-with-header>
                     <div slot="heading">
+                        <button class="btn btn-success" click.delegate="save()" if.bind="!saving"><span
+                                class="glyphicon glyphicon-save"></span> Save${!dirty && saved ? 'd' : '' }
+                        </button>
+                        <button class="btn btn-success" disabled if.bind="saving"><span
+                                class="glyphicon glyphicon-save"></span> Saving
+                        </button>
                         <button class="btn btn-default pull-right" click.delegate="mapHidden = false"
                                 show.bind="mapHidden"><span
                                 class="glyphicon glyphicon-resize-full"></span> Show Map
@@ -64,7 +70,7 @@
                         </button>
                     </div>
                     <div slot="content">
-                        <story-advanced-form story.bind="story" map-pane.bind="mapPane"></story-advanced-form>
+                        <story-advanced-form story.bind="story" map-pane.bind="mapPane" dirty.bind="dirty"></story-advanced-form>
                     </div>
                 </scrollable-list-with-header>
             </div>

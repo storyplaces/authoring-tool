@@ -43,6 +43,8 @@ import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvance
 import {AuthoringAdvancedVariableCollection} from "../../resources/collections/AuthoringAdvancedVariableCollection";
 import {AuthoringAdvancedFunctionCollection} from "../../resources/collections/AuthoringAdvancedFunctionCollection";
 import {AuthoringAdvancedConditionCollection} from "../../resources/collections/AuthoringAdvancedConditionCollection";
+import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
+import {AuthoringAdvancedVariable} from "../../resources/models/AuthoringAdvancedVariable";
 
 @inject(DialogController)
 
@@ -51,10 +53,10 @@ export class AuthoringAdvancedFunctionEdit {
     private func: AuthoringAdvancedFunction;
     private errors;
 
-    private variables: AuthoringAdvancedVariableCollection;
-    private conditions: AuthoringAdvancedConditionCollection;
+    private variables: Array<AuthoringAdvancedVariable>;
+    private conditions: Array<AuthoringAdvancedCondition>;
     private errorCount: number;
-    private functions: AuthoringAdvancedFunctionCollection;
+    private functions: Array<AuthoringAdvancedFunction>;
 
     constructor(private dialogController: DialogController) {
         this.dialogController.settings.centerHorizontalOnly = true;
@@ -64,14 +66,14 @@ export class AuthoringAdvancedFunctionEdit {
         return AuthoringAdvancedFunction.allowedTypes;
     }
 
-    @computedFrom('variables.all')
+    @computedFrom('variables')
     get availableVariables() {
-        return this.variables.all;
+        return this.variables;
     }
 
-    @computedFrom('functions.all')
+    @computedFrom('functions')
     get availableFunctions() {
-        return this.functions.all
+        return this.functions
             .filter(funcToTest => funcToTest.id != this.func.id)
             .map(func => {
                 return {
@@ -83,9 +85,9 @@ export class AuthoringAdvancedFunctionEdit {
             });
     }
 
-    @computedFrom('conditions.all')
+    @computedFrom('conditions')
     get availableConditions() {
-        return this.conditions.all
+        return this.conditions
             .map(condition => {
                 return {
                     id: condition.id,
@@ -98,9 +100,9 @@ export class AuthoringAdvancedFunctionEdit {
 
     activate(model: {
         func: AuthoringAdvancedFunction,
-        variables: AuthoringAdvancedVariableCollection,
-        conditions: AuthoringAdvancedConditionCollection,
-        functions: AuthoringAdvancedFunctionCollection
+        variables: Array<AuthoringAdvancedVariable>,
+        conditions: Array<AuthoringAdvancedCondition>,
+        functions: Array<AuthoringAdvancedFunction>
     }) {
         this.func = model.func;
         this.variables = model.variables;
