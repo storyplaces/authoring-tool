@@ -6,14 +6,14 @@ export class StoryComponentCreator {
     public makeStoryVariables(story: AuthoringStory): Array<Identifiable & HasName> {
         let pageReadVariables = story.pages.all.map(page => {
             return {
-                id: `page-read-${page.id}-variable`,
+                id: this.generatePageReadVariableId(page.id),
                 name: `Auto: Page '${page.name}' read`
             }
         });
 
         let chapterUnlockedVariables = story.chapters.all.map(chapter => {
             return {
-                id: `chapter-unlocked${chapter.id}-variable`,
+                id: this.generateChapterUnlockedVariableId(chapter.id),
                 name: `Auto: Chapter '${chapter.name}' unlocked`
             }
         });
@@ -24,21 +24,21 @@ export class StoryComponentCreator {
     public makeStoryConditions(story: AuthoringStory): Array<Identifiable & HasName> {
         let pageReadConditions = story.pages.all.map(page => {
             return {
-                id: `page-read-${page.id}`,
+                id: this.generatePageReadConditionId(page.id),
                 name: `Auto: Page '${page.name}' read`
             }
         });
 
         let pageNotReadConditions = story.pages.all.map(page => {
             return {
-                id: `page-not-read-${page.id}`,
+                id: this.generatePageNotReadConditionId(page.id),
                 name: `Auto: Page '${page.name}' not read`
             }
         });
 
         let chapterUnlockedConditions = story.chapters.all.map(chapter => {
             return {
-                id: `chapter-unlocked-${chapter.id}`,
+                id: this.generateChapterUnlockedConditionId(chapter.id),
                 name: `Auto: Chapter '${chapter.name}' unlocked`
             }
         });
@@ -49,7 +49,7 @@ export class StoryComponentCreator {
             })
             .map(page => {
                 return {
-                    id: `location-${page.locationId}`,
+                    id: this.generateLocationCondition(page.locationId),
                     name: `Auto: User at page '${page.name}' location`
                 }
             });
@@ -64,9 +64,37 @@ export class StoryComponentCreator {
             })
             .map(page => {
                 return {
-                    id: `${page.locationId}`,
+                    id: this.generateLocationId(page.locationId),
                     name: `Auto: Page '${page.name}' location`
                 }
             });
+    }
+
+    public generateLocationId(locationId) {
+        return `${locationId}`;
+    }
+
+    public generateLocationCondition(locationId) {
+        return `location-${locationId}`;
+    }
+
+    public generateChapterUnlockedConditionId(chapterId: string) {
+        return `chapter-unlocked-${chapterId}`;
+    }
+
+    public generatePageNotReadConditionId(pageId: string) {
+        return `page-not-read-${pageId}`;
+    }
+
+    public generatePageReadConditionId(pageId: string) {
+        return `page-read-${pageId}`;
+    }
+
+    public generatePageReadVariableId(pageId: string) {
+        return `page-read-${pageId}-variable`;
+    }
+
+    public generateChapterUnlockedVariableId(chapterId:string) {
+        return `chapter-unlocked-${chapterId}-variable`;
     }
 }
