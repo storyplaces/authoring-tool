@@ -57,6 +57,7 @@ export class MapCustomElement {
     @bindable currentPage: AuthoringPage;
     @bindable currentLocation: AuthoringLocation;
     @bindable activePageIds: Array<string>;
+    @bindable advancedActive: boolean;
 
     constructor(private mapManager: MapManager, private markerManager: MarkerManager, private advancedLocationMarkerManager: AdvancedLocationMarkerManager, private bindingEngine: BindingEngine) {
     }
@@ -64,7 +65,7 @@ export class MapCustomElement {
     attached() {
         this.mapManager.attach(this.mapElement);
         this.markerManager.attach(this.story, this.currentPage, this.currentLocation, this.activePageIds);
-        this.advancedLocationMarkerManager.attach(this.story);
+        this.advancedLocationMarkerManager.attach(this.story, this.advancedActive);
 
         this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => {
             this.markerManager.selectedLocation = newLocation

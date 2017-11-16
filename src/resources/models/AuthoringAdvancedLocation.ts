@@ -51,11 +51,21 @@ export class AuthoringAdvancedLocation extends BaseModel implements Identifiable
     private _lat: number;
     private _long: number;
     private _radius: number;
+    private _type: string;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
         this.fromObject(data);
+    }
+
+    get type(): string {
+        return "circle";
+    }
+
+    set type(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Type", value);
+        this._type = value;
     }
 
     get name(): string {
@@ -99,7 +109,8 @@ export class AuthoringAdvancedLocation extends BaseModel implements Identifiable
         lat: undefined,
         long: undefined,
         radius: undefined,
-        name: undefined
+        name: undefined,
+        type: undefined,
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -107,6 +118,7 @@ export class AuthoringAdvancedLocation extends BaseModel implements Identifiable
         this.long = data.long;
         this.radius = data.radius;
         this.name = data.name;
+        this.type = data.type;
     }
 
     public toJSON() {
@@ -116,6 +128,7 @@ export class AuthoringAdvancedLocation extends BaseModel implements Identifiable
             long: this.long,
             radius: this.radius,
             name: this.name,
+            type: this.type,
         }
     }
 

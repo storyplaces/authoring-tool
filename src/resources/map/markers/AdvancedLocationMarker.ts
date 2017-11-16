@@ -56,10 +56,9 @@ export class AdvancedLocationMarker extends MapGroup {
     private _longitude: number;
     private _radius: number;
 
-
     constructor(private circleFactory: (lat?, lon?, radius?) => MapCircle,
                 private markerFactory: (lat?, lon?, text?) => AdvancedLocationMarkerPin,
-                latitude: number, longitude: number, radius: number, popupText: string) {
+                latitude: number, longitude: number, radius: number, popupText: string, active: boolean) {
         super();
 
         this._latitude = latitude;
@@ -74,7 +73,7 @@ export class AdvancedLocationMarker extends MapGroup {
         this.radiusCircle.borderOpacity=0.5;
 
         this.addItem(this.mainMarker);
-        this.addItem(this.radiusCircle);
+        this.active = active;
     }
 
     set latitude(latitude: number) {
@@ -84,6 +83,16 @@ export class AdvancedLocationMarker extends MapGroup {
         }
 
         this.mainMarker.latitude = latitude;
+    }
+
+    set active(active:boolean) {
+        if (active) {
+            this.addItem(this.radiusCircle);
+            return;
+        }
+
+        this.removeItem(this.radiusCircle);
+
     }
 
     get longitude(): number {

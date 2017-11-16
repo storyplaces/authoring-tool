@@ -39,10 +39,8 @@
 import {MapCore} from "../mapping/MapCore";
 import {BindingEngine, Disposable, Factory, inject} from "aurelia-framework";
 import {AuthoringStory} from "../models/AuthoringStory";
-import {AuthoringLocationMarker} from "./markers/AuthoringLocationMarker";
 import {AuthoringAdvancedLocation} from "../models/AuthoringAdvancedLocation";
 import {AdvancedLocationMarker} from "./markers/AdvancedLocationMarker";
-
 
 @inject(MapCore, BindingEngine, Factory.of(AdvancedLocationMarker))
 export class AdvancedLocationMarkerManager {
@@ -50,14 +48,16 @@ export class AdvancedLocationMarkerManager {
     private story: AuthoringStory;
     private advancedLocationMarkers: Array<AdvancedLocationMarker> = [];
     private advancedLocationsChangedSub: Disposable;
+    private active: boolean;
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
-                private advancedLocationMarkerFactory: (latitude: number, longitude: number, radius: number, popupText: string) => AdvancedLocationMarker) {
+                private advancedLocationMarkerFactory: (latitude: number, longitude: number, radius: number, popupText: string, active: boolean) => AdvancedLocationMarker) {
     }
 
-    attach(story: AuthoringStory) {
+    attach(story: AuthoringStory, active: boolean) {
         this.story = story;
+        this.active = active || false;
 
         this.advancedLocationsChangedSub = this.bindingEngine.collectionObserver(this.story.advancedLocations.all).subscribe(shards => {
             console.log(shards);
@@ -97,7 +97,7 @@ export class AdvancedLocationMarkerManager {
 
     private createMarkerForAdvancedLocation(location: AuthoringAdvancedLocation): AdvancedLocationMarker {
         let marker: AdvancedLocationMarker;
-        marker = this.advancedLocationMarkerFactory(location.lat || 0, location.long || 0, location.radius || 0, this.makeAdvancedLocationMarkerPopupText(location));
+        marker = this.advancedLocationMarkerFactory(location.lat || 0, location.long || 0, location.radius || 0, this.makeAdvancedLocationMarkerPopupText(location), this.active);
         marker.advancedLocationId = location.id;
         this.advancedLocationMarkers.push(marker);
         this.mapCore.addItem(marker);
@@ -117,7 +117,7 @@ export class AdvancedLocationMarkerManager {
 
     private addMarkersForExistingLocations() {
         this.story.advancedLocations.forEach(location => {
-           this.createMarkerForAdvancedLocation(location);
+            this.createMarkerForAdvancedLocation(location);
         });
     }
 }
