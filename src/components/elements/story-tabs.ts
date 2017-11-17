@@ -51,10 +51,11 @@ export class StoryTabsCustomElement{
 
     @bindable selected: string;
     @bindable storyId: string;
+    @bindable advanced: boolean;
 
-    @computedFrom('userConfig.advancedMode')
+    @computedFrom('userConfig.advancedMode', 'advanced')
     get advancedMode() {
-        return this.userConfig.advancedMode;
+        return this.userConfig.advancedMode || this.advanced;
     }
 
 }

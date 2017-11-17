@@ -50,7 +50,7 @@
             <map story.two-way="story" ref="mapPane" advanced-active="true"></map>
         </div>
         <div slot="content-pane" class="fill-space">
-            <story-tabs selected="advanced" story-id.bind="story.id"></story-tabs>
+            <story-tabs selected="advanced" story-id.bind="story.id" advanced.bind="story.hasAdvanced"></story-tabs>
             <div class="story-nav-body">
                 <scrollable-list-with-header>
                     <div slot="heading">

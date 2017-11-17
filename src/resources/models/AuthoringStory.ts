@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Factory, inject} from "aurelia-framework";
+import {Factory, inject, computedFrom} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {AuthoringChapterCollection} from "../collections/AuthoringChapterCollection";
@@ -306,6 +306,18 @@ export class AuthoringStory extends BaseModel {
         }
     }
 
+    @computedFrom('advancedFunctions','advancedConditions','advancedLocations','advancedVariables')
+    get hasAdvanced(): boolean {
+        if (!this.advancedFunctions && !this.advancedConditions && !this.advancedLocations && !this.advancedVariables) {
+            return false;
+        }
+
+        if (this.advancedFunctions.length() == 0 && this.advancedConditions.length() == 0 && this.advancedLocations.length() == 0 && this.advancedVariables.length() == 0) {
+            return false;
+        }
+
+        return true;
+    }
 
 }
 
