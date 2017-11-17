@@ -52,6 +52,10 @@ import {ValidationControllerFactory, ValidationController, ValidationRules, vali
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
 import {ChapterMembershipChangedEvent} from "../../resources/events/ChapterMembershipChangedEvent";
+import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
+import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
+import {StoryJsonConnector} from "../../resources/store/StoryJsonConnector";
+import {StoryComponentCreator} from "../../resources/utilities/StoryComponentCreator";
 
 @inject(
     Factory.of(AuthoringLocation),
@@ -62,7 +66,8 @@ import {ChapterMembershipChangedEvent} from "../../resources/events/ChapterMembe
     ValidationControllerFactory,
     Factory.of(BootstrapValidationRenderer),
     BindingEngine,
-    Factory.of(ChapterMembershipChangedEvent))
+    Factory.of(ChapterMembershipChangedEvent),
+    StoryComponentCreator)
 export class PageEditFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) page: AuthoringPage;
     @bindable({defaultBindingMode: bindingMode.twoWay}) location: AuthoringLocation;
@@ -70,6 +75,7 @@ export class PageEditFormCustomElement {
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
     @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
+    @bindable advanced: boolean;
 
     private errorSub: Disposable;
     private eventSub: Subscription;
@@ -96,7 +102,8 @@ export class PageEditFormCustomElement {
                 private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
                 private bindingEngine: BindingEngine,
-                private chapterMembershipChangedEventFactory: (pageId: string) => ChapterMembershipChangedEvent) {
+                private chapterMembershipChangedEventFactory: (pageId: string) => ChapterMembershipChangedEvent,
+                private storyComponentCreator: StoryComponentCreator) {
         this.setupValidation();
     }
 
@@ -137,6 +144,32 @@ export class PageEditFormCustomElement {
             this.memberOfChaptersSub.dispose();
             this.memberOfChaptersSub = undefined;
         }
+    }
+
+    @computedFrom('story.advancedConditions')
+    get availableAdvancedConditions() {
+        return this.story.advancedConditions.all.concat(this.storyComponentCreator.makeStoryConditions(this.story) as any)
+            .map((condition: AuthoringAdvancedCondition): MutableListAvailableItem => {
+                return {
+                    id: condition.id,
+                    name: condition.name,
+                    suggestion: `<div><strong>${condition.name}</strong></div>`,
+                    search: condition.name
+                };
+            });
+    }
+
+    @computedFrom('story.advancedFunctions')
+    get availableAdvancedFunctions() {
+        return this.story.advancedFunctions.all
+            .map((func: AuthoringAdvancedFunction): MutableListAvailableItem => {
+            return {
+                id: func.id,
+                name: func.name,
+                suggestion: `<div><strong>${func.name}</strong></div>`,
+                search: func.name
+            };
+        });
     }
 
     /*** VALIDATION ***/

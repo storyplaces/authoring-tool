@@ -192,7 +192,8 @@ Your start page should always be a 'loose page,' so that it can be read at the b
                 <div class="form-group">
                     <label>This page is unlocked by the following pages:</label>
                     <information-icon
-                            help-text="Pages that must be read before this page becomes available"></information-icon><br>
+                            help-text="Pages that must be read before this page becomes available"></information-icon>
+                    <br>
                     <toggle-switch checked.bind="unlockedOperator" off="Any Of" on="All Of:"
                                    change.delegate="setDirty()"></toggle-switch>
                     <mutable-list available-items.bind="availablePages"
@@ -211,6 +212,33 @@ Your start page should always be a 'loose page,' so that it can be read at the b
                                   placeholder="Start typing a chapter name"></mutable-list>
                 </div>
 
+            </div>
+        </div>
+        <div class="panel panel-default" if.bind="advanced">
+            <div class="panel-heading">
+                Advanced options
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Conditions (all of which must pass along with any settings above):</label>
+                    <information-icon
+                            help-text="Conditions, all of which must be true before this page is readable"></information-icon>
+                    <mutable-list available-items.bind="availableAdvancedConditions"
+                                  selected-items.bind="page.advancedConditionIds"
+                                  placeholder="Start typing an advanced condition name"
+                                  change.delegate="setDirty()"></mutable-list>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Functions</label>
+                    <information-icon
+                            help-text="Functions which are run when the page is read"></information-icon>
+                    <mutable-list available-items.bind="availableAdvancedFunctions"
+                                  selected-items.bind="page.advancedFunctionIds"
+                                  placeholder="Start typing an advanced function name"
+                                  change.delegate="setDirty()"></mutable-list>
+                </div>
             </div>
         </div>
     </div>
