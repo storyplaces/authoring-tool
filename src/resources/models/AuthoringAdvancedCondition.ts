@@ -245,34 +245,34 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
     public fromObject(data = {
         id: undefined,
         name: undefined,
-        variable: undefined,
+        variableId: undefined,
         type: undefined,
         start: undefined,
         end: undefined,
         minutes: undefined,
         operand: undefined,
-        conditions: undefined,
-        location: undefined,
-        a: undefined,
-        b: undefined,
-        aType: undefined,
-        bType: undefined
+        conditionIds: undefined,
+        locationId: undefined,
+        variableA: undefined,
+        variableB: undefined,
+        variableAType: undefined,
+        variableBType: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.name = data.name;
-        this.variableId = data.variable;
+        this.variableId = data.variableId;
         this.type = data.type;
         this.start = data.start;
         this.end = data.end;
         this.minutes = data.minutes;
         this.operand = data.operand;
-        this.conditionIds = data.conditions;
-        this.locationId = data.location;
-        this.variableA = data.a;
-        this.variableB = data.b;
-        this.variableAType = data.aType;
-        this.variableBType = data.bType;
+        this.conditionIds = data.conditionIds;
+        this.locationId = data.locationId;
+        this.variableA = data.variableA;
+        this.variableB = data.variableB;
+        this.variableAType = data.variableAType;
+        this.variableBType = data.variableBType;
     }
 
     public toJSON() {
@@ -304,10 +304,10 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             id: this.id,
             name: this.name,
             type: this.type,
-            a: this.variableA,
-            b: this.variableB,
-            aType: this.variableAType,
-            bType: this.variableBType,
+            variableA: this.variableA,
+            variableB: this.variableB,
+            variableAType: this.variableAType,
+            variableBType: this.variableBType,
             operand: this.operand,
         }
     }
@@ -317,7 +317,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             id: this.id,
             name: this.name,
             type: this.type,
-            variable: this.variableId
+            variableId: this.variableId
         }
     }
 
@@ -326,7 +326,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             id: this.id,
             name: this.name,
             type: this.type,
-            location: this.locationId
+            locationId: this.locationId
         }
     }
 
@@ -336,7 +336,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             name: this.name,
             type: this.type,
             operand: this.operand,
-            conditions: this.conditionIds
+            conditionIds: this.conditionIds
         }
     }
 
@@ -345,7 +345,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             id: this.id,
             name: this.name,
             type: this.type,
-            variable: this.variableId,
+            variableId: this.variableId,
             minutes: this.minutes
         }
     }
@@ -355,7 +355,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             id: this.id,
             name: this.name,
             type: this.type,
-            variable: this.variableId,
+            variableId: this.variableId,
             start: this.start,
             end: this.end
         }
