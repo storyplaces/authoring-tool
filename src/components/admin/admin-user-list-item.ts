@@ -36,39 +36,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
+import {autoinject, bindable, computedFrom, containerless} from "aurelia-framework";
+import {AuthoringUserConnector} from "../../resources/store/AuthoringUserConnector";
+import {AuthoringUser} from "../../resources/models/AuthoringUser";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
 
-@inject(StoryPlacesAPI, Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+/**
+ * Created by andy on 28/11/16.
+ */
 
-    public allUsers: Array<AuthoringUser>;
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+@autoinject()
+@containerless()
+export class AdminUserListItem {
+
+    @bindable user: AuthoringUser;
+
+    constructor(private authoringUserConnector: AuthoringUserConnector, private currentUser: CurrentUser) {
     }
 
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
+    @computedFrom("user.roles.length")
+    get isAdmin(): boolean {
+        if (this.user.roles.indexOf("admin") > -1) {
+            return true;
+        }
+        return false;
     }
 
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
-
-            });
+    get isYou(): boolean {
+        if (this.currentUser.userId == this.user.id){
+            return true;
+        }
+        return false;
     }
 
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
+    setUserAdminRole(admin: boolean): void {
+        if (admin) {
+            if (this.user.roles.indexOf("admin") == -1) {
+                this.user.roles.push("admin");
+            }
+        } else {
+            if (this.user.roles.indexOf("admin") > -1) {
+                this.user.roles.splice(this.user.roles.indexOf("admin"), 1);
+            }
+        }
+        this.authoringUserConnector.assignRoles(this.user);
     }
-
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
-    }
-
 
 }

@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject} from "aurelia-framework";
+import {inject, computedFrom} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 
@@ -51,6 +51,7 @@ export class AuthoringUser extends BaseModel {
     private _name: string;
     private _bio: string;
     private _privileges: Array<string>;
+    private _roles: Array<string>;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -63,7 +64,8 @@ export class AuthoringUser extends BaseModel {
         email: undefined,
         name: undefined,
         bio: undefined,
-        privileges: undefined
+        privileges: undefined,
+        roles: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -71,6 +73,7 @@ export class AuthoringUser extends BaseModel {
         this.name = data.name;
         this.bio = data.bio;
         this.privileges = data.privileges;
+        this.roles = data.roles;
 
     }
 
@@ -80,7 +83,8 @@ export class AuthoringUser extends BaseModel {
             email: this.email,
             name: this.name,
             bio: this.bio,
-            privileges: this.privileges
+            privileges: this.privileges,
+            roles: this.roles
         }
     }
 
@@ -90,6 +94,14 @@ export class AuthoringUser extends BaseModel {
 
     set privileges(value: Array<string>) {
         this._privileges = value;
+    }
+
+    get roles(): Array<string> {
+        return this._roles;
+    }
+
+    set roles(value: Array<string>) {
+        this._roles = value;
     }
 
     get bio(): string {
