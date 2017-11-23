@@ -45,6 +45,8 @@ import {AuthoringUserConnector} from "../../resources/store/AuthoringUserConnect
 import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
 import {PublishingConnector} from "../../resources/store/PublishingConnector";
+import {AuthoringUser} from "../../resources/models/AuthoringUser";
+import 'typeahead.js';
 
 @inject(StoryJsonConnector, Config, CurrentUser, AuthoringUserConnector, PreviewingConnector, AuthoringStoryConnector, PublishingConnector)
 export class StoryDetailTab {
@@ -62,6 +64,8 @@ export class StoryDetailTab {
     private publishing: boolean = false;
     private buildingPreview: boolean = false;
     private isPreviewLink: boolean = false;
+
+    private lookup: HTMLInputElement;
 
     constructor(private storyJsonConnector: StoryJsonConnector,
                 private config: Config,
@@ -105,8 +109,12 @@ export class StoryDetailTab {
         return this.currentUser.hasPrivilege('adminMenu');
     }
 
-    attached() {
+    created() {
         this.authoringUserConnector.fetchAll();
+    }
+
+    attached() {
+        this.setupTypeAhead();
     }
 
     //@computedFrom('authoringUserConnector.all')
@@ -115,12 +123,12 @@ export class StoryDetailTab {
     }
 
     @computedFrom("this.story.authorIds")
-    get storyOwner() {
-        return this.story.authorIds[0];
+    get storyOwner(): AuthoringUser {
+        return this.authoringUserConnector.byId(this.story.authorIds[0]);
     }
 
-    set storyOwner(owner: string) {
-        this.story.authorIds.splice(0, 1, owner);
+    set storyOwner(owner: AuthoringUser) {
+        this.story.authorIds.splice(0, 1, owner.id);
         this.setDirty();
     }
 
@@ -145,7 +153,7 @@ export class StoryDetailTab {
         return previewUrl;
     }
 
-    set results(value: string){
+    set results(value: string) {
         this._results = value;
         this.isPreviewLink = false;
     }
@@ -171,6 +179,42 @@ export class StoryDetailTab {
 
             this.results = "Sorry it has not been possible to request publication at this time due to a network issue";
         });
+    }
+
+    private userMatcher(strings: Array<AuthoringUser>){
+        return (q, cb) => {
+            // regex used to determine if a string contains the substring `q`
+            let substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            let matches = this.users.filter(item => substrRegex.test(item.name));
+
+            cb(matches);
+        };
+    }
+
+    setupTypeAhead() {
+        ($(this.lookup as any) as any).typeahead({
+            hint: false,
+            highlight: false,
+            minLength: 1,
+            classNames: {
+                empty: 'Typeahead-input'
+            }
+        },
+            {
+                name: 'users',
+                display: (item: AuthoringUser) => item.name,
+                templates: {
+                    empty: '<div class="tt-no-suggestion"><strong>Sorry, there are no matches</strong></div>',
+                    suggestion: (item: AuthoringUser) => (`<div><strong>${item.name}</strong> - ${item.email}</div>`)
+                },
+                source: this.userMatcher(this.users)
+            }).on('typeahead:selected',
+            (e, value: AuthoringUser) => {
+                this.storyOwner = value;
+            });
     }
 
 }

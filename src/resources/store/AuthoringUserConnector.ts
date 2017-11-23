@@ -49,6 +49,10 @@ export class AuthoringUserConnector {
         this.storyplacesAPI.path = "/authoring/user/";
     }
 
+    byId(id: string){
+        return this.allUsers.find(item => item.id == id);
+    }
+
     get all(): Array<AuthoringUser> {
         return this.allUsers;
     }
