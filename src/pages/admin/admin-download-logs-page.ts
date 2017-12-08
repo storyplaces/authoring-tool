@@ -52,13 +52,22 @@ export class AdminDownloadLogsPage {
     finishDate: Date;
 
     pickerOptions = {
-        format: "dddd, MMMM Do YYYY, h:mm:ss a"
+        format: "dddd, MMMM Do YYYY, h:mm:ss a",
     };
 
     constructor(private logsConnector: LoggingConnector) {
     }
 
     downloadLogs() {
+        this.jsonLogsResults = "";
+        if (!this.startDate || !this.finishDate) {
+            this.jsonLogsResults = "Start date and finish date must be selected.";
+            return;
+        }
+        if (this.startDate.getTime() > this.finishDate.getTime()) {
+            this.jsonLogsResults = "Start date must be before finish date.";
+            return;
+        }
         this.logsConnector.fetchLogs(this.startDate.getTime(), this.finishDate.getTime()).then(result => {
             if (typeof result !== 'boolean') {
                 var file = new Blob([JSON.stringify(result)], {type: "application/octet-stream"});

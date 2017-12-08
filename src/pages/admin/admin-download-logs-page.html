@@ -46,9 +46,11 @@
         <div class="row">
             <div class='col-sm-6'>
                 <div class="form-group">
-                    <abp-datetime-picker value.bind="startDateString" model.bind="startDate"
+                    <label for="startDate">Start Date:</label>
+                    <abp-datetime-picker id="startDate" value.bind="startDateString" model.bind="startDate"
                                          options.bind="pickerOptions"></abp-datetime-picker>
-                    <abp-datetime-picker value.bind="finishDateString" model.bind="finishDate"
+                    <label for="finishDate">Finish Date:</label>
+                    <abp-datetime-picker id="finishDate" value.bind="finishDateString" model.bind="finishDate"
                                          options.bind="pickerOptions"></abp-datetime-picker>
                     <button class="btn btn-primary" data-toggle="tooltip"
                             title="Download story logs."
@@ -56,8 +58,8 @@
                         <span class="glyphicon glyphicon-download-alt"></span> Download Logs
                     </button>
                     <a ref="downloadLogsLink" hidden="true" download></a>
-                    <div class="well" if.bind="jsonDownloadResults">
-                        <div if.bind="jsonDownloadResults">${jsonDownloadResults}</div>
+                    <div class="well alert-danger" if.bind="jsonLogsResults">
+                        <div if.bind="jsonLogsResults">${jsonLogsResults}</div>
                     </div>
                 </div>
             </div>
