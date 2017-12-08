@@ -54,6 +54,10 @@ export class StoryPlacesAPI {
         return this.client.fetch(this._path + id);
     }
 
+    getWithPath(path: string): Promise<Response> {
+        return this.client.fetch(this._path + path);
+    }
+
     save(object: Identifiable): Promise<Response> {
         let method;
         let path;

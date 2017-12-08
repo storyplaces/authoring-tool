@@ -75,6 +75,7 @@ export class App {
 
             {route: '/admin/story', moduleId: 'pages/admin/admin-story-list-page', title: 'Story Approval', name: 'admin-story-list', auth: true, privileges:{all:["updateReadingStoryPublishStatus"]} },
             {route: '/admin/user', moduleId: 'pages/admin/admin-user-list-page', title: 'User Management', name: 'admin-user-list', auth: true, privileges:{all:["getUserList"]} },
+            {route: '/admin/logs', moduleId: 'pages/admin/admin-download-logs-page', title: 'Download Logs', name: 'admin-download-logs', auth: true, privileges:{all:["readLogs"]} },
 
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/post-login', moduleId: 'pages/auth/postLogin', title: 'Post login', name: 'post-login'},
