@@ -119,11 +119,13 @@ export class StoryDetailTab {
 
     //@computedFrom('authoringUserConnector.all')
     get users() {
+        console.log("getting users");
         return this.authoringUserConnector.all;
     }
 
-    @computedFrom("this.story.authorIds")
+    @computedFrom("authoringUserConnector.all", "story.authorIds")
     get storyOwner(): AuthoringUser {
+        console.log(this.authoringUserConnector.all);
         return this.authoringUserConnector.byId(this.story.authorIds[0]);
     }
 

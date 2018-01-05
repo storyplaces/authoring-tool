@@ -37,7 +37,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {inject, Factory} from "aurelia-framework";
+import {Factory, inject} from "aurelia-framework";
 import {ReadingStory} from "../models/ReadingStory";
 
 @inject(StoryPlacesAPI, Factory.of(ReadingStory))
@@ -53,7 +53,6 @@ export class ReadingStoryConnector {
         return this.storyplacesAPI.getAll()
             .then(response => response.json())
             .then((jsonArray) => {
-                console.log(jsonArray);
                 this.allStories = jsonArray.map(readingStory => this.readingStoryFactory(readingStory));
 
             });
@@ -61,6 +60,16 @@ export class ReadingStoryConnector {
 
     save(story: ReadingStory): Promise<Response> {
         return this.storyplacesAPI.save(story).then(response => response.json() as any);
+    }
+
+    saveNew(storyString: string): Promise<Object> {
+        return this.storyplacesAPI.saveNewString(storyString)
+            .then(response => response.json() as any)
+            .catch((err) => {
+                return err.json().then((errJson) => {
+                    throw new Error(errJson.error);
+                });
+            });
     }
 
     delete(story: ReadingStory): Promise<Response> {

@@ -74,6 +74,16 @@ export class StoryPlacesAPI {
         });
     }
 
+    saveNewString(objectToSave: string): Promise<Response> {
+        let method = 'put';
+        let path = this._path;
+
+        return this.client.fetch(path, {
+            method: method,
+            body: objectToSave
+        });
+    }
+
     delete(id: string): Promise<Response> {
         return this.client.fetch(this.path + id, {
             method: "delete"

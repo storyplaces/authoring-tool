@@ -17,15 +17,15 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *   notice, this list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
  * - The name of the University of Southampton nor the name of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE ABOVE COPYRIGHT HOLDERS BE LIABLE FOR ANY
@@ -36,43 +36,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Factory, inject} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
+import {ReadingStoryConnector} from "../../resources/store/ReadingStoryConnector";
+import {ReadingStory} from "../../resources/models/ReadingStory";
 
-@inject(StoryPlacesAPI, Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+@inject(ReadingStoryConnector, Factory.of(ReadingStory))
+export class AdminUploadReadingStoryPage {
 
-    public allUsers: Array<AuthoringUser> = [];
+    readingStory;
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+    responseMessage: string;
+    errorMessage: string;
+
+    constructor(private readingStoryConnector: ReadingStoryConnector, private readingStoryFactory: (any?) => ReadingStory) {
     }
 
-    byId(id: string) {
-        console.log(this.all);
-        return this.all.find(item => item.id == id);
+    uploadReadingStory() {
+        let reader = new FileReader();
+        if (!this.readingStory) {
+            this.responseMessage = "No file uploaded.";
+            return;
+        }
+        reader.readAsText(this.readingStory[0]);
+        reader.onloadend = () => {
+            this.readingStoryConnector.saveNew(reader.result).then(
+                (data: any) => {
+                    this.errorMessage = "";
+                    this.responseMessage = data.message;
+                }
+            ).catch(
+                (err: Error) => {
+                    this.responseMessage = "";
+                    this.errorMessage = err.message;
+                }
+            );
+        };
     }
-
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
-    }
-
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
-            });
-    }
-
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
-    }
-
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
-    }
-
-
 }
