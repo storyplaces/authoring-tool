@@ -36,43 +36,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject, NewInstance} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
+import {autoinject, bindable, containerless} from "aurelia-framework";
+import {DialogService} from "aurelia-dialog";
+import {DeleteConfirm} from "../modals/delete-confirm";
+import {Collection} from "../../resources/models/Collection";
+import {CollectionConnector} from "../../resources/store/CollectionConnector";
+import {Router} from "aurelia-router";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+/**
+ * Created by andy on 28/11/16.
+ */
 
-    public allUsers: Array<AuthoringUser> = [];
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+@autoinject()
+@containerless()
+export class AdminCollectionListItem {
+
+    @bindable collection: Collection;
+
+    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router) {
     }
 
-    byId(id: string) {
-        console.log(this.all);
-        return this.all.find(item => item.id == id);
+    delete(): void {
+        let question = "Are you sure you wish to delete the collection " + this.collection.name + "?";
+        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
+            if (!response.wasCancelled) {
+                this.collectionConnector.delete(this.collection);
+            }
+        });
     }
 
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
+    edit(): void {
+        this.router.navigateToRoute("admin-collection-edit", {"collectionId": this.collection.id});
     }
-
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
-            });
-    }
-
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
-    }
-
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
-    }
-
 
 }

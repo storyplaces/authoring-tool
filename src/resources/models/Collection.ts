@@ -36,43 +36,69 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject, NewInstance} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
+import {inject} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+@inject(TypeChecker)
+export class Collection extends BaseModel {
 
-    public allUsers: Array<AuthoringUser> = [];
+    private _name: string;
+    private _description: string;
+    private _storyIds: Array<string>;
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+    constructor(typeChecker: TypeChecker,
+                data?: any) {
+        super(typeChecker);
+        this.fromObject(data);
     }
 
-    byId(id: string) {
-        console.log(this.all);
-        return this.all.find(item => item.id == id);
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        description: undefined,
+        storyIds: undefined
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.description = data.description;
+        this.name = data.name;
+        this.storyIds = data.storyIds;
     }
 
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
+    public toJSON() {
+        return {
+            id: this.id,
+            description: this.description,
+            name: this.name,
+            storyIds: this.storyIds
+        }
     }
 
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
-            });
+    get name(): string {
+        return this._name;
     }
 
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
+    set name(name: string) {
+        this.typeChecker.validateAsStringOrUndefined('Name', name);
+        this._name = name;
     }
 
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
+    get description(): string {
+        return this._description;
     }
 
+    set description(description: string) {
+        this.typeChecker.validateAsStringOrUndefined('Description', description);
+        this._description = description;
+    }
+
+    get storyIds(): Array<string> {
+        return this._storyIds;
+    }
+
+    set storyIds(value: Array<string>) {
+        this._storyIds = value;
+    }
 
 }

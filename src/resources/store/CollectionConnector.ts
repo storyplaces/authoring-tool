@@ -38,41 +38,43 @@
  */
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Factory, inject, NewInstance} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
+import {Collection} from "../models/Collection";
+import {CollectionsCollection} from "../collections/CollectionsCollection";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+@inject(NewInstance.of(CollectionsCollection), NewInstance.of(StoryPlacesAPI), Factory.of(Collection))
+export class CollectionConnector {
 
-    public allUsers: Array<AuthoringUser> = [];
-
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+    constructor(private allCollections: CollectionsCollection, private storyplacesAPI: StoryPlacesAPI, private collectionFactory: (any?) => Collection) {
+        this.storyplacesAPI.path = "/authoring/admin/collection";
     }
 
-    byId(id: string) {
-        console.log(this.all);
-        return this.all.find(item => item.id == id);
-    }
-
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
+    byId(id: string): Collection {
+        return this.allCollections.get(id);
     }
 
     fetchAll(): Promise<any> {
         return this.storyplacesAPI.getAll()
             .then(response => response.json())
             .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
+                this.allCollections.saveMany(jsonArray.map(collection => this.collectionFactory(collection)));
+
             });
     }
 
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
+    get all(): Array<Collection> {
+        return this.allCollections.all;
     }
 
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
+    save(collection: Collection): Promise<Response> {
+        return this.storyplacesAPI.save(collection).then(response => response.json() as any);
     }
 
+    delete(collection: Collection): Promise<Response> | any {
+        return this.storyplacesAPI.delete(collection.id)
+            .then(response => response.json() as any)
+            .then(response => {
+                this.allCollections.remove(collection.id);
+            })
+    }
 
 }

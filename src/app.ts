@@ -78,6 +78,10 @@ export class App {
             {route: '/admin/logs', moduleId: 'pages/admin/admin-download-logs-page', title: 'Download Logs', name: 'admin-download-logs', auth: true, privileges:{all:["readLogs"]} },
             {route: '/admin/upload-story', moduleId: 'pages/admin/admin-upload-reading-story-page', title: 'Upload Reading Story', name: 'admin-upload-reading-story', auth: true, privileges:{all:["addReadingStory"]} },
 
+            {route: '/admin/collections', moduleId: 'pages/admin/collections/admin-collection-list-page', title: 'Story Collections', name: 'admin-collection-list', auth: true, privileges:{all:["editCollections"]} },
+            {route: '/admin/collections/new', moduleId: 'pages/admin/collections/admin-collection-edit-page', title: 'New Collection', name: 'admin-collection-new', auth: true, privileges:{all:["editCollections"]} },
+            {route: '/admin/collections/edit/:collectionId', moduleId: 'pages/admin/collections/admin-collection-edit-page', title: 'Edit Collection', name: 'admin-collection-edit', auth: true, privileges:{all:["editCollections"]} },
+
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/post-login', moduleId: 'pages/auth/postLogin', title: 'Post login', name: 'post-login'},
 

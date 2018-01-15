@@ -36,43 +36,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject, NewInstance} from "aurelia-framework";
-import {AuthoringUser} from "../models/AuthoringUser";
 
-@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
-export class AuthoringUserConnector {
+import {BaseCollection} from "./BaseCollection";
+import {inject, Factory} from "aurelia-framework";
+import {AuthoringStory} from "../models/AuthoringStory";
+import {Collection} from "../models/Collection";
 
-    public allUsers: Array<AuthoringUser> = [];
+@inject(Factory.of(Collection))
+export class CollectionsCollection extends BaseCollection<Collection> {
+    constructor(private factory: (any?) => Collection, data?: any[]) {
+        super();
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
-        this.storyplacesAPI.path = "/authoring/user/";
+        data = this.checkIfCollection(data);
+
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
-    byId(id: string) {
-        console.log(this.all);
-        return this.all.find(item => item.id == id);
+    protected itemFromObject(item: any): Collection {
+
+        if (item instanceof Collection) {
+            return item;
+        }
+
+        return this.factory(item);
     }
 
-    get all(): Array<AuthoringUser> {
-        return this.allUsers;
+    public save(passedItem: any): string {
+        let item = this.itemFromObject(passedItem);
+
+        if (item.id == undefined) {
+            throw Error("Unable to save collection as it has no id set");
+        }
+
+        let foundIndex = this.findIndex(item);
+
+        if (foundIndex !== undefined) {
+            this._data[foundIndex] = item;
+            return item.id;
+        }
+
+        this._data.push(item);
+
+        return item.id;
     }
-
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
-            });
-    }
-
-    save(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.save(user).then(response => response.json() as any);
-    }
-
-    assignRoles(user: AuthoringUser): Promise<Response> {
-        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
-    }
-
-
 }
