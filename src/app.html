@@ -36,6 +36,7 @@
 <template>
     <require from="./app.css"></require>
     <require from="./components/sync-icon/SyncIcon"></require>
+    <require from="./styles/bootstrap-datetimepicker.min.css"></require>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -72,6 +73,9 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a route-href="route: admin-story-list">Story Approvals</a></li>
+                            <li><a route-href="route: admin-user-list">User Management</a></li>
+                            <li><a route-href="route: admin-download-logs">Download Logs</a></li>
+                            <li><a route-href="route: admin-upload-reading-story">Upload Reading Story</a></li>
                         </ul>
                     </li>
                     <li><a route-href="route: about">About</a></li>

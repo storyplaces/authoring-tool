@@ -102,6 +102,7 @@ export class CurrentUser {
     }
 
     public hasPrivilege(privilege: string): boolean {
+        console.log(this.user);
         return (this.user.privileges.indexOf(privilege) != -1);
     }
 

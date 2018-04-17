@@ -38,54 +38,41 @@
  */
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Factory, inject} from "aurelia-framework";
-import {ReadingStory} from "../models/ReadingStory";
+import {AuthoringUser} from "../models/AuthoringUser";
 
-@inject(StoryPlacesAPI, Factory.of(ReadingStory))
-export class ReadingStoryConnector {
+@inject(StoryPlacesAPI, Factory.of(AuthoringUser))
+export class AuthoringUserConnector {
 
-    public allStories: Array<ReadingStory>;
+    public allUsers: Array<AuthoringUser> = [];
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private readingStoryFactory: (any?) => ReadingStory) {
-        this.storyplacesAPI.path = "/authoring/admin/story";
+    constructor(private storyplacesAPI: StoryPlacesAPI, private authoringUserFactory: (any?) => AuthoringUser) {
+        this.storyplacesAPI.path = "/authoring/user/";
+    }
+
+    byId(id: string) {
+        console.log(this.all);
+        return this.all.find(item => item.id == id);
+    }
+
+    get all(): Array<AuthoringUser> {
+        return this.allUsers;
     }
 
     fetchAll(): Promise<any> {
         return this.storyplacesAPI.getAll()
             .then(response => response.json())
             .then((jsonArray) => {
-                this.allStories = jsonArray.map(readingStory => this.readingStoryFactory(readingStory));
-
+                this.allUsers = jsonArray.map(authoringUser => this.authoringUserFactory(authoringUser));
             });
     }
 
-    save(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.save(story).then(response => response.json() as any);
+    save(user: AuthoringUser): Promise<Response> {
+        return this.storyplacesAPI.save(user).then(response => response.json() as any);
     }
 
-    saveNew(storyString: string): Promise<Object> {
-        return this.storyplacesAPI.saveNewString(storyString)
-            .then(response => response.json() as any)
-            .catch((err) => {
-                return err.json().then((errJson) => {
-                    throw new Error(errJson.error);
-                });
-            });
+    assignRoles(user: AuthoringUser): Promise<Response> {
+        return this.storyplacesAPI.trigger(user, "assignRoles", ['roles']);
     }
 
-    delete(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.delete(story.id)
-            .then(response => response.json() as any)
-            .then(response => {
-                this.allStories = this.allStories.filter((story) => story.id != response.id);
-            })
-    }
-
-    updatePublishState(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.trigger(story, "updatePublishState", ["id", "publishState"]).then(response => response.json() as any);
-    }
-
-    preview(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.trigger(story, "createPreview").then(response => response.json() as any);
-    }
 
 }

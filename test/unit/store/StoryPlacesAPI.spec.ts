@@ -157,7 +157,7 @@ describe("StoryPlacesAPI", () => {
             })
         );
         let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
-        api.path = "/stories/"
+        api.path = "/stories/";
         let testObjectNoId = new TestIdentifiable();
         testObjectNoId.id = "1";
 
@@ -167,6 +167,27 @@ describe("StoryPlacesAPI", () => {
             expect(client.fetch).toHaveBeenCalledWith(api.path + testObjectNoId.id.toString(), {
                 method: "put",
                 body: JSON.stringify(testObjectNoId.toJSON())
+            });
+            finished();
+        });
+    });
+
+    it("calls fetch client with a put request and no id in the url when calling saveNewString", (finished) => {
+        let client = resolve(HttpClient);
+        spyOn(client, "fetch").and.returnValue(new Promise((success, failure) => {
+                return success(new Response("[]"));
+            })
+        );
+        let api = new StoryPlacesAPI(client, config, resolve(FetchConfig));
+        api.path = "/stories/";
+        let testString = '{"test": "testString"}';
+
+        api.saveNewString(testString).then((result) => {
+            expect(result).toEqual(new Response("[]"));
+            expect(client.fetch).toHaveBeenCalledTimes(1);
+            expect(client.fetch).toHaveBeenCalledWith(api.path, {
+                method: "put",
+                body: testString
             });
             finished();
         });

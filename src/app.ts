@@ -76,6 +76,9 @@ export class App {
             {route: '/story/:storyId/advanced', moduleId: 'pages/story/story-advanced-page', title: 'Story Advanced Settings', name: 'story-advanced', auth: true, privileges:{all:["editOwnStory"]}},
 
             {route: '/admin/story', moduleId: 'pages/admin/admin-story-list-page', title: 'Story Approval', name: 'admin-story-list', auth: true, privileges:{all:["updateReadingStoryPublishStatus"]} },
+            {route: '/admin/user', moduleId: 'pages/admin/admin-user-list-page', title: 'User Management', name: 'admin-user-list', auth: true, privileges:{all:["getUserList"]} },
+            {route: '/admin/logs', moduleId: 'pages/admin/admin-download-logs-page', title: 'Download Logs', name: 'admin-download-logs', auth: true, privileges:{all:["readLogs"]} },
+            {route: '/admin/upload-story', moduleId: 'pages/admin/admin-upload-reading-story-page', title: 'Upload Reading Story', name: 'admin-upload-reading-story', auth: true, privileges:{all:["addReadingStory"]} },
 
             {route: '/login', moduleId: 'pages/auth/login', title: 'Log In', name: 'login'},
             {route: '/post-login', moduleId: 'pages/auth/postLogin', title: 'Post login', name: 'post-login'},

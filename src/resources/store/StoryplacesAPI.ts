@@ -54,6 +54,10 @@ export class StoryPlacesAPI {
         return this.client.fetch(this._path + id);
     }
 
+    getWithPath(path: string): Promise<Response> {
+        return this.client.fetch(this._path + path);
+    }
+
     save(object: Identifiable): Promise<Response> {
         let method;
         let path;
@@ -67,6 +71,16 @@ export class StoryPlacesAPI {
         return this.client.fetch(path, {
             method: method,
             body: JSON.stringify(object)
+        });
+    }
+
+    saveNewString(objectToSave: string): Promise<Response> {
+        let method = 'put';
+        let path = this._path;
+
+        return this.client.fetch(path, {
+            method: method,
+            body: objectToSave
         });
     }
 

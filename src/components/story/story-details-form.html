@@ -87,49 +87,4 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-default" if.bind="story.id">
-        <div class="panel-heading">
-            Publish Story
-        </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    <p>
-                        <button class="btn btn-primary btn-block" click.delegate="preview()" if.bind="!buildingPreview"
-                                disabled.bind="canNotPublish || dirty"><span
-                                class="glyphicon glyphicon-eye-open"></span> Preview
-                            Story
-                        </button>
-                        <button class="btn btn-danger btn-block" disabled if.bind="buildingPreview"><span
-                                class="glyphicon glyphicon-refresh"></span> Requesting Preview
-                        </button>
-                    </p>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <p>
-                        <button class="btn btn-primary btn-block" click.delegate="publish()" if.bind="!publishing"
-                                disabled.bind="canNotPublish || dirty"><span class="glyphicon glyphicon-book"></span>
-                            Request
-                            Publication
-                        </button>
-                        <button class="btn btn-danger btn-block" disabled if.bind="publishing"><span
-                                class="glyphicon glyphicon-refresh"></span> Requesting Publication
-                        </button>
-                    </p>
-                </div>
-            </div>
-            <div class="well" if.bind="results">
-                <div if.bind="!isPreviewLink">${results}</div>
-                <div if.bind="isPreviewLink">
-                    The following link is a one-time preview link, which will expire at midnight.
-                    <br/>
-                    <a href.bind="results" target="_blank">${results}</a>
-                </div>
-            </div>
-            <div class="well" if.bind="dirty || canNotPublish">
-                <span class="text-warning">Please save any changes before you preview or publish your story and ensure the changes are synchronised with the server.</span>
-            </div>
-        </div>
-    </div>
-
 </template>

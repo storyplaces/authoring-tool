@@ -22,7 +22,8 @@ export function configure(aurelia: Aurelia) {
         })
         .plugin('aurelia-authentication', baseConfig => {
             baseConfig.configure((new AuthConfig(new Config)).authConfig);
-        });
+        })
+        .plugin('aurelia-bootstrap-datetimepicker');
 
     if (environment.debug) {
         aurelia.use.developmentLogging();

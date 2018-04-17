@@ -36,56 +36,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject} from "aurelia-framework";
-import {ReadingStory} from "../models/ReadingStory";
+import {autoinject, bindable, computedFrom, containerless} from "aurelia-framework";
+import {AuthoringUserConnector} from "../../resources/store/AuthoringUserConnector";
+import {AuthoringUser} from "../../resources/models/AuthoringUser";
+import {CurrentUser} from "../../resources/auth/CurrentUser";
 
-@inject(StoryPlacesAPI, Factory.of(ReadingStory))
-export class ReadingStoryConnector {
+/**
+ * Created by andy on 28/11/16.
+ */
 
-    public allStories: Array<ReadingStory>;
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private readingStoryFactory: (any?) => ReadingStory) {
-        this.storyplacesAPI.path = "/authoring/admin/story";
+@autoinject()
+@containerless()
+export class AdminUserListItem {
+
+    @bindable user: AuthoringUser;
+
+    constructor(private authoringUserConnector: AuthoringUserConnector, private currentUser: CurrentUser) {
     }
 
-    fetchAll(): Promise<any> {
-        return this.storyplacesAPI.getAll()
-            .then(response => response.json())
-            .then((jsonArray) => {
-                this.allStories = jsonArray.map(readingStory => this.readingStoryFactory(readingStory));
-
-            });
+    @computedFrom("user.roles.length")
+    get isAdmin(): boolean {
+        if (this.user.roles.indexOf("admin") > -1) {
+            return true;
+        }
+        return false;
     }
 
-    save(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.save(story).then(response => response.json() as any);
+    get isYou(): boolean {
+        if (this.currentUser.userId == this.user.id){
+            return true;
+        }
+        return false;
     }
 
-    saveNew(storyString: string): Promise<Object> {
-        return this.storyplacesAPI.saveNewString(storyString)
-            .then(response => response.json() as any)
-            .catch((err) => {
-                return err.json().then((errJson) => {
-                    throw new Error(errJson.error);
-                });
-            });
-    }
-
-    delete(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.delete(story.id)
-            .then(response => response.json() as any)
-            .then(response => {
-                this.allStories = this.allStories.filter((story) => story.id != response.id);
-            })
-    }
-
-    updatePublishState(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.trigger(story, "updatePublishState", ["id", "publishState"]).then(response => response.json() as any);
-    }
-
-    preview(story: ReadingStory): Promise<Response> {
-        return this.storyplacesAPI.trigger(story, "createPreview").then(response => response.json() as any);
+    setUserAdminRole(admin: boolean): void {
+        if (admin) {
+            if (this.user.roles.indexOf("admin") == -1) {
+                this.user.roles.push("admin");
+            }
+        } else {
+            if (this.user.roles.indexOf("admin") > -1) {
+                this.user.roles.splice(this.user.roles.indexOf("admin"), 1);
+            }
+        }
+        this.authoringUserConnector.assignRoles(this.user);
     }
 
 }
