@@ -46,7 +46,12 @@ describe("Authoring Story model", () => {
     let authoringChapterCollectionFactoryCalledWith;
     let authoringPageCollectionFactoryCalledWith;
     let authoringLocationCollectionFactoryCalledWith;
-    let typeChecker: TypeChecker
+    let authoringAdvancedVariableCollectionFactoryCalledWith;
+    let authoringAdvancedFunctionCollectionFactoryCalledWith;
+    let authoringAdvancedConditionCollectionFactoryCalledWith;
+    let authoringAdvancedLocationCollectionFactoryCalledWith;
+
+    let typeChecker: TypeChecker;
 
     let authoringUserCollectionFactory = (data) => {
         authoringUserCollectionFactoryCalledWith = data;
@@ -68,6 +73,27 @@ describe("Authoring Story model", () => {
         return undefined;
     };
 
+    let authoringAdvancedVariableCollectionFactory = (data) => {
+        authoringAdvancedVariableCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedFunctionCollectionFactory = (data) => {
+        authoringAdvancedFunctionCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedConditionCollectionFactory = (data) => {
+        authoringAdvancedConditionCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedLocationCollectionFactory = (data) => {
+        authoringAdvancedLocationCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+
     let container: Container = new Container().makeGlobal();
 
     function resolve(object: Function, data?: any) {
@@ -78,6 +104,10 @@ describe("Authoring Story model", () => {
         authoringChapterCollectionFactoryCalledWith = "set to something random";
         authoringPageCollectionFactoryCalledWith = "set to something random";
         authoringLocationCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedVariableCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedFunctionCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedConditionCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedLocationCollectionFactoryCalledWith = "set to something random";
         typeChecker = new TypeChecker();
     });
 
@@ -91,6 +121,10 @@ describe("Authoring Story model", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(model.id).toBeUndefined();
@@ -132,6 +166,10 @@ describe("Authoring Story model", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker,
             data);
 
@@ -169,12 +207,20 @@ describe("Authoring Story model", () => {
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
             tags: ["tag"],
+            advancedFunctions: [],
+            advancedConditions: [],
+            advancedLocations: [],
+            advancedVariables: [],
             logLocations: true
         };
 
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
         model.fromObject(data);
 
@@ -201,6 +247,10 @@ describe("Authoring Story model", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(() => {
@@ -217,6 +267,10 @@ describe("Authoring Story model", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(() => {
@@ -245,6 +299,8 @@ describe("Authoring Story model", () => {
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"],"logLocations":true}');
+        console.log(result);
+
+        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page","advancedConditionIds":[],"advancedFunctionIds":[]}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"],"logLocations":true,"advancedFunctions":[],"advancedConditions":[],"advancedVariables":[],"advancedLocations":[]}');
     });
 });

@@ -134,6 +134,8 @@ describe("Story List Item Custom Component", () => {
     });
 
     xit("links to the correct url", (done) => {
+        buildComponent(storyFamilyRating);
+
         component.create(bootstrap).then(() => {
             const element = document.querySelector('a');
 
