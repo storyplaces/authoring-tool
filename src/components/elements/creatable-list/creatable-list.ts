@@ -36,17 +36,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {bindable, bindingMode, inject, computedFrom} from "aurelia-framework";
+import {bindable, bindingMode, inject} from "aurelia-framework";
 import {HasName} from "../../../resources/interfaces/HasName";
 import {Identifiable} from "../../../resources/interfaces/Identifiable";
 import {BaseCollection} from "../../../resources/collections/BaseCollection";
 import {JSONable} from "../../../resources/interfaces/JSONable";
+import {ItemInUse} from "../../../resources/types/ItemInUse";
 
 @inject(Element)
 export class CreatableListCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) items: BaseCollection<Identifiable & HasName & JSONable>;
     @bindable createItem: () => Promise<HasName & Identifiable>;
     @bindable editItem: (any) => Promise<HasName & Identifiable>;
+    @bindable okToDeleteItem: (any) => Promise<string>;
     @bindable itemType: string;
 
     constructor(private element: Element) {
@@ -56,7 +58,7 @@ export class CreatableListCustomElement {
         event.stopPropagation();
         let item = this.items.getClone(event.detail.id);
 
-        this.editItem({item:item}).then(item => {
+        this.editItem({item: item}).then(item => {
             if (!item) {
                 return;
             }
@@ -69,23 +71,38 @@ export class CreatableListCustomElement {
 
     remove(event: CustomEvent) {
         event.stopPropagation();
-        let itemId = event.detail.id;
-        this.items.remove(itemId);
-        this.fireEvent('changed');
-        this.fireEvent('deleted', {id: itemId});
+        let item = this.items.get(event.detail.id);
 
+        this.checkIfCanDelete(item)
+            .then((idToRemove: string) => {
+                if (idToRemove !== null) {
+                    this.items.remove(idToRemove);
+                    this.fireEvent('changed');
+                    this.fireEvent('deleted', {id: idToRemove});
+                    return;
+                }
+            })
     }
 
     create() {
-        this.createItem().then(item => {
-            if (!item) {
-                return;
-            }
+        this.createItem()
+            .then(item => {
+                if (!item) {
+                    return;
+                }
 
-            this.items.save(item);
-            this.fireEvent('changed');
-            this.fireEvent('created', {id: item.id})
-        });
+                this.items.save(item);
+                this.fireEvent('changed');
+                this.fireEvent('created', {id: item.id})
+            });
+    }
+
+    private checkIfCanDelete(item: Identifiable & HasName):Promise<string> {
+        if (this.okToDeleteItem) {
+            return this.okToDeleteItem({item: item});
+        }
+
+        return Promise.resolve(item.id);
     }
 
     private fireEvent(event: string, detail?: any) {

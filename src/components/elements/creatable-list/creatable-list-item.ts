@@ -45,7 +45,6 @@ import {HasName} from "../../../resources/interfaces/HasName";
 @inject(Element)
 export class CreatableListItem {
     @bindable item: Identifiable & HasName;
-    @bindable deleteCallback: Function;
 
     constructor(private element: Element) {
     }

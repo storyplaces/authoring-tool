@@ -55,6 +55,9 @@ import {AuthoringAdvancedLocationEdit} from "../modals/authoring-advanced-locati
 import {AuthoringAdvancedLocation} from "../../resources/models/AuthoringAdvancedLocation";
 import {LocationUpdateFromMapEvent} from "../../resources/events/LocationUpdateFromMapEvent";
 import {StoryComponentCreator} from "../../resources/utilities/StoryComponentCreator";
+import {ItemInUse} from "../../resources/types/ItemInUse";
+import {AuthoringAdvancedUnableToDelete} from "../modals/authoring-advanced-unable-to-delete";
+import {DeleteConfirm} from "../modals/delete-confirm";
 
 @inject(
     Factory.of(AuthoringAdvancedVariable),
@@ -175,6 +178,17 @@ export class StoryAdvancedFormCustomElement {
             });
     }
 
+    okToDeleteVariable(variable: Identifiable & HasName): Promise<string> {
+        let inUse = this.story.variableInUse(variable);
+
+        if (inUse.inUse) {
+            this.showInUseDialog(inUse, 'variable');
+            return Promise.resolve(null);
+        }
+
+        return this.showConfirmDeleteDialog(variable, 'variable');
+    }
+
     createFunction(): Promise<Identifiable & HasName> {
         let newFunc = this.functionFactory();
         return this.editFunction(newFunc);
@@ -200,6 +214,17 @@ export class StoryAdvancedFormCustomElement {
                 this.dirty = true;
                 return response.output;
             });
+    }
+
+    okToDeleteFunction(func: Identifiable & HasName): Promise<string> {
+        let inUse = this.story.functionInUse(func);
+
+        if (inUse.inUse) {
+            this.showInUseDialog(inUse, 'function');
+            return Promise.resolve(null);
+        }
+
+        return this.showConfirmDeleteDialog(func, 'function');
     }
 
     createCondition(): Promise<Identifiable & HasName> {
@@ -230,6 +255,16 @@ export class StoryAdvancedFormCustomElement {
             });
     }
 
+    okToDeleteCondition(condition: Identifiable & HasName): Promise<string> {
+        let inUse = this.story.conditionInUse(condition);
+        if (inUse.inUse) {
+            this.showInUseDialog(inUse, 'condition');
+            return Promise.resolve(null);
+        }
+
+        return this.showConfirmDeleteDialog(condition, 'condition');
+    }
+
     createLocation(): Promise<Identifiable & HasName> {
         let newLocation = this.locationFactory();
         return this.editLocation(newLocation);
@@ -237,6 +272,40 @@ export class StoryAdvancedFormCustomElement {
 
     editLocation(location: Identifiable & HasName): Promise<Identifiable & HasName> {
         return this.openLocationDialog(location);
+    }
+
+    okToDeleteLocation(location: Identifiable & HasName): Promise<string> {
+        return this.showConfirmDeleteDialog(location, 'location');
+    }
+
+    private showInUseDialog(inUse: ItemInUse, type: string) {
+        this.dialogService
+            .open({
+                viewModel: AuthoringAdvancedUnableToDelete,
+                model: {
+                    inUse: inUse,
+                    type: type,
+                },
+                keyboard: 'Escape'
+            })
+
+    }
+
+    private showConfirmDeleteDialog(item: Identifiable & HasName, type: string){
+        return this.dialogService
+            .open({
+                viewModel: DeleteConfirm,
+                model:  `Are you sure you want to delete ${type} '${item.name}'?`,
+                keyboard: 'Escape'
+            })
+            .whenClosed(response => {
+                if (response.wasCancelled) {
+                    return null;
+                }
+
+                this.dirty = true;
+                return item.id;
+            });
     }
 
     private makeStoryComponents() {

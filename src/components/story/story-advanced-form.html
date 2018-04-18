@@ -59,22 +59,22 @@
                 <div class="form-group">
                     <label>Variables:</label>
                     <creatable-list items.bind="story.advancedVariables" create-item.call="createVariable()"
-                                    edit-item.call="editVariable(item)"></creatable-list>
+                                    edit-item.call="editVariable(item)" ok-to-delete-item.call="okToDeleteVariable(item)"></creatable-list>
                 </div>
                 <div class="form-group">
                     <label>Conditions:</label>
                     <creatable-list items.bind="story.advancedConditions" create-item.call="createCondition()"
-                                    edit-item.call="editCondition(item)"></creatable-list>
+                                    edit-item.call="editCondition(item)" ok-to-delete-item.call="okToDeleteCondition(item)"></creatable-list>
                 </div>
                 <div class="form-group">
                     <label>Functions:</label>
                     <creatable-list items.bind="story.advancedFunctions" create-item.call="createFunction()"
-                                    edit-item.call="editFunction(item)"></creatable-list>
+                                    edit-item.call="editFunction(item)" ok-to-delete-item.call="okToDeleteFunction(item)"></creatable-list>
                 </div>
                 <div class="form-group">
                     <label>Locations:</label>
                     <creatable-list items.bind="story.advancedLocations" create-item.call="createLocation()"
-                                    edit-item.call="editLocation(item)"></creatable-list>
+                                    edit-item.call="editLocation(item)"ok-to-delete-item.call="okToDeleteLocation(item)"></creatable-list>
                 </div>
             </div>
         </div>

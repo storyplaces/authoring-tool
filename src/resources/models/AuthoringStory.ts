@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Factory, inject, computedFrom} from "aurelia-framework";
+import {computedFrom, Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {AuthoringChapterCollection} from "../collections/AuthoringChapterCollection";
@@ -46,6 +46,9 @@ import {AuthoringAdvancedVariableCollection} from "../collections/AuthoringAdvan
 import {AuthoringAdvancedFunctionCollection} from "../collections/AuthoringAdvancedFunctionCollection";
 import {AuthoringAdvancedConditionCollection} from "../collections/AuthoringAdvancedConditionCollection";
 import {AuthoringAdvancedLocationCollection} from "../collections/AuthoringAdvancedLocationCollection";
+import {Identifiable} from "../interfaces/Identifiable";
+import {HasName} from "../interfaces/HasName";
+import {ItemInUse} from "../types/ItemInUse";
 
 @inject(
     Factory.of(AuthoringChapterCollection),
@@ -245,6 +248,19 @@ export class AuthoringStory extends BaseModel {
         this._logLocations = value;
     }
 
+    @computedFrom('advancedFunctions', 'advancedConditions', 'advancedLocations', 'advancedVariables')
+    get hasAdvanced(): boolean {
+        if (!this.advancedFunctions && !this.advancedConditions && !this.advancedLocations && !this.advancedVariables) {
+            return false;
+        }
+
+        if (this.advancedFunctions.length() == 0 && this.advancedConditions.length() == 0 && this.advancedLocations.length() == 0 && this.advancedVariables.length() == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
     public fromObject(data = {
         id: undefined,
         title: undefined,
@@ -306,17 +322,54 @@ export class AuthoringStory extends BaseModel {
         }
     }
 
-    @computedFrom('advancedFunctions','advancedConditions','advancedLocations','advancedVariables')
-    get hasAdvanced(): boolean {
-        if (!this.advancedFunctions && !this.advancedConditions && !this.advancedLocations && !this.advancedVariables) {
-            return false;
-        }
+    variableInUse(variable: Identifiable & HasName): ItemInUse {
+        let usedInConditions = this.advancedConditions.all
+            .filter(condition => {
+                let usedInVariableA = condition.variableA ? (condition.variableA == variable.id) : false;
+                let usedInVariableB = condition.variableB ? (condition.variableB == variable.id) : false;
+                let usedInVariableId = condition.variableId ? (condition.variableId == variable.id) : false;
 
-        if (this.advancedFunctions.length() == 0 && this.advancedConditions.length() == 0 && this.advancedLocations.length() == 0 && this.advancedVariables.length() == 0) {
-            return false;
-        }
+                return usedInVariableA || usedInVariableB || usedInVariableId;
+            })
+            .map(condition => `Advanced Condition: ${condition.name}`);
 
-        return true;
+        let usedInFunctions = this.advancedFunctions.all
+            .filter(advancedFunction => {
+                return advancedFunction.variableId ? (advancedFunction.variableId == variable.id) : false;
+            })
+            .map(advancedFunction => `Advanced Function: ${advancedFunction.name}`);
+
+        let inUse = usedInConditions.length !== 0 || usedInFunctions.length !== 0;
+
+        return {item: variable, inUse: inUse, usedIn: usedInConditions.concat(usedInFunctions)};
+    }
+
+    functionInUse(func: Identifiable & HasName): ItemInUse {
+        let usedInPages = this.pages.all
+            .filter(page => {
+                return page.advancedFunctionIds.indexOf(func.id) !== -1;
+            })
+            .map(page => `Page: ${page.name}`);
+
+        return {item: func, inUse: usedInPages.length !== 0, usedIn: usedInPages};
+    }
+
+    conditionInUse(condition: Identifiable & HasName): ItemInUse {
+        let usedInFunctions = this.advancedFunctions.all
+            .filter(advancedFunction => {
+                return advancedFunction.conditionIds.indexOf(condition.id) != -1;
+            })
+            .map(advancedFunction => `Advanced Function: ${advancedFunction.name}`);
+
+        let usedInPages = this.pages.all
+            .filter(page => {
+                return page.advancedConditionIds.indexOf(condition.id) !== -1;
+            })
+            .map(page => `Page: ${page.name}`);
+
+        let inUse = usedInPages.length !== 0 || usedInFunctions.length !== 0;
+
+        return {item: condition, inUse: inUse, usedIn: usedInPages.concat(usedInFunctions)};
     }
 
 }
@@ -326,3 +379,4 @@ export var audiences = [
     {shortname: "family", fullname: "Family Friendly"},
     {shortname: "advisory", fullname: "Advisory Content"}
 ];
+
