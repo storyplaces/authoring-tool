@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
+import * as L from 'leaflet';
 import TileLayerOptions = L.TileLayerOptions;
 import Layer = L.Layer;
 

@@ -34,12 +34,12 @@
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
 
+import * as L from 'leaflet';
+
 import MarkerOptions = L.MarkerOptions;
 import Marker = L.Marker;
-import LatLngLiteral = L.LatLngLiteral;
 import {MapMarkerDefaults} from "../settings/MapMarkerDefaults";
 
-import {inject} from "aurelia-framework";
 import {MapIconInterface} from "../interfaces/MapIconInterface";
 
 

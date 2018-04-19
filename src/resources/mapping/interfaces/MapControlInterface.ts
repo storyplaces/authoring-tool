@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as L from 'leaflet';
 
 export interface MapControlInterface {
     leafletControl : L.Control;

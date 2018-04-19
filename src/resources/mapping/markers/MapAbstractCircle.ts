@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
+import * as L from 'leaflet';
 import Circle = L.Circle;
 import CircleMarker = L.CircleMarker;
 import Layer = L.Layer;

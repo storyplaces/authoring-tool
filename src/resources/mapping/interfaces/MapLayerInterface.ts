@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import * as L from 'leaflet';
 import Layer = L.Layer;
 
 export interface MapLayerInterface {
