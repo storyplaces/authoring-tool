@@ -39,6 +39,7 @@
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Factory, inject} from "aurelia-framework";
 import {ReadingStory} from "../models/ReadingStory";
+import {Identifiable} from "../interfaces/Identifiable";
 
 @inject(StoryPlacesAPI, Factory.of(ReadingStory))
 export class ReadingStoryConnector {
@@ -72,7 +73,7 @@ export class ReadingStoryConnector {
             });
     }
 
-    delete(story: ReadingStory): Promise<Response> {
+    delete(story: ReadingStory): Promise<void> {
         return this.storyplacesAPI.delete(story.id)
             .then(response => response.json() as any)
             .then(response => {
@@ -84,7 +85,7 @@ export class ReadingStoryConnector {
         return this.storyplacesAPI.trigger(story, "updatePublishState", ["id", "publishState"]).then(response => response.json() as any);
     }
 
-    preview(story: ReadingStory): Promise<Response> {
+    preview(story: ReadingStory): Promise<Identifiable> {
         return this.storyplacesAPI.trigger(story, "createPreview").then(response => response.json() as any);
     }
 
