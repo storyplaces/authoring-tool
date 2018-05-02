@@ -320,6 +320,9 @@ describe("Authoring Story model", () => {
             let function2 = {'id': 'function2', 'name': 'setFunction2', 'variableId': 'var4', 'conditionIds': ['condition3']};
             let function3 = {'id': 'function3', 'name': 'setFunction3', 'variableId': 'var6'};
             let function4 = {'id': 'function4', 'name': 'setFunction4', 'variableId': 'var6'};
+            let function5 = {'id': 'function5', 'name': 'setFunction5', 'variableId': 'var6'};
+            let function6 = {'id': 'function6', 'name': 'setFunction6', 'chainFunctionIds': ['function5']};
+
 
             let page1 = {'id': 'page1', 'name': 'Page1', 'advancedFunctionIds': ['function3', 'function4'], 'advancedConditionIds': ['condition2']};
             let page2 = {'id': 'page2', 'name': 'Page2', 'advancedFunctionIds': ['function4'], 'advancedConditionIds': ['condition3']};
@@ -346,7 +349,7 @@ describe("Authoring Story model", () => {
                 chapters: [],
                 locations: [],
                 tags: ["tag"],
-                advancedFunctions: [function1, function2, function3, function4],
+                advancedFunctions: [function1, function2, function3, function4, function5, function6],
                 advancedConditions: [condition1, condition2, condition3, condition4, condition5],
                 advancedLocations: [],
                 advancedVariables: [variable1, variable2, variable3, variable4, variable5, variable6],
@@ -398,6 +401,14 @@ describe("Authoring Story model", () => {
 
             it("will return the page a function in use on", () => {
                 expect(authoringStory.functionInUse({'id': 'function3'}).usedIn).toEqual(['Page: Page1']);
+            });
+
+            it("will return true for a function used as a chain function in another function", () => {
+                expect(authoringStory.functionInUse({'id': 'function5'}).inUse).toEqual(true);
+            });
+
+            it("will return the functions a function in use on", () => {
+                expect(authoringStory.functionInUse({'id': 'function5'}).usedIn).toEqual(['Advanced Function: setFunction6']);
             });
 
             it("will return true for a function in use on multiple pages", () => {

@@ -351,7 +351,19 @@ export class AuthoringStory extends BaseModel {
             })
             .map(page => `Page: ${page.name}`);
 
-        return {item: func, inUse: usedInPages.length !== 0, usedIn: usedInPages};
+        let usedInFunctions = this.advancedFunctions.all
+            .filter(advancedFunction => {
+                if(advancedFunction.chainFunctionIds) {
+                    return advancedFunction.chainFunctionIds.indexOf(func.id) !== -1;
+                }
+
+                return false;
+            })
+            .map(advancedFunction => `Advanced Function: ${advancedFunction.name}`);
+
+        let inUse = usedInPages.length !== 0 || usedInFunctions.length !== 0;
+
+        return {item: func, inUse: inUse, usedIn: usedInPages.concat(usedInFunctions)};
     }
 
     conditionInUse(condition: Identifiable & HasName): ItemInUse {
