@@ -1,5 +1,4 @@
-import {MapAbstractCircle} from "./MapAbstractCircle";
-import CircleMarkerOptions = L.CircleMarkerOptions;
+
 /*******************************************************************
  *
  * StoryPlaces
@@ -34,6 +33,10 @@ import CircleMarkerOptions = L.CircleMarkerOptions;
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import {MapAbstractCircle} from "./MapAbstractCircle";
+import * as L from 'leaflet';
+import CircleMarkerOptions = L.CircleMarkerOptions;
 
 export class MapCircleMarker extends MapAbstractCircle{
     constructor(latitude: number = 0, longitude: number = 0, radius: number = 0, passedOptions: CircleMarkerOptions = {}) {

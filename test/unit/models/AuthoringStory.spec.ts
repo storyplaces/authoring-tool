@@ -36,17 +36,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import {AuthoringStory} from "../../../src/resources/models/AuthoringStory";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
-import {Container} from "aurelia-framework";
+import {Container, Factory} from "aurelia-framework";
 import * as moment from "moment";
+import {AuthoringAdvancedVariableCollection} from "../../../src/resources/collections/AuthoringAdvancedVariableCollection";
+import {AuthoringAdvancedConditionCollection} from "../../../src/resources/collections/AuthoringAdvancedConditionCollection";
+import {AuthoringAdvancedFunctionCollection} from "../../../src/resources/collections/AuthoringAdvancedFunctionCollection";
+import {AuthoringAdvancedLocationCollection} from "../../../src/resources/collections/AuthoringAdvancedLocationCollection";
+import {AuthoringPageCollection} from "../../../src/resources/collections/AuthoringPageCollection";
 
 describe("Authoring Story model", () => {
     let authoringUserCollectionFactoryCalledWith;
     let authoringChapterCollectionFactoryCalledWith;
     let authoringPageCollectionFactoryCalledWith;
     let authoringLocationCollectionFactoryCalledWith;
-    let typeChecker: TypeChecker
+    let authoringAdvancedVariableCollectionFactoryCalledWith;
+    let authoringAdvancedFunctionCollectionFactoryCalledWith;
+    let authoringAdvancedConditionCollectionFactoryCalledWith;
+    let authoringAdvancedLocationCollectionFactoryCalledWith;
+
+    let typeChecker: TypeChecker;
 
     let authoringUserCollectionFactory = (data) => {
         authoringUserCollectionFactoryCalledWith = data;
@@ -68,6 +79,26 @@ describe("Authoring Story model", () => {
         return undefined;
     };
 
+    let authoringAdvancedVariableCollectionFactory = (data) => {
+        authoringAdvancedVariableCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedFunctionCollectionFactory = (data) => {
+        authoringAdvancedFunctionCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedConditionCollectionFactory = (data) => {
+        authoringAdvancedConditionCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let authoringAdvancedLocationCollectionFactory = (data) => {
+        authoringAdvancedLocationCollectionFactoryCalledWith = data;
+        return undefined;
+    };
+
     let container: Container = new Container().makeGlobal();
 
     function resolve(object: Function, data?: any) {
@@ -78,19 +109,25 @@ describe("Authoring Story model", () => {
         authoringChapterCollectionFactoryCalledWith = "set to something random";
         authoringPageCollectionFactoryCalledWith = "set to something random";
         authoringLocationCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedVariableCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedFunctionCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedConditionCollectionFactoryCalledWith = "set to something random";
+        authoringAdvancedLocationCollectionFactoryCalledWith = "set to something random";
         typeChecker = new TypeChecker();
     });
-
 
     afterEach(() => {
         typeChecker = null;
     });
 
-
     it("can be instantiated with no data", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(model.id).toBeUndefined();
@@ -128,13 +165,15 @@ describe("Authoring Story model", () => {
             logLocations: true
         };
 
-
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker,
             data);
-
 
         expect(model.id).toEqual("id");
         expect(model.title).toEqual("title");
@@ -154,7 +193,6 @@ describe("Authoring Story model", () => {
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
     });
 
-
     it("can have an anonymous Object passed to it", () => {
         let data = {
             id: "id",
@@ -169,12 +207,20 @@ describe("Authoring Story model", () => {
             chapters: [{id: "chapter"}],
             locations: [{id: "location", type: "null"}],
             tags: ["tag"],
+            advancedFunctions: [],
+            advancedConditions: [],
+            advancedLocations: [],
+            advancedVariables: [],
             logLocations: true
         };
 
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
         model.fromObject(data);
 
@@ -196,11 +242,14 @@ describe("Authoring Story model", () => {
         expect(authoringLocationCollectionFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
     });
 
-
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(() => {
@@ -212,18 +261,20 @@ describe("Authoring Story model", () => {
         }).toThrow();
     });
 
-
     it("will throw an error if title is not set to a string or undefined", () => {
         let model = new AuthoringStory(authoringChapterCollectionFactory,
             authoringPageCollectionFactory,
             authoringLocationCollectionFactory,
+            authoringAdvancedVariableCollectionFactory,
+            authoringAdvancedFunctionCollectionFactory,
+            authoringAdvancedConditionCollectionFactory,
+            authoringAdvancedLocationCollectionFactory,
             typeChecker);
 
         expect(() => {
             model.title = 1 as any
         }).toThrow();
     });
-
 
     it("will output JSON when passed to JSON.stringify", () => {
         let data = {
@@ -245,6 +296,195 @@ describe("Authoring Story model", () => {
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page"}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"],"logLocations":true}');
+        expect(result).toEqual('{"id":"id","title":"title","description":"description","createdDate":"1970-01-13T20:38:31.000Z","modifiedDate":"1970-01-13T20:38:32.000Z","audience":"general","authorIds":["author"],"chapters":[{"id":"chapter"}],"pages":[{"id":"page","advancedConditionIds":[],"advancedFunctionIds":[]}],"locations":[{"id":"location","type":"circle"}],"tags":["tag"],"logLocations":true,"advancedFunctions":[],"advancedConditions":[],"advancedVariables":[],"advancedLocations":[]}');
+    });
+
+    describe('in use functions', () => {
+        let authoringStory;
+
+        beforeEach(() => {
+            let variable1 = {'id': 'var1', 'name': 'var1'};
+            let variable2 = {'id': 'var2', 'name': 'var2'};
+            let variable3 = {'id': 'var3', 'name': 'var3'};
+            let variable4 = {'id': 'var4', 'name': 'var4'};
+            let variable5 = {'id': 'var5', 'name': 'var5'};
+            let variable6 = {'id': 'var6', 'name': 'var6'};
+
+            let condition1 = {'id': 'comparison1', 'name': 'comparison1', 'type': 'comparison', 'variableA': 'var1'};
+            let condition2 = {'id': 'comparison2', 'name': 'comparison2', 'type': 'comparison', 'variableB': 'var2'};
+            let condition3 = {'id': 'check1', 'name': 'check1', 'type': 'check', 'variableId': 'var3'};
+            let condition4 = {'id': 'check2', 'name': 'check2', 'type': 'check', 'variableId': 'var4'};
+            let condition5 = {'id': 'comparison3', 'name': 'comparison3', 'type': 'comparison', 'variableB': 'var4'};
+
+            let function1 = {'id': 'function1', 'name': 'setFunction1', 'variableId': 'var5', 'conditionIds': ['condition1']};
+            let function2 = {'id': 'function2', 'name': 'setFunction2', 'variableId': 'var4', 'conditionIds': ['condition3']};
+            let function3 = {'id': 'function3', 'name': 'setFunction3', 'variableId': 'var6'};
+            let function4 = {'id': 'function4', 'name': 'setFunction4', 'variableId': 'var6'};
+            let function5 = {'id': 'function5', 'name': 'setFunction5', 'variableId': 'var6'};
+            let function6 = {'id': 'function6', 'name': 'setFunction6', 'chainFunctionIds': ['function5']};
+
+
+            let page1 = {'id': 'page1', 'name': 'Page1', 'advancedFunctionIds': ['function3', 'function4'], 'advancedConditionIds': ['condition2']};
+            let page2 = {'id': 'page2', 'name': 'Page2', 'advancedFunctionIds': ['function4'], 'advancedConditionIds': ['condition3']};
+
+            authoringStory = new AuthoringStory(authoringChapterCollectionFactory,
+                Factory.of(AuthoringPageCollection).get(container) as any,
+                authoringLocationCollectionFactory,
+                Factory.of(AuthoringAdvancedVariableCollection).get(container) as any,
+                Factory.of(AuthoringAdvancedFunctionCollection).get(container) as any,
+                Factory.of(AuthoringAdvancedConditionCollection).get(container) as any,
+                Factory.of(AuthoringAdvancedLocationCollection).get(container) as any,
+                typeChecker);
+
+            authoringStory.fromObject({
+                id: "id",
+                title: "title",
+                description: "description",
+                createdDate: moment.unix(1111111),
+                modifiedDate: moment.unix(1111112),
+                audience: "general",
+                authorIds: ["author"],
+                imageIds: [],
+                pages: [page1, page2],
+                chapters: [],
+                locations: [],
+                tags: ["tag"],
+                advancedFunctions: [function1, function2, function3, function4, function5, function6],
+                advancedConditions: [condition1, condition2, condition3, condition4, condition5],
+                advancedLocations: [],
+                advancedVariables: [variable1, variable2, variable3, variable4, variable5, variable6],
+                logLocations: true
+            });
+
+        });
+
+        describe('condition in use', () => {
+            it("will return true for a condition in use in a function", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition1'}).inUse).toEqual(true);
+            });
+
+            it("will return the function which a condition is used by", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition1'}).usedIn).toEqual(['Advanced Function: setFunction1']);
+            });
+
+            it("will return true for a condition in use on a page", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition2'}).inUse).toEqual(true);
+            });
+
+            it("will return the page the condition is used by", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition2'}).usedIn).toEqual(['Page: Page1']);
+            });
+
+            it("will return true when a function is used by a condition and a page", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition3'}).inUse).toEqual(true);
+            });
+
+            it("will return a list of pages and functions a condition is used by", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition3'}).usedIn.length).toEqual(2);
+                expect(authoringStory.conditionInUse({'id': 'condition3'}).usedIn).toContain('Page: Page2');
+                expect(authoringStory.conditionInUse({'id': 'condition3'}).usedIn).toContain('Advanced Function: setFunction2');
+            });
+
+            it("will return false when a condition is not in use", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition4'}).inUse).toEqual(false);
+            });
+
+            it("will return an empty list when the condition is not in use", () => {
+                expect(authoringStory.conditionInUse({'id': 'condition4'}).usedIn.length).toEqual(0);
+            });
+        });
+
+        describe('function in use', () => {
+            it("will return true for a function in use on a page", () => {
+                expect(authoringStory.functionInUse({'id': 'function3'}).inUse).toEqual(true);
+            });
+
+            it("will return the page a function in use on", () => {
+                expect(authoringStory.functionInUse({'id': 'function3'}).usedIn).toEqual(['Page: Page1']);
+            });
+
+            it("will return true for a function used as a chain function in another function", () => {
+                expect(authoringStory.functionInUse({'id': 'function5'}).inUse).toEqual(true);
+            });
+
+            it("will return the functions a function in use on", () => {
+                expect(authoringStory.functionInUse({'id': 'function5'}).usedIn).toEqual(['Advanced Function: setFunction6']);
+            });
+
+            it("will return true for a function in use on multiple pages", () => {
+                expect(authoringStory.functionInUse({'id': 'function4'}).inUse).toEqual(true);
+            });
+
+            it("will return the pages a function in use on", () => {
+                expect(authoringStory.functionInUse({'id': 'function4'}).usedIn.length).toEqual(2);
+                expect(authoringStory.functionInUse({'id': 'function4'}).usedIn).toContain('Page: Page1');
+                expect(authoringStory.functionInUse({'id': 'function4'}).usedIn).toContain('Page: Page2');
+            });
+
+            it("will return false for a function not in use on a page", () => {
+                expect(authoringStory.functionInUse({'id': 'not-a-function'}).inUse).toEqual(false);
+            });
+
+            it("will return an empty list when the function is not in use", () => {
+                expect(authoringStory.functionInUse({'id': 'not-a-function'}).usedIn.length).toEqual(0);
+            });
+        });
+
+        describe('variable in use', () => {
+            // Single checks
+
+            it('will return true if a variableA is in use in a comparison condition', () => {
+                expect(authoringStory.variableInUse({'id': 'var1'}).inUse).toEqual(true);
+            });
+
+            it('will return the condition variableA is in use in', () => {
+                expect(authoringStory.variableInUse({'id': 'var1'}).usedIn).toEqual(['Advanced Condition: comparison1']);
+            });
+
+            it('will return true if a variableB is in use in a comparison condition', () => {
+                expect(authoringStory.variableInUse({'id': 'var2'}).inUse).toEqual(true);
+            });
+
+            it('will return the condition variableB is in use in', () => {
+                expect(authoringStory.variableInUse({'id': 'var2'}).usedIn).toEqual(['Advanced Condition: comparison2']);
+            });
+
+            it('will return true if a variableId is in use in a check condition', () => {
+                expect(authoringStory.variableInUse({'id': 'var3'}).inUse).toEqual(true);
+            });
+
+            it('will return the condition variableId is in use in', () => {
+                expect(authoringStory.variableInUse({'id': 'var3'}).usedIn).toEqual(['Advanced Condition: check1']);
+            });
+
+            it('will return true if a variableId is in use in a function', () => {
+                expect(authoringStory.variableInUse({'id': 'var5'}).inUse).toEqual(true);
+            });
+
+            it('will return the function variableId is in use in', () => {
+                expect(authoringStory.variableInUse({'id': 'var5'}).usedIn).toEqual(['Advanced Function: setFunction1']);
+            });
+
+            // Multiple checks
+
+            it('will return true if the variable is in use in a multiple conditions', () => {
+                expect(authoringStory.variableInUse({'id': 'var4'}).inUse).toEqual(true);
+            });
+
+            it('will return the conditions the variable is in use in', () => {
+                expect(authoringStory.variableInUse({'id': 'var4'}).usedIn.length).toEqual(3);
+                expect(authoringStory.variableInUse({'id': 'var4'}).usedIn).toContain('Advanced Condition: comparison3');
+                expect(authoringStory.variableInUse({'id': 'var4'}).usedIn).toContain('Advanced Condition: check2');
+                expect(authoringStory.variableInUse({'id': 'var4'}).usedIn).toContain('Advanced Function: setFunction2');
+            });
+
+            it('will return false if a variable is not in use', () => {
+                expect(authoringStory.variableInUse({'id': 'not-a-variable'}).inUse).toEqual(false);
+            });
+
+            it('will return the no usedIn information', () => {
+                expect(authoringStory.variableInUse({'id': 'not-a-variable'}).usedIn.length).toEqual(0);
+            });
+        });
     });
 });

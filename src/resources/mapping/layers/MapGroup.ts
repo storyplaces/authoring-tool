@@ -37,7 +37,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
-import Marker = L.Marker;
+import * as L from 'leaflet';
 import LayerGroup = L.LayerGroup;
 
 export class MapGroup implements MapLayerInterface {

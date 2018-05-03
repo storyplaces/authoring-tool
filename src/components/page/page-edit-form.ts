@@ -52,6 +52,10 @@ import {ValidationControllerFactory, ValidationController, ValidationRules, vali
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
 import {MutableListAvailableItem} from "../../resources/interfaces/MutableListAvailableItem";
 import {ChapterMembershipChangedEvent} from "../../resources/events/ChapterMembershipChangedEvent";
+import {AuthoringAdvancedFunction} from "../../resources/models/AuthoringAdvancedFunction";
+import {AuthoringAdvancedCondition} from "../../resources/models/AuthoringAdvancedCondition";
+import {StoryJsonConnector} from "../../resources/store/StoryJsonConnector";
+import {StoryComponentCreator} from "../../resources/utilities/StoryComponentCreator";
 
 @inject(
     Factory.of(AuthoringLocation),
@@ -62,7 +66,8 @@ import {ChapterMembershipChangedEvent} from "../../resources/events/ChapterMembe
     ValidationControllerFactory,
     Factory.of(BootstrapValidationRenderer),
     BindingEngine,
-    Factory.of(ChapterMembershipChangedEvent))
+    Factory.of(ChapterMembershipChangedEvent),
+    StoryComponentCreator)
 export class PageEditFormCustomElement {
     @bindable({defaultBindingMode: bindingMode.twoWay}) page: AuthoringPage;
     @bindable({defaultBindingMode: bindingMode.twoWay}) location: AuthoringLocation;
@@ -70,6 +75,7 @@ export class PageEditFormCustomElement {
 
     @bindable({defaultBindingMode: bindingMode.twoWay}) dirty: boolean;
     @bindable({defaultBindingMode: bindingMode.twoWay}) valid: boolean;
+    @bindable advanced: boolean;
 
     private errorSub: Disposable;
     private eventSub: Subscription;
@@ -96,7 +102,8 @@ export class PageEditFormCustomElement {
                 private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
                 private bindingEngine: BindingEngine,
-                private chapterMembershipChangedEventFactory: (pageId: string) => ChapterMembershipChangedEvent) {
+                private chapterMembershipChangedEventFactory: (pageId: string) => ChapterMembershipChangedEvent,
+                private storyComponentCreator: StoryComponentCreator) {
         this.setupValidation();
     }
 
@@ -139,6 +146,32 @@ export class PageEditFormCustomElement {
         }
     }
 
+    @computedFrom('story.advancedConditions')
+    get availableAdvancedConditions() {
+        return this.story.advancedConditions.all.concat(this.storyComponentCreator.makeStoryConditions(this.story) as any)
+            .map((condition: AuthoringAdvancedCondition): MutableListAvailableItem => {
+                return {
+                    id: condition.id,
+                    name: condition.name,
+                    suggestion: `<div><strong>${condition.name}</strong></div>`,
+                    search: condition.name
+                };
+            });
+    }
+
+    @computedFrom('story.advancedFunctions')
+    get availableAdvancedFunctions() {
+        return this.story.advancedFunctions.all
+            .map((func: AuthoringAdvancedFunction): MutableListAvailableItem => {
+            return {
+                id: func.id,
+                name: func.name,
+                suggestion: `<div><strong>${func.name}</strong></div>`,
+                search: func.name
+            };
+        });
+    }
+
     /*** VALIDATION ***/
 
     private setupValidation() {
@@ -159,13 +192,15 @@ export class PageEditFormCustomElement {
     }
 
     private validationRules() {
+        // Having to use 'any' for the locations to stop the type checking from whinging.
+
         return ValidationRules
             .ensure((page: AuthoringPage) => page.name).displayName("Page Name").required().maxLength(255)
             // .ensure((page: AuthoringPage) => page.content).displayName("Page Content").required()
             .ensure((page: AuthoringPage) => page.pageHint).displayName("Hint Text").maxLength(255)
-            .ensure((location: AuthoringLocation) => location.lat).displayName("Latitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -90 && parseFloat(value) <= 90)).withMessage(`\${$displayName} must be between -90 and 90 inclusive`)
-            .ensure((location: AuthoringLocation) => location.long).displayName("Longitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -180 && parseFloat(value) <= 180)).withMessage(`\${$displayName} must be between -180 and 180 inclusive`)
-            .ensure((location: AuthoringLocation) => location.radius).displayName("Radius").required().satisfies(value => value == undefined || (parseFloat(value) >= 0 && parseFloat(value) <= 100000)).withMessage(`\${$displayName} must be between 0 and 100000 inclusive`)
+            .ensure((location: any) => location.lat).displayName("Latitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -90 && parseFloat(value) <= 90)).withMessage(`\${$displayName} must be between -90 and 90 inclusive`)
+            .ensure((location: any) => location.long).displayName("Longitude").required().satisfies(value => value == undefined || (parseFloat(value) >= -180 && parseFloat(value) <= 180)).withMessage(`\${$displayName} must be between -180 and 180 inclusive`)
+            .ensure((location: any) => location.radius).displayName("Radius").required().satisfies(value => value == undefined || (parseFloat(value) >= 0 && parseFloat(value) <= 100000)).withMessage(`\${$displayName} must be between 0 and 100000 inclusive`)
             .rules;
     }
 

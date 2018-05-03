@@ -32,7 +32,9 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import Marker = L.Marker;
+
+import * as L from 'leaflet';
+
 import Icon = L.Icon;
 import IconOptions = L.IconOptions;
 import {MapIconDefaults} from "../settings/MapIconDefaults";

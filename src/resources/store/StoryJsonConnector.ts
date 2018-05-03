@@ -44,7 +44,7 @@ import {EventConnector} from "./EventConnector";
 @inject(NewInstance.of(StoryPlacesAPI))
 export class StoryJsonConnector extends EventConnector {
 
-    downloadJson(story: AuthoringStory): Promise<Response | boolean> {
+    downloadJson(story: AuthoringStory): Promise<Object | boolean> {
         return this.triggerStoryEvent(story, 'downloadJson');
     }
 

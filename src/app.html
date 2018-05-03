@@ -55,11 +55,16 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li if.bind="currentUser.loggedIn"><a route-href="route: story-list">My Stories</a></li>
                     <li class="dropdown" if.bind="currentUser.loggedIn">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Advanced <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a><div class="checkbox">
                                 <label>
                                     <input type="checkbox" checked.bind="userConfig.locationDemo"> Demo Mode
+                                </label>
+                            </div></a></li>
+                            <li><a><div class="checkbox">
+                                <label>
+                                    <input type="checkbox" checked.bind="userConfig.advancedMode"> Advanced Mode
                                 </label>
                             </div></a></li>
                         </ul>

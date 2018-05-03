@@ -105,7 +105,7 @@ export class AuthoringStoryConnector {
         return this.authoringStoryCollection.getClone(id);
     }
 
-    save(authoringStory: AuthoringStory): Promise<undefined> {
+    save(authoringStory: AuthoringStory): Promise<void> {
         authoringStory.modifiedDate = new Date();
         this.authoringStoryCollection.save(authoringStory);
         this.addToDirtyList(authoringStory.id);
@@ -128,7 +128,7 @@ export class AuthoringStoryConnector {
             });
     }
 
-    sync(): Promise<undefined> {
+    sync(): Promise<void> {
         return this
             .syncDirty()
             .then(() => this.fetchAll());
@@ -153,7 +153,7 @@ export class AuthoringStoryConnector {
         return sequence;
     }
 
-    fetchAll(): Promise<undefined> {
+    fetchAll(): Promise<void> {
         this.numberOfNetworkConnections++;
         return this.api
             .getAll()

@@ -73,6 +73,8 @@ export class App {
             {route: '/story/:storyId/page/:pageId', moduleId: 'pages/page/page-edit-page', title: 'Edit Page', name: 'page-edit', auth: true, privileges:{all:["editOwnStory"]}},
             {route: '/story/:storyId/page/new', moduleId: 'pages/page/page-edit-page', title: 'New Page', name: 'page-new', auth: true, privileges:{all:["editOwnStory"]}},
 
+            {route: '/story/:storyId/advanced', moduleId: 'pages/story/story-advanced-page', title: 'Story Advanced Settings', name: 'story-advanced', auth: true, privileges:{all:["editOwnStory"]}},
+
             {route: '/admin/story', moduleId: 'pages/admin/admin-story-list-page', title: 'Story Approval', name: 'admin-story-list', auth: true, privileges:{all:["updateReadingStoryPublishStatus"]} },
             {route: '/admin/user', moduleId: 'pages/admin/admin-user-list-page', title: 'User Management', name: 'admin-user-list', auth: true, privileges:{all:["getUserList"]} },
             {route: '/admin/logs', moduleId: 'pages/admin/admin-download-logs-page', title: 'Download Logs', name: 'admin-download-logs', auth: true, privileges:{all:["readLogs"]} },

@@ -37,11 +37,12 @@ import {MapDefaults} from "./settings/MapDefaults";
 import {inject} from "aurelia-framework";
 import {MapControlInterface} from "./interfaces/MapControlInterface";
 
+import * as L from 'leaflet';
+
 import Map = L.Map;
 
 import LatLngLiteral = L.LatLngLiteral;
 import LatLng = L.LatLng;
-import EventHandlerFn = L.EventHandlerFn;
 
 @inject(MapDefaults)
 
@@ -105,7 +106,7 @@ export class MapCore {
     panTo(latLng: LatLngLiteral) {
         this.mapReady.then(
             map => {
-                map.panTo(latLng, map.getZoom());
+                map.panTo(latLng);
             }
         );
     }
@@ -116,7 +117,7 @@ export class MapCore {
         });
     }
 
-    addEvent(eventName: string, callback: EventHandlerFn): Promise<void> {
+    addEvent(eventName: string, callback): Promise<void> {
         return this.mapReady.then(map => {
             map.on(eventName, callback);
         });

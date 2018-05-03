@@ -36,7 +36,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory} from "aurelia-framework";
+import {inject, Factory, computedFrom} from "aurelia-framework";
 import {Router} from "aurelia-router";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
 import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
@@ -46,8 +46,9 @@ import {AuthoringLocation} from "../../resources/models/AuthoringLocation";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../../components/modals/delete-confirm";
 import {DefaultAuthoringPageFactory} from "../../resources/factories/DefaultAuthoringPageFactory";
+import {UserConfig} from "../../resources/store/UserConfig";
 
-@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory), Router, DialogService, DefaultAuthoringPageFactory)
+@inject(AuthoringStoryConnector, StoryLookup, Factory.of(AuthoringPage), Factory.of(AuthoringLocation), Factory.of(AuthoringStory), Router, DialogService, DefaultAuthoringPageFactory, UserConfig)
 export class PageEditPage {
     private params: {storyId: string, pageId: string};
     private page: AuthoringPage;
@@ -64,7 +65,8 @@ export class PageEditPage {
                 private storyFactory: (data?) => AuthoringStory,
                 private router: Router,
                 private dialogService: DialogService,
-                private defaultAuthoringPageFactory: DefaultAuthoringPageFactory) {
+                private defaultAuthoringPageFactory: DefaultAuthoringPageFactory,
+                private userConfig: UserConfig) {
     }
 
     canActivate(params) : any{
@@ -83,6 +85,11 @@ export class PageEditPage {
 
             return false;
         });
+    }
+
+    @computedFrom('story.hasAdvanced', 'userConfig.advancedMode')
+    get advanced() {
+        return this.story.hasAdvanced || this.userConfig.advancedMode
     }
 
     private itemsExist(): boolean {

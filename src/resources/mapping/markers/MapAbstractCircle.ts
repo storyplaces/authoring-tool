@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
+import * as L from 'leaflet';
 import Circle = L.Circle;
 import CircleMarker = L.CircleMarker;
 import Layer = L.Layer;
@@ -74,6 +75,14 @@ export abstract class MapAbstractCircle implements MapLayerInterface {
     }
 
     set fillOpacity(opacity: number) {
+        this.marker.setStyle({opacity: opacity});
+    }
+
+    set border(colour: string) {
+        this.marker.setStyle({color: colour});
+    }
+
+    set borderOpacity(opacity: number) {
         this.marker.setStyle({opacity: opacity});
     }
 

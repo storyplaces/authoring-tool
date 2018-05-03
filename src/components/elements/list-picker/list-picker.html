@@ -1,0 +1,11 @@
+<template>
+    <div class="form-group" class.bind="hasError ? 'has-error' : ''">
+        <label for.one-way="name">${label}: </label>
+        <select id.one-way="name" value.bind="value" class="form-control" change.delegate="changed()">
+            <option value="" if.bind="hasPlaceholder">${placeholder}</option>
+            <option value="" if.bind="hasPlaceholder" disabled>${placeholderSeparator}</option>
+            <option repeat.for="item of items" value.bind="item.id">${item.name}</option>
+        </select>
+        <div class="help-block" if.bind="hasError">${error}</div>
+    </div>
+</template>

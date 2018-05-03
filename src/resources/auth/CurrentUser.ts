@@ -121,7 +121,7 @@ export class CurrentUser {
         })
     }
 
-    public save(): Promise<null> {
+    public save(): Promise<Response> {
         return this.storyPlacesAPI.save(this.user);
     }
 

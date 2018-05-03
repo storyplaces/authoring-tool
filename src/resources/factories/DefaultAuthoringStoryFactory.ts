@@ -72,8 +72,11 @@ export class DefaultAuthoringStoryFactory {
             }],
             chapters: [],
             locations: [],
-            version: 1,
-            imageIds: []
+            imageIds: [],
+            advancedFunctions: [],
+            advancedLocations: [],
+            advancedVariables: [],
+            advancedConditions: [],
         }
     }
 }

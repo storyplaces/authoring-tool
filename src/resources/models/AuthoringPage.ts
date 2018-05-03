@@ -45,7 +45,6 @@ import {TypeChecker} from "../utilities/TypeChecker";
     TypeChecker
 )
 export class AuthoringPage extends BaseModel {
-
     private _name: string;
     private _content: string;
     private _pageHint: string;
@@ -55,6 +54,8 @@ export class AuthoringPage extends BaseModel {
     private _unlockedByPagesOperator: string;
     private _finishesStory: boolean;
     private _imageId: string;
+    private _advancedFunctionIds: Array<string>;
+    private _advancedConditionIds: Array<string>;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -62,44 +63,22 @@ export class AuthoringPage extends BaseModel {
         this.fromObject(data);
     }
 
-    public fromObject(data = {
-                          id: undefined,
-                          name: undefined,
-                          content: undefined,
-                          pageHint: undefined,
-                          locationId: undefined,
-                          allowMultipleReadings: undefined,
-                          unlockedByPageIds: undefined,
-                          unlockedByPagesOperator: undefined,
-                          finishesStory: undefined,
-                          imageId: undefined
-                      }) {
-        this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.id = data.id;
-        this.content = data.content;
-        this.name = data.name;
-        this.pageHint = data.pageHint;
-        this.locationId = data.locationId;
-        this.allowMultipleReadings = data.allowMultipleReadings;
-        this.unlockedByPageIds = data.unlockedByPageIds;
-        this.unlockedByPagesOperator = data.unlockedByPagesOperator;
-        this.finishesStory = data.finishesStory;
-        this.imageId = data.imageId;
+    get advancedConditionIds(): Array<string> {
+        return this._advancedConditionIds;
     }
 
-    public toJSON() {
-        return {
-            id: this.id,
-            name: this.name,
-            content: this.content,
-            pageHint: this.pageHint,
-            locationId: this.locationId,
-            allowMultipleReadings: this.allowMultipleReadings,
-            unlockedByPageIds: this.unlockedByPageIds,
-            unlockedByPagesOperator: this.unlockedByPagesOperator,
-            finishesStory: this.finishesStory,
-            imageId: this.imageId
-        }
+    set advancedConditionIds(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("Condition Ids", value, "string");
+        this._advancedConditionIds = value || [];
+    }
+
+    get advancedFunctionIds(): Array<string> {
+        return this._advancedFunctionIds;
+    }
+
+    set advancedFunctionIds(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("Function Ids", value, "string");
+        this._advancedFunctionIds = value || [];
     }
 
     get finishesStory(): boolean {
@@ -187,4 +166,49 @@ export class AuthoringPage extends BaseModel {
         this._imageId = value;
     }
 
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        content: undefined,
+        pageHint: undefined,
+        locationId: undefined,
+        allowMultipleReadings: undefined,
+        unlockedByPageIds: undefined,
+        unlockedByPagesOperator: undefined,
+        finishesStory: undefined,
+        imageId: undefined,
+        advancedConditionIds: undefined,
+        advancedFunctionIds: undefined,
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.content = data.content;
+        this.name = data.name;
+        this.pageHint = data.pageHint;
+        this.locationId = data.locationId;
+        this.allowMultipleReadings = data.allowMultipleReadings;
+        this.unlockedByPageIds = data.unlockedByPageIds;
+        this.unlockedByPagesOperator = data.unlockedByPagesOperator;
+        this.finishesStory = data.finishesStory;
+        this.imageId = data.imageId;
+        this.advancedConditionIds = data.advancedConditionIds;
+        this.advancedFunctionIds = data.advancedFunctionIds;
+    }
+
+    public toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            content: this.content,
+            pageHint: this.pageHint,
+            locationId: this.locationId,
+            allowMultipleReadings: this.allowMultipleReadings,
+            unlockedByPageIds: this.unlockedByPageIds,
+            unlockedByPagesOperator: this.unlockedByPagesOperator,
+            finishesStory: this.finishesStory,
+            imageId: this.imageId,
+            advancedConditionIds: this.advancedConditionIds,
+            advancedFunctionIds: this.advancedFunctionIds
+        }
+    }
 }

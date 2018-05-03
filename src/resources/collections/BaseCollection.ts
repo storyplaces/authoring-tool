@@ -34,6 +34,7 @@
  */
 import {Identifiable} from "../interfaces/Identifiable";
 import {JSONable} from "../interfaces/JSONable";
+import {computedFrom} from "aurelia-framework";
 
 export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> {
 
@@ -44,6 +45,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
         return this._data.length;
     }
 
+    @computedFrom('this._data')
     get all(): Array<DATA_TYPE> {
         return this._data;
     }
@@ -93,7 +95,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable & JSONable> 
         let foundIndex = this.findIndex(item);
 
         if (foundIndex !== undefined) {
-            this._data[foundIndex] = item;
+            this._data.splice(foundIndex,1, item);
             return item.id;
         }
 

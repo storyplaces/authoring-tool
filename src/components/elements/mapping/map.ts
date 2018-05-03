@@ -37,15 +37,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapManager} from "../../../resources/map/MapManager";
-import {inject, bindable, BindingEngine} from "aurelia-framework";
+import {bindable, BindingEngine, inject} from "aurelia-framework";
 import {MarkerManager} from "../../../resources/map/MarkerManager";
 import {AuthoringStory} from "../../../resources/models/AuthoringStory";
 import {AuthoringPage} from "../../../resources/models/AuthoringPage";
 import {AuthoringLocation} from "../../../resources/models/AuthoringLocation";
+import {AdvancedLocationMarkerManager} from "../../../resources/map/AdvancedLocationMarkerManager";
 
 @inject(
     MapManager,
     MarkerManager,
+    AdvancedLocationMarkerManager,
     BindingEngine
 )
 export class MapCustomElement {
@@ -55,21 +57,26 @@ export class MapCustomElement {
     @bindable currentPage: AuthoringPage;
     @bindable currentLocation: AuthoringLocation;
     @bindable activePageIds: Array<string>;
+    @bindable advancedActive: boolean;
 
-    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private bindingEngine: BindingEngine) {
+    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private advancedLocationMarkerManager: AdvancedLocationMarkerManager, private bindingEngine: BindingEngine) {
     }
-
 
     attached() {
         this.mapManager.attach(this.mapElement);
         this.markerManager.attach(this.story, this.currentPage, this.currentLocation, this.activePageIds);
+        this.advancedLocationMarkerManager.attach(this.story, this.advancedActive);
 
-        this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => { this.markerManager.selectedLocation = newLocation});
-        this.bindingEngine.propertyObserver(this, 'activePageIds').subscribe(newPageIds => {this.markerManager.activePageIds = newPageIds});
+        this.bindingEngine.propertyObserver(this, 'currentLocation').subscribe(newLocation => {
+            this.markerManager.selectedLocation = newLocation
+        });
+        this.bindingEngine.propertyObserver(this, 'activePageIds').subscribe(newPageIds => {
+            this.markerManager.activePageIds = newPageIds
+        });
     }
 
-
     detached() {
+        this.advancedLocationMarkerManager.detach();
         this.markerManager.detach();
         this.mapManager.detach()
     }
