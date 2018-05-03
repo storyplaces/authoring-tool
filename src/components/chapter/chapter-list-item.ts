@@ -83,7 +83,6 @@ export class ChapterListItem {
     }
 
     select(event: MouseEvent) {
-        console.log(event);
     }
 
     clickLink(event, page): void {

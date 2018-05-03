@@ -39,16 +39,19 @@
 import {autoinject} from "aurelia-framework";
 import {AuthService} from "aurelia-authentication";
 import {AuthManager} from "../../../resources/auth/AuthManager";
+import {Logger} from "aurelia-logging";
+
 
 @autoinject()
 export class googleCustomElement {
-     constructor(private authService: AuthService, private authManager: AuthManager) {}
+    constructor(private authService: AuthService, private authManager: AuthManager, private logger: Logger) {
+    }
 
-     login() {
+    login() {
         return this.authService
             .authenticate('google')
             .catch((error) => {
-                console.log(error);
+                this.logger.error(error)
             });
     };
 }

@@ -37,11 +37,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {AuthoringStoryCollection} from "../collections/AuthoringStoryCollection";
-import {NewInstance, inject, computedFrom} from "aurelia-framework";
+import {computedFrom, inject, NewInstance} from "aurelia-framework";
 import {AuthoringStory} from "../models/AuthoringStory";
 import {DefaultAuthoringStoryFactory} from "../factories/DefaultAuthoringStoryFactory";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {Identifiable} from "../interfaces/Identifiable";
+import {Logger} from "aurelia-logging";
+
 
 export interface AuthoringStoryWriteResponse {
     message: string,
@@ -52,14 +54,14 @@ export interface hasModifiedDate {
     modifiedDate: string;
 }
 
-@inject(NewInstance.of(AuthoringStoryCollection), DefaultAuthoringStoryFactory, NewInstance.of(StoryPlacesAPI))
+@inject(NewInstance.of(AuthoringStoryCollection), DefaultAuthoringStoryFactory, NewInstance.of(StoryPlacesAPI), Logger)
 export class AuthoringStoryConnector {
     private dirtyAuthoringStoryIds: Set<string> = new Set();
     private conflictingAuthoringStoryIds: Set<string> = new Set();
     private numberOfNetworkConnections: number = 0;
     private serverOK: boolean = true;
 
-    constructor(private authoringStoryCollection: AuthoringStoryCollection, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private api: StoryPlacesAPI) {
+    constructor(private authoringStoryCollection: AuthoringStoryCollection, private defaultAuthoringStoryFactory: DefaultAuthoringStoryFactory, private api: StoryPlacesAPI, private logger: Logger) {
         api.path = "/authoring/story/";
     }
 
@@ -145,7 +147,7 @@ export class AuthoringStoryConnector {
                         this.removeFromConflictingList(authoringStory.id);
                     })
                     .catch(error => {
-                        console.error(error);
+                        this.logger.error(error);
                     });
             });
         });
@@ -181,7 +183,7 @@ export class AuthoringStoryConnector {
                     })
             })
             .catch(reject => {
-                console.error(reject)
+                this.logger.error(reject);
             })
     }
 

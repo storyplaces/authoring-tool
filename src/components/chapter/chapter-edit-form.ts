@@ -107,7 +107,6 @@ export class ChapterEditFormCustomElement {
                 pages.push(this.story.pages.get(pageId));
             }
         });
-        console.log("Pages in chapter: ", pages);
         return pages;
     }
 

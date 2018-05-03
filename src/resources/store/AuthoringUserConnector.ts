@@ -50,7 +50,6 @@ export class AuthoringUserConnector {
     }
 
     byId(id: string) {
-        console.log(this.all);
         return this.all.find(item => item.id == id);
     }
 

@@ -37,6 +37,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
+import {Logger} from "aurelia-logging";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../modals/delete-confirm";
 import {AuthoringStory} from "../../resources/models/AuthoringStory";
@@ -56,14 +57,14 @@ export class StoryListItem {
 
     selected: boolean;
 
-    constructor(private dialogService: DialogService) {
+    constructor(private dialogService: DialogService, private logger: Logger) {
     }
 
     delete(): void {
         let question = "Are you sure you wish to delete the story " + this.story.title + "?";
         this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
-                console.info("Not yet implemented");
+                this.logger.error("Not yet implemented");
             }
         });
     }

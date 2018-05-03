@@ -60,7 +60,6 @@ export class AdvancedLocationMarkerManager {
         this.active = active || false;
 
         this.advancedLocationsChangedSub = this.bindingEngine.collectionObserver(this.story.advancedLocations.all).subscribe(shards => {
-            console.log(shards);
             this.advancedLocationsChanged(shards)
         });
 
