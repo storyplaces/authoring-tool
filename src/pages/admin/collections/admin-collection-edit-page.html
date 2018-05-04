@@ -38,8 +38,9 @@
   -->
 
 <template>
-    <require from="components/story/story-details-form"></require>
     <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
+    <require from="components/elements/mutable-list/mutable-list"></require>
+    <require from="components/icons/information-icon.html"></require>
 
     <div class="container fill-height">
         <scrollable-list-with-header>
@@ -67,6 +68,17 @@
                               value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection."></textarea>
                 </div>
 
+                <div class="form-group">
+                    <label>Stories in this collection:</label>
+                    <information-icon
+                            help-text="The stories which will appear in this collection to the reader"></information-icon>
+                    <br>
+                    <mutable-list available-items.bind="availableStories"
+                                  selected-items.bind="collection.storyIds"
+                                  placeholder="Start typing a story name, author or part of the description"
+                                  change.delegate="setDirty()">
+                    </mutable-list>
+                </div>
             </div>
         </scrollable-list-with-header>
     </div>

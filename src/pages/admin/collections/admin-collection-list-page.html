@@ -41,21 +41,23 @@
     <require from="components/admin/admin-collection-list-item"></require>
     <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
 
+
     <div class="container fill-height">
-
         <div class="content-list-controls"><h4>Current Collections:</h4></div>
-        <button class="btn btn-primary" click.delegate="new()"><span
-                class="glyphicon glyphicon-plus"></span> New Collection
-        </button>
         <div class="content-list-body">
-
             <div class="fill-height">
-                <ul div class="list-group">
-                    <admin-collection-list-item repeat.for="collection of collections" class="list-group-item"
-                                                collection.bind="collection"></admin-collection-list-item>
-                </ul>
+                <scrollable-list-with-header>
+                    <div slot="heading">
+                        <button class="btn btn-primary" click.delegate="new()"><span class="glyphicon glyphicon-plus"></span> New Collection</button>
+                    </div>
+                    <div slot="content">
+                        <ul class="list-group">
+                            <admin-collection-list-item repeat.for="collection of collections" class="list-group-item"
+                                                        collection.bind="collection"></admin-collection-list-item>
+                        </ul>
+                    </div>
+                </scrollable-list-with-header>
             </div>
         </div>
-
     </div>
 </template>

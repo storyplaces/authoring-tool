@@ -50,6 +50,8 @@ export class Collection extends BaseModel {
     constructor(typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
+
+        this._storyIds = [];
         this.fromObject(data);
     }
 
@@ -63,7 +65,7 @@ export class Collection extends BaseModel {
         this.id = data.id;
         this.description = data.description;
         this.name = data.name;
-        this.storyIds = data.storyIds;
+        this.storyIds = data.storyIds || [];
     }
 
     public toJSON() {

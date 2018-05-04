@@ -41,16 +41,20 @@
     <require from="../attributes/bootstrap-tooltip"></require>
     <require from="components/elements/toggle-switch/toggle-switch"></require>
 
-    <li class="list-group-item">
-        <div class="grabbable-list-item-body">
-            <h4>${collection.name}</h4>
+    <li class="list-group-item grabbable-list-item">
 
-            <p style="max-height: 10em; overflow: hidden">${collection.description}</p>
-            <br/>
+        <div class="grabbable-list-item-heading">
+            <div class="grabbable-list-item-grab-bar"></div>
 
+            <div class="grabbable-list-item-heading-text">
+                <h4>${collection.name}</h4>
+            </div>
         </div>
-        <div class="grabbable-item-buttons-wide">
-            <button class="btn btn-danger" click.delegate="edit()"><span
+        <div class="grabbable-list-item-body">
+            <p style="max-height: 10em; overflow: hidden">${collection.description}</p>
+        </div>
+        <div class="grabbable-item-buttons">
+            <button class="btn btn-primary" click.delegate="edit()"><span
                     class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Edit</span></button>
             <button class="btn btn-danger" click.delegate="delete()"><span
                     class="glyphicon glyphicon-trash"></span><span class="hidden-xs"> Delete</span></button>

@@ -48,8 +48,15 @@ import {
     ValidationRules
 } from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../../../components/validation-renderer/BootstrapValidationRenderer";
+import "typeahead.js";
+import {ReadingStoryConnector} from "../../../resources/store/ReadingStoryConnector";
+import {MutableListAvailableItem} from "../../../resources/interfaces/MutableListAvailableItem";
+import {ReadingStory} from "../../../resources/models/ReadingStory";
+import {DeleteConfirm} from "../../../components/modals/delete-confirm";
+import {DialogService} from "aurelia-dialog";
 
-@inject(CollectionConnector, Router, Factory.of(Collection), ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
+
+@inject(CollectionConnector, Router, Factory.of(Collection), ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine, ReadingStoryConnector, DialogService)
 export class AdminCollectionListPage {
 
     private collectionId: string;
@@ -59,6 +66,9 @@ export class AdminCollectionListPage {
     private validationController: ValidationController;
     private errorSub: Disposable;
     private valid: Boolean;
+    private availableStories: Array<MutableListAvailableItem>;
+    private dirty: boolean;
+
 
 
     constructor(private collectionConnector: CollectionConnector,
@@ -66,7 +76,9 @@ export class AdminCollectionListPage {
                 private collectionFactory: (any?) => Collection,
                 private controllerFactory: ValidationControllerFactory,
                 private validationRendererFactory: () => BootstrapValidationRenderer,
-                private bindingEngine: BindingEngine) {
+                private bindingEngine: BindingEngine,
+                private readingStoryConnector: ReadingStoryConnector,
+                private dialogService: DialogService) {
         this.setupValidation();
     }
 
@@ -75,6 +87,19 @@ export class AdminCollectionListPage {
         this.validationController.validate().then(() => {
             this.calculateIfValid();
         });
+        this.readingStoryConnector.fetchAll().then(() => {
+            this.availableStories = this.readingStoryConnector.allStories.map((story: ReadingStory) => {
+               return {
+                   id: story.id,
+                   name: story.name,
+                   suggestion: `<div><strong>${story.name}</strong></div>`,
+                   search: `${story.name} ${story.description} ${story.author}`
+               }
+            });
+
+            console.log(this.availableStories);
+        });
+
     }
 
     private setupValidation() {
@@ -120,10 +145,27 @@ export class AdminCollectionListPage {
         if (!this.valid) {
             return;
         }
+
         this.collectionConnector.save(this.collection).then(() => {
+            this.dirty = false;
             this.router.navigateToRoute("admin-collection-list");
         });
+    }
 
+    canDeactivate() {
+        let question = "Are you sure you wish to leave the page without saving? Any changes you have made will be lost."
+        if (this.dirty) {
+            return this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
+                if (!response.wasCancelled) {
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    setDirty() {
+        this.dirty = true;
     }
 
 }
