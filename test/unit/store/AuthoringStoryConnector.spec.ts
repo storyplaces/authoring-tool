@@ -43,9 +43,12 @@ import {StoryPlacesAPI} from "../../../src/resources/store/StoryplacesAPI";
 import {DefaultAuthoringStoryFactory} from "../../../src/resources/factories/DefaultAuthoringStoryFactory";
 import {Identifiable} from "../../../src/resources/interfaces/Identifiable";
 import {AuthoringStory} from "../../../src/resources/models/AuthoringStory";
+import {Logger} from "aurelia-logging";
+
 
 describe("AuthoringStoryConnector", () => {
     let container: Container = new Container().makeGlobal();
+    let logger: Logger = new Logger('');
 
     function resolve(object: Function, data?: any) {
         return container.invoke(object, [data]);
@@ -81,7 +84,7 @@ describe("AuthoringStoryConnector", () => {
         let storyPlacesAPI = resolve(StoryPlacesAPI);
         let authoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
-        new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
     });
 
     it("sets the storyPlacesAPI path to /authoring/story/", () => {
@@ -89,7 +92,7 @@ describe("AuthoringStoryConnector", () => {
         let storyPlacesAPI = resolve(StoryPlacesAPI);
         let authoringStoryFactory = resolve(DefaultAuthoringStoryFactory);
 
-        new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
         expect(storyPlacesAPI.path).toEqual("/authoring/story/");
     });
 
@@ -102,7 +105,7 @@ describe("AuthoringStoryConnector", () => {
 
         authoringStoryCollection.save(authoringStory);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         let result = authoringStoryConnector.all;
         expect(result[0]).toBe(authoringStory);
@@ -119,7 +122,7 @@ describe("AuthoringStoryConnector", () => {
 
         spyOn(authoringStoryCollection, 'get').and.callThrough();
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         let result = authoringStoryConnector.byId("123");
         expect(result).toBe(authoringStory);
@@ -135,7 +138,7 @@ describe("AuthoringStoryConnector", () => {
 
         apiReturnsSuccessfulSave(storyPlacesAPI, "123");
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .newAuthoringStory()
@@ -161,7 +164,7 @@ describe("AuthoringStoryConnector", () => {
 
         apiReturnsSuccessfulSave(storyPlacesAPI);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .save(authoringStory)
@@ -186,7 +189,7 @@ describe("AuthoringStoryConnector", () => {
 
         apiReturnsErrorCodeOnSave(storyPlacesAPI, 500);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .save(authoringStory)
@@ -221,7 +224,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.reject(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .save(authoringStory)
@@ -269,7 +272,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.reject(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .save(authoringStory)
@@ -307,7 +310,7 @@ describe("AuthoringStoryConnector", () => {
 
         apiReturnsErrorCodeOnSave(storyPlacesAPI, 409);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector
             .save(authoringStory)
@@ -339,7 +342,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.resolve(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector.fetchAll().then(() => {
             expect(authoringStoryConnector.byId("123")).not.toBeUndefined();
@@ -375,7 +378,7 @@ describe("AuthoringStoryConnector", () => {
             return Promise.resolve(response);
         });
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, defaultAuthoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector.fetchAll().then(() => {
             expect(storyPlacesAPI.getAll).toHaveBeenCalled();
@@ -405,7 +408,7 @@ describe("AuthoringStoryConnector", () => {
         apiReturnsErrorCodeOnSave(storyPlacesAPI);
         apiReturnsSuccessfulFetch(storyPlacesAPI, [authoringStoryRemote]);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
         authoringStoryConnector.save(authoringStoryLocal).then(() => {
             expect(authoringStoryConnector.hasUnSyncedStories).toEqual(true, "Test sync status before fetch");
             expect(authoringStoryConnector.hasConflictingStories).toEqual(false, "Test conflicting status before fetch");
@@ -440,7 +443,7 @@ describe("AuthoringStoryConnector", () => {
 
         apiReturnsSuccessfulFetch(storyPlacesAPI, [authoringStoryRemote]);
 
-        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI);
+        let authoringStoryConnector = new AuthoringStoryConnector(authoringStoryCollection, authoringStoryFactory, storyPlacesAPI, logger);
 
         authoringStoryConnector.fetchAll().then(() => {
             expect(storyPlacesAPI.getAll).toHaveBeenCalled();
