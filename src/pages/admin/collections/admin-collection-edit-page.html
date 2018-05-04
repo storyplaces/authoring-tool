@@ -57,7 +57,7 @@
                         <information-icon help-text="The name of the collection as it appears to readers."></information-icon>
                     </label>
                     <input type="text" class="form-control" id="name" value.bind="collection.name & validate:rules"
-                           placeholder="The name of the collection">
+                           placeholder="The name of the collection" change.delegate="setDirty()">
                 </div>
                 <div class="form-group">
                     <label for="description">Collection description:
@@ -65,7 +65,7 @@
                                 help-text="A description of the collection which the users will see."></information-icon>
                     </label>
                     <textarea type="textarea" class="form-control" id="description"
-                              value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection."></textarea>
+                              value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection." change.delegate="setDirty()"></textarea>
                 </div>
 
                 <div class="form-group">
