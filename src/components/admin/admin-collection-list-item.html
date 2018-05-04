@@ -51,7 +51,8 @@
             </div>
         </div>
         <div class="grabbable-list-item-body">
-            <p style="max-height: 10em; overflow: hidden">${collection.description}</p>
+            <p style="height: 5em; overflow: hidden">${collection.description}</p>
+            <span repeat.for="storyName of storyNames"><span class="label label-default">${storyName}</span> </span>
         </div>
         <div class="grabbable-item-buttons">
             <button class="btn btn-primary" click.delegate="edit()"><span

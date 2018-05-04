@@ -42,6 +42,7 @@ import {DeleteConfirm} from "../modals/delete-confirm";
 import {Collection} from "../../resources/models/Collection";
 import {CollectionConnector} from "../../resources/store/CollectionConnector";
 import {Router} from "aurelia-router";
+import {ReadingStoryConnector} from "../../resources/store/ReadingStoryConnector";
 
 /**
  * Created by andy on 28/11/16.
@@ -54,7 +55,22 @@ export class AdminCollectionListItem {
 
     @bindable collection: Collection;
 
-    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router) {
+    private storyNames: Array<string>;
+
+    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router, private readingStoryConnector: ReadingStoryConnector) {
+    }
+
+    attached() {
+        this.readingStoryConnector.fetchAll().then(() => {
+            this.storyNames = this.collection.storyIds.map(storyId => {
+               let story = this.readingStoryConnector.allStories.find(readingStory => readingStory.id == storyId);
+               if (story) {
+                   return story.name;
+               }
+
+               return "";
+            });
+        });
     }
 
     delete(): void {
