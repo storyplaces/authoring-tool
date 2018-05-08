@@ -137,6 +137,9 @@ export class AdminCollectionListPage {
     private validationRules() {
         return ValidationRules
             .ensure((collection: Collection) => collection.name).required().maxLength(255)
+            .ensure((collection: Collection) => collection.slug).required().maxLength(255).matches(/^[a-z0-9-]+$/).withMessage(`\${$displayName} can only consist of lower case letters, numbers and dashes`).satisfies(value => {
+                return this.collectionConnector.all.find(collection => (collection.slug == value) && (collection.id != this.collection.id)) == undefined;
+            }).withMessage(`\${$displayName} is already in use by another collection`)
             .ensure((collection: Collection) => collection.description).required().maxLength(1024)
             .rules;
     }
@@ -168,4 +171,7 @@ export class AdminCollectionListPage {
         this.dirty = true;
     }
 
+    generateSlug() {
+        this.collection.slug = this.collection.name.replace(/[^a-zA-Z0-9-]/g,"-").toLowerCase();
+    }
 }

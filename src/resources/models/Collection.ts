@@ -46,6 +46,7 @@ export class Collection extends BaseModel {
     private _name: string;
     private _description: string;
     private _storyIds: Array<string>;
+    private _slug: string;
 
     constructor(typeChecker: TypeChecker,
                 data?: any) {
@@ -59,13 +60,15 @@ export class Collection extends BaseModel {
         id: undefined,
         name: undefined,
         description: undefined,
-        storyIds: undefined
+        storyIds: undefined,
+        slug: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.description = data.description;
         this.name = data.name;
         this.storyIds = data.storyIds || [];
+        this.slug = data.slug;
     }
 
     public toJSON() {
@@ -73,7 +76,8 @@ export class Collection extends BaseModel {
             id: this.id,
             description: this.description,
             name: this.name,
-            storyIds: this.storyIds
+            storyIds: this.storyIds,
+            slug: this.slug
         }
     }
 
@@ -84,6 +88,14 @@ export class Collection extends BaseModel {
     set name(name: string) {
         this.typeChecker.validateAsStringOrUndefined('Name', name);
         this._name = name;
+    }
+    get slug(): string {
+        return this._slug;
+    }
+
+    set slug(slug: string) {
+        this.typeChecker.validateAsStringOrUndefined('Slug', slug);
+        this._slug = slug;
     }
 
     get description(): string {

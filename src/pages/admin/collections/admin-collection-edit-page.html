@@ -51,9 +51,10 @@
                 <a class="btn btn-danger" route-href="route: admin-collection-list"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
             </div>
             <div slot="content">
-                <h3>Collection</h3>
+                <h3 if.bind="!collection.id">New collection</h3>
+                <h3 if.bind="collection.id">Edit collection</h3>
                 <div class="form-group">
-                    <label for="name">Story title:
+                    <label for="name">Collection title:
                         <information-icon help-text="The name of the collection as it appears to readers."></information-icon>
                     </label>
                     <input type="text" class="form-control" id="name" value.bind="collection.name & validate:rules"
@@ -65,9 +66,21 @@
                                 help-text="A description of the collection which the users will see."></information-icon>
                     </label>
                     <textarea type="textarea" class="form-control" id="description"
-                              value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection." change.delegate="setDirty()"></textarea>
+                              value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection."
+                              change.delegate="setDirty()"></textarea>
                 </div>
-
+                <div class="form-group">
+                    <label for="slug">Collection URL slug:
+                        <information-icon help-text="The slug used in the URL for the collection.  Changing this will change the URL of the collection"></information-icon>
+                    </label>
+                    <span class="input-group">
+                    <input type="text" class="form-control" id="slug" value.bind="collection.slug & validate:rules"
+                           placeholder="The slug of the collection" change.delegate="setDirty()">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" click.delegate="generateSlug()">Generate</button>
+                        </span>
+                        </span>
+                </div>
                 <div class="form-group">
                     <label>Stories in this collection:</label>
                     <information-icon
