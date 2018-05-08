@@ -87,8 +87,8 @@ export class AdminCollectionListItem {
         this.router.navigateToRoute("admin-collection-edit", {"collectionId": this.collection.id});
     }
 
-    generateURL(collectionId: string) {
-        return this.config.read('reading_tool_url') + 'collection/' + collectionId;
+    generateURL(collection: Collection) {
+        return this.config.read('reading_tool_url') + 'collection/' + collection.slug;
     }
 
 }
