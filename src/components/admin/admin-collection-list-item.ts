@@ -43,6 +43,7 @@ import {Collection} from "../../resources/models/Collection";
 import {CollectionConnector} from "../../resources/store/CollectionConnector";
 import {Router} from "aurelia-router";
 import {ReadingStoryConnector} from "../../resources/store/ReadingStoryConnector";
+import {Config} from "../../config/Config";
 
 /**
  * Created by andy on 28/11/16.
@@ -57,7 +58,7 @@ export class AdminCollectionListItem {
 
     private storyNames: Array<string>;
 
-    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router, private readingStoryConnector: ReadingStoryConnector) {
+    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router, private readingStoryConnector: ReadingStoryConnector, private config: Config) {
     }
 
     attached() {
@@ -84,6 +85,10 @@ export class AdminCollectionListItem {
 
     edit(): void {
         this.router.navigateToRoute("admin-collection-edit", {"collectionId": this.collection.id});
+    }
+
+    generateURL(collectionId: string) {
+        return this.config.read('reading_tool_url') + 'collection/' + collectionId;
     }
 
 }
