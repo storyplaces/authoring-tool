@@ -96,10 +96,7 @@ export class AdminCollectionListPage {
                    search: `${story.name} ${story.description} ${story.author}`
                }
             });
-
-            console.log(this.availableStories);
         });
-
     }
 
     private setupValidation() {

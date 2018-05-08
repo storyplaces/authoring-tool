@@ -67,11 +67,11 @@
                     </label>
                     <textarea type="textarea" class="form-control" id="description"
                               value.bind="collection.description & validate:rules" placeholder="A user visible description of the collection."
-                              change.delegate="setDirty()"></textarea>
+                              change.delegate="setDirty()" rows="6"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="slug">Collection URL slug:
-                        <information-icon help-text="The slug used in the URL for the collection.  Changing this will change the URL of the collection"></information-icon>
+                    <label for="slug">Collection URL identifier:
+                        <information-icon help-text="The identifier used in the URL for the collection.  Changing this will change the URL of the collection"></information-icon>
                     </label>
                     <span class="input-group">
                     <input type="text" class="form-control" id="slug" value.bind="collection.slug & validate:rules"
