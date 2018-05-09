@@ -51,8 +51,14 @@
                 <a class="btn btn-danger" route-href="route: admin-collection-list"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
             </div>
             <div slot="content">
-                <h3 if.bind="!collection.id">New collection</h3>
-                <h3 if.bind="collection.id">Edit collection</h3>
+                <span if.bind="!collection.id">
+                    <h3>New collection</h3>
+                    <div class="alert alert-danger"><strong>Warning:</strong> This collection will be visible in the reading tool immediately upon saving.</div>
+                </span>
+                <span if.bind="collection.id">
+                    <h3>Edit collection</h3>
+                    <div class="alert alert-danger"><strong>Warning:</strong> Changes to the collection will be visible in the reading tool immediately upon saving.</div>
+                </span>
                 <div class="form-group">
                     <label for="name">Collection title:
                         <information-icon help-text="The name of the collection as it appears to readers."></information-icon>
