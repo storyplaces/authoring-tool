@@ -37,11 +37,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject} from "aurelia-framework";
+import {Factory, inject, NewInstance} from "aurelia-framework";
 import {ReadingStory} from "../models/ReadingStory";
 import {Identifiable} from "../interfaces/Identifiable";
 
-@inject(StoryPlacesAPI, Factory.of(ReadingStory))
+@inject(NewInstance.of(StoryPlacesAPI), Factory.of(ReadingStory))
 export class ReadingStoryConnector {
 
     public allStories: Array<ReadingStory>;
