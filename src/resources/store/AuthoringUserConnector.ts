@@ -37,10 +37,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {StoryPlacesAPI} from "./StoryplacesAPI";
-import {Factory, inject} from "aurelia-framework";
+import {Factory, inject, NewInstance} from "aurelia-framework";
 import {AuthoringUser} from "../models/AuthoringUser";
 
-@inject(StoryPlacesAPI, Factory.of(AuthoringUser))
+@inject(NewInstance.of(StoryPlacesAPI), Factory.of(AuthoringUser))
 export class AuthoringUserConnector {
 
     public allUsers: Array<AuthoringUser> = [];
