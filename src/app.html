@@ -41,36 +41,46 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" route-href="route: home"><img src="images/logo/StoryPlaces_40x40.png">StoryPlaces</a>
+
+                <a class="navbar-brand sp-navbar" route-href="route: home"><img src="images/logo/StoryPlaces_40x40.png">StoryPlaces</a>
+
                 <sync-icon if.bind="currentUser.loggedIn"></sync-icon>
+
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li if.bind="currentUser.loggedIn"><a route-href="route: story-list">My Stories</a></li>
                     <li class="dropdown" if.bind="currentUser.loggedIn">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Settings <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a><div class="checkbox">
-                                <label>
-                                    <input type="checkbox" checked.bind="userConfig.locationDemo"> Demo Mode
-                                </label>
-                            </div></a></li>
-                            <li><a><div class="checkbox">
-                                <label>
-                                    <input type="checkbox" checked.bind="userConfig.advancedMode"> Advanced Mode
-                                </label>
-                            </div></a></li>
+                            <li><a>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" checked.bind="userConfig.locationDemo"> Demo Mode
+                                    </label>
+                                </div>
+                            </a></li>
+                            <li><a>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" checked.bind="userConfig.advancedMode"> Advanced Mode
+                                    </label>
+                                </div>
+                            </a></li>
                         </ul>
                     </li>
                     <li class="dropdown" if.bind="currentUser.loggedIn && canSeeAdminMenu()">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Admin <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a route-href="route: admin-story-list">Story Approvals</a></li>
                             <li><a route-href="route: admin-user-list">User Management</a></li>
@@ -84,7 +94,8 @@
                     <li if.bind="!currentUser.loggedIn"><a route-href="route: login"><strong>Sign In</strong></a></li>
 
                     <li class="dropdown" if.bind="currentUser.loggedIn">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>${currentUser.displayName}</strong> <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><strong>${currentUser.displayName}</strong> <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a route-href="route: user-edit"> Profile</a></li>
                             <li><a route-href="route: logout">Log Out</a></li>
