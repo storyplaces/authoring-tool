@@ -36,49 +36,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
-import {Logger} from "aurelia-logging";
-import {DialogService} from "aurelia-dialog";
-import {DeleteConfirm} from "../modals/delete-confirm";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {StoryPlacesAPI} from "./StoryplacesAPI";
+import {Factory, inject, NewInstance} from "aurelia-framework";
+import {Collection} from "../models/Collection";
+import {CollectionsCollection} from "../collections/CollectionsCollection";
 
-import * as moment from "moment"
+@inject(NewInstance.of(CollectionsCollection), NewInstance.of(StoryPlacesAPI), Factory.of(Collection))
+export class CollectionConnector {
 
-/**
- * Created by andy on 28/11/16.
- */
-
-
-@autoinject()
-@containerless()
-export class StoryListItem {
-
-    @bindable story: AuthoringStory;
-
-    selected: boolean;
-
-    constructor(private dialogService: DialogService, private logger: Logger) {
+    constructor(private allCollections: CollectionsCollection, private storyplacesAPI: StoryPlacesAPI, private collectionFactory: (any?) => Collection) {
+        this.storyplacesAPI.path = "/authoring/admin/collection";
     }
 
-    delete(): void {
-        let question = "Are you sure you wish to delete the story " + this.story.title + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
-            if (!response.wasCancelled) {
-                this.logger.error("Not yet implemented");
-            }
-        });
+    byId(id: string): Collection {
+        return this.allCollections.get(id);
     }
 
+    fetchAll(): Promise<any> {
+        return this.storyplacesAPI.getAll()
+            .then(response => response.json())
+            .then((jsonArray) => {
+                this.allCollections.saveMany(jsonArray.map(collection => this.collectionFactory(collection)));
 
-    @computedFrom('story.modifiedDate')
-    get modified() {
-        return moment(this.story.modifiedDate).calendar(null, {
-            sameDay: '[today at] HH:mm',
-            nextDay: '[tomorrow at] HH:mm',
-            nextWeek: 'dddd [at] HH:mm',
-            lastDay: '[yesterday at] HH:mm',
-            lastWeek: '[last] dddd [at] HH:mm',
-            sameElse: '[on] DD/MM/YYYY [at] HH:mm'
-        });
+            });
     }
+
+    get all(): Array<Collection> {
+        return this.allCollections.all;
+    }
+
+    save(collection: Collection): Promise<Response> {
+        return this.storyplacesAPI.save(collection).then(response => response.json() as any);
+    }
+
+    delete(collection: Collection): Promise<Response> | any {
+        return this.storyplacesAPI.delete(collection.id)
+            .then(response => response.json() as any)
+            .then(response => {
+                this.allCollections.remove(collection.id);
+            })
+    }
+
 }

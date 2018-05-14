@@ -36,13 +36,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
-import {Logger} from "aurelia-logging";
+import {autoinject, bindable, containerless} from "aurelia-framework";
 import {DialogService} from "aurelia-dialog";
 import {DeleteConfirm} from "../modals/delete-confirm";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
-
-import * as moment from "moment"
+import {Collection} from "../../resources/models/Collection";
+import {CollectionConnector} from "../../resources/store/CollectionConnector";
+import {Router} from "aurelia-router";
+import {ReadingStoryConnector} from "../../resources/store/ReadingStoryConnector";
+import {Config} from "../../config/Config";
 
 /**
  * Created by andy on 28/11/16.
@@ -51,34 +52,43 @@ import * as moment from "moment"
 
 @autoinject()
 @containerless()
-export class StoryListItem {
+export class AdminCollectionListItem {
 
-    @bindable story: AuthoringStory;
+    @bindable collection: Collection;
 
-    selected: boolean;
+    private storyNames: Array<string>;
 
-    constructor(private dialogService: DialogService, private logger: Logger) {
+    constructor(private collectionConnector: CollectionConnector, private dialogService: DialogService, private router: Router, private readingStoryConnector: ReadingStoryConnector, private config: Config) {
+    }
+
+    attached() {
+        this.readingStoryConnector.fetchAll().then(() => {
+            this.storyNames = this.collection.storyIds.map(storyId => {
+               let story = this.readingStoryConnector.allStories.find(readingStory => readingStory.id == storyId);
+               if (story) {
+                   return story.name;
+               }
+
+               return "";
+            });
+        });
     }
 
     delete(): void {
-        let question = "Are you sure you wish to delete the story " + this.story.title + "?";
+        let question = "Are you sure you wish to delete the collection " + this.collection.name + "?";
         this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
             if (!response.wasCancelled) {
-                this.logger.error("Not yet implemented");
+                this.collectionConnector.delete(this.collection);
             }
         });
     }
 
-
-    @computedFrom('story.modifiedDate')
-    get modified() {
-        return moment(this.story.modifiedDate).calendar(null, {
-            sameDay: '[today at] HH:mm',
-            nextDay: '[tomorrow at] HH:mm',
-            nextWeek: 'dddd [at] HH:mm',
-            lastDay: '[yesterday at] HH:mm',
-            lastWeek: '[last] dddd [at] HH:mm',
-            sameElse: '[on] DD/MM/YYYY [at] HH:mm'
-        });
+    edit(): void {
+        this.router.navigateToRoute("admin-collection-edit", {"collectionId": this.collection.id});
     }
+
+    generateURL(collection: Collection) {
+        return this.config.read('reading_tool_url') + 'collection/' + collection.slug;
+    }
+
 }

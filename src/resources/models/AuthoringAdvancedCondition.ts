@@ -170,7 +170,7 @@ export class AuthoringAdvancedCondition extends BaseModel implements HasName {
             AuthoringAdvancedCondition.allowedComparisonOperands.findIndex(item => item.id == value) == -1 &&
             AuthoringAdvancedCondition.allowedLogicalOperands.findIndex(item => item.id == value) == -1
         ) {
-            throw new Error("Unsupported opearand type");
+            throw new Error("Unsupported operand type");
         }
         this._operand = value;
     }

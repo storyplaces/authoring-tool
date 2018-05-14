@@ -67,7 +67,6 @@ export class ReadingStory extends BaseModel {
         publishState: undefined,
         publishDate: undefined
     }) {
-        console.log(data);
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.author = data.author;

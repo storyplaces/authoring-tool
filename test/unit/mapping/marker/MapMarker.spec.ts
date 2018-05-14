@@ -41,12 +41,17 @@ import {MapMarkerDefaults} from "../../../../src/resources/mapping/settings/MapM
 import {MapMarker} from "../../../../src/resources/mapping/markers/MapMarker";
 import {MapIcon} from "../../../../src/resources/mapping/icons/MapIcon";
 import {MapIconDefaults} from "../../../../src/resources/mapping/settings/MapIconDefaults";
+
+import * as L from "leaflet";
+
+class TestMapMarker extends MapMarker {}
+
 describe("MapMarker", () => {
     it("Creates a MapMarker instance when instantiated", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect(marker instanceof MapMarker).toEqual(true);
     });
@@ -55,7 +60,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect(marker.leafletLayer instanceof L.Marker).toEqual(true);
     });
@@ -64,7 +69,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect(marker.leafletLayer instanceof L.Marker).toEqual(true);
     });
@@ -75,7 +80,7 @@ describe("MapMarker", () => {
 
         defaults.title = "test";
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect((marker.leafletLayer as any).options.title).toEqual("test"); // Looks as though the typings don't have types for options which appears to be where things get stored before the marker gets created when its added to a map
     });
@@ -87,7 +92,7 @@ describe("MapMarker", () => {
         defaults.title = "test";
         options.title = "this should override";
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect((marker.leafletLayer as any).options.title).toEqual("this should override"); // Looks as though the typings don't have types for options which appears to be where things get stored before the marker gets created when its added to a map
     });
@@ -96,7 +101,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect(marker.latitude).toEqual(1);
     });
@@ -105,7 +110,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
         marker.latitude = 12;
 
         expect(marker.latitude).toEqual(12);
@@ -115,7 +120,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         expect(marker.longitude).toEqual(2);
     });
@@ -124,7 +129,7 @@ describe("MapMarker", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
         marker.longitude = 12;
 
         expect(marker.longitude).toEqual(12);
@@ -135,7 +140,7 @@ describe("MapMarker", () => {
         let options = {};
         let icon = new MapIcon(new MapIconDefaults, {} as any);
 
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
         marker.icon = icon;
 
         expect((marker.leafletLayer as any).options.icon).toBe(icon.leafletIcon); // Looks as though the typings don't have types for options which appears to be where things get stored before the marker gets created when its added to a map
@@ -144,7 +149,7 @@ describe("MapMarker", () => {
     it("can have destroy called on it", () => {
         let defaults = new MapMarkerDefaults;
         let options = {};
-        let marker = new MapMarker(defaults, 1, 2, options);
+        let marker = new TestMapMarker(defaults, 1, 2, options);
 
         marker.destroy();
         expect(marker.leafletLayer).toBeUndefined();

@@ -36,22 +36,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject} from "aurelia-framework";
-import {AuthService} from "aurelia-authentication";
-import {AuthManager} from "../../../resources/auth/AuthManager";
-import {Logger} from "aurelia-logging";
-
+import {autoinject, computedFrom} from "aurelia-framework";
+import {CollectionConnector} from "../../../resources/store/CollectionConnector";
+import {Router} from "aurelia-router";
 
 @autoinject()
-export class googleCustomElement {
-    constructor(private authService: AuthService, private authManager: AuthManager, private logger: Logger) {
+export class AdminCollectionListPage {
+    constructor(private collectionConnector: CollectionConnector, private router: Router) {
     }
 
-    login() {
-        return this.authService
-            .authenticate('google')
-            .catch((error) => {
-                this.logger.error(error)
-            });
-    };
+    attached() {
+        this.collectionConnector.fetchAll();
+    }
+
+    @computedFrom('collectionConnector.all')
+    get collections() {
+        return this.collectionConnector.all;
+    }
+
+    new() {
+        this.router.navigateToRoute("admin-collection-new");
+    }
+
 }

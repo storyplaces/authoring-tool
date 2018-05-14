@@ -36,49 +36,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
-import {Logger} from "aurelia-logging";
-import {DialogService} from "aurelia-dialog";
-import {DeleteConfirm} from "../modals/delete-confirm";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
 
-import * as moment from "moment"
+import {BaseCollection} from "./BaseCollection";
+import {inject, Factory} from "aurelia-framework";
+import {AuthoringStory} from "../models/AuthoringStory";
+import {Collection} from "../models/Collection";
 
-/**
- * Created by andy on 28/11/16.
- */
+@inject(Factory.of(Collection))
+export class CollectionsCollection extends BaseCollection<Collection> {
+    constructor(private factory: (any?) => Collection, data?: any[]) {
+        super();
 
+        data = this.checkIfCollection(data);
 
-@autoinject()
-@containerless()
-export class StoryListItem {
-
-    @bindable story: AuthoringStory;
-
-    selected: boolean;
-
-    constructor(private dialogService: DialogService, private logger: Logger) {
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
-    delete(): void {
-        let question = "Are you sure you wish to delete the story " + this.story.title + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
-            if (!response.wasCancelled) {
-                this.logger.error("Not yet implemented");
-            }
-        });
+    protected itemFromObject(item: any): Collection {
+
+        if (item instanceof Collection) {
+            return item;
+        }
+
+        return this.factory(item);
     }
 
+    public save(passedItem: any): string {
+        let item = this.itemFromObject(passedItem);
 
-    @computedFrom('story.modifiedDate')
-    get modified() {
-        return moment(this.story.modifiedDate).calendar(null, {
-            sameDay: '[today at] HH:mm',
-            nextDay: '[tomorrow at] HH:mm',
-            nextWeek: 'dddd [at] HH:mm',
-            lastDay: '[yesterday at] HH:mm',
-            lastWeek: '[last] dddd [at] HH:mm',
-            sameElse: '[on] DD/MM/YYYY [at] HH:mm'
-        });
+        if (item.id == undefined) {
+            throw Error("Unable to save collection as it has no id set");
+        }
+
+        let foundIndex = this.findIndex(item);
+
+        if (foundIndex !== undefined) {
+            this._data[foundIndex] = item;
+            return item.id;
+        }
+
+        this._data.push(item);
+
+        return item.id;
     }
 }

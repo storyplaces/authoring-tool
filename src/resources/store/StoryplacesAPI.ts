@@ -102,8 +102,6 @@ export class StoryPlacesAPI {
             body[field] = object[field];
         });
 
-        console.log(JSON.stringify(body));
-
         return this.client.fetch(path, {
             method: 'post',
             body: JSON.stringify(body)

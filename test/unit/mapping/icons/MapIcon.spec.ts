@@ -40,6 +40,7 @@
 import IconOptions = L.IconOptions;
 import {MapIconDefaults} from "../../../../src/resources/mapping/settings/MapIconDefaults";
 import {MapIcon} from "../../../../src/resources/mapping/icons/MapIcon";
+import * as L from "leaflet";
 
 describe("MapIcon", () => {
     it("will create a MapIcon object when instantiated", () => {

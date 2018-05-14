@@ -38,23 +38,22 @@
   -->
 
 <template>
-    <require from="components/story/story-list-item"></require>
+    <require from="components/admin/admin-collection-list-item"></require>
     <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
 
+
     <div class="container fill-height">
-        <div class="content-list-controls"><h4>My Stories:</h4></div>
+        <div class="content-list-controls"><h4>Current Collections:</h4></div>
         <div class="content-list-body">
             <div class="fill-height">
                 <scrollable-list-with-header>
                     <div slot="heading">
-                        <button class="btn btn-primary" click.delegate="new()"><span
-                                class="glyphicon glyphicon-plus"></span> New story
-                        </button>
+                        <button class="btn btn-primary" click.delegate="new()"><span class="glyphicon glyphicon-plus"></span> New Collection</button>
                     </div>
                     <div slot="content">
                         <ul class="list-group">
-                            <story-list-item repeat.for="story of stories" class="list-group-item"
-                                             story.bind="story"></story-list-item>
+                            <admin-collection-list-item repeat.for="collection of collections" class="list-group-item"
+                                                        collection.bind="collection"></admin-collection-list-item>
                         </ul>
                     </div>
                 </scrollable-list-with-header>

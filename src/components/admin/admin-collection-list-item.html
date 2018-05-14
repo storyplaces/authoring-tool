@@ -38,27 +38,28 @@
   -->
 
 <template>
-    <require from="components/story/story-list-item"></require>
-    <require from="components/scrollable-list-with-header/scrollable-list-with-header"></require>
+    <require from="../attributes/bootstrap-tooltip"></require>
+    <require from="components/elements/toggle-switch/toggle-switch"></require>
 
-    <div class="container fill-height">
-        <div class="content-list-controls"><h4>My Stories:</h4></div>
-        <div class="content-list-body">
-            <div class="fill-height">
-                <scrollable-list-with-header>
-                    <div slot="heading">
-                        <button class="btn btn-primary" click.delegate="new()"><span
-                                class="glyphicon glyphicon-plus"></span> New story
-                        </button>
-                    </div>
-                    <div slot="content">
-                        <ul class="list-group">
-                            <story-list-item repeat.for="story of stories" class="list-group-item"
-                                             story.bind="story"></story-list-item>
-                        </ul>
-                    </div>
-                </scrollable-list-with-header>
+    <li class="list-group-item grabbable-list-item">
+
+        <div class="grabbable-list-item-heading">
+            <div class="grabbable-list-item-grab-bar"></div>
+
+            <div class="grabbable-list-item-heading-text">
+                <h4>${collection.name} <small>(<a href.bind="generateURL(collection)" target="_blank">${generateURL(collection)}</a>)</small></h4>
             </div>
         </div>
-    </div>
+        <div class="grabbable-list-item-body">
+            <p style="height: 5em; overflow: hidden">${collection.description}</p>
+            <span repeat.for="storyName of storyNames"><span class="label label-default">${storyName}</span> </span>
+        </div>
+        <div class="grabbable-item-buttons">
+            <button class="btn btn-primary" click.delegate="edit()"><span
+                    class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Edit</span></button>
+            <button class="btn btn-danger" click.delegate="delete()"><span
+                    class="glyphicon glyphicon-trash"></span><span class="hidden-xs"> Delete</span></button>
+        </div>
+    </li>
+
 </template>

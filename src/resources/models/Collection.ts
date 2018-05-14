@@ -36,49 +36,83 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, bindable, containerless, computedFrom} from "aurelia-framework";
-import {Logger} from "aurelia-logging";
-import {DialogService} from "aurelia-dialog";
-import {DeleteConfirm} from "../modals/delete-confirm";
-import {AuthoringStory} from "../../resources/models/AuthoringStory";
+import {inject} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-import * as moment from "moment"
+@inject(TypeChecker)
+export class Collection extends BaseModel {
 
-/**
- * Created by andy on 28/11/16.
- */
+    private _name: string;
+    private _description: string;
+    private _storyIds: Array<string>;
+    private _slug: string;
 
+    constructor(typeChecker: TypeChecker,
+                data?: any) {
+        super(typeChecker);
 
-@autoinject()
-@containerless()
-export class StoryListItem {
-
-    @bindable story: AuthoringStory;
-
-    selected: boolean;
-
-    constructor(private dialogService: DialogService, private logger: Logger) {
+        this._storyIds = [];
+        this.fromObject(data);
     }
 
-    delete(): void {
-        let question = "Are you sure you wish to delete the story " + this.story.title + "?";
-        this.dialogService.open({viewModel: DeleteConfirm, model: question}).whenClosed(response => {
-            if (!response.wasCancelled) {
-                this.logger.error("Not yet implemented");
-            }
-        });
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        description: undefined,
+        storyIds: undefined,
+        slug: undefined
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.description = data.description;
+        this.name = data.name;
+        this.storyIds = data.storyIds || [];
+        this.slug = data.slug;
     }
 
-
-    @computedFrom('story.modifiedDate')
-    get modified() {
-        return moment(this.story.modifiedDate).calendar(null, {
-            sameDay: '[today at] HH:mm',
-            nextDay: '[tomorrow at] HH:mm',
-            nextWeek: 'dddd [at] HH:mm',
-            lastDay: '[yesterday at] HH:mm',
-            lastWeek: '[last] dddd [at] HH:mm',
-            sameElse: '[on] DD/MM/YYYY [at] HH:mm'
-        });
+    public toJSON() {
+        return {
+            id: this.id,
+            description: this.description,
+            name: this.name,
+            storyIds: this.storyIds,
+            slug: this.slug
+        }
     }
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(name: string) {
+        this.typeChecker.validateAsStringOrUndefined('Name', name);
+        this._name = name;
+    }
+    get slug(): string {
+        return this._slug;
+    }
+
+    set slug(slug: string) {
+        this.typeChecker.validateAsStringOrUndefined('Slug', slug);
+        this._slug = slug;
+    }
+
+    get description(): string {
+        return this._description;
+    }
+
+    set description(description: string) {
+        this.typeChecker.validateAsStringOrUndefined('Description', description);
+        this._description = description;
+    }
+
+    get storyIds(): Array<string> {
+        return this._storyIds;
+    }
+
+    set storyIds(value: Array<string>) {
+        this._storyIds = value;
+    }
+
 }

@@ -46,10 +46,6 @@ import {
     ValidationRules
 } from "aurelia-validation";
 import {BootstrapValidationRenderer} from "../validation-renderer/BootstrapValidationRenderer";
-import {AuthoringStoryConnector} from "../../resources/store/AuthoringStoryConnector";
-import {PublishingConnector} from "../../resources/store/PublishingConnector";
-import {PreviewingConnector} from "../../resources/store/PreviewingConnector";
-import {Config} from "../../config/Config";
 
 @inject(ValidationControllerFactory, Factory.of(BootstrapValidationRenderer), BindingEngine)
 export class StoryDetailsForm {
