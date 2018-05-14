@@ -310,19 +310,25 @@ describe("Authoring Story model", () => {
             let variable5 = {'id': 'var5', 'name': 'var5'};
             let variable6 = {'id': 'var6', 'name': 'var6'};
 
-            let condition1 = {'id': 'comparison1', 'name': 'comparison1', 'type': 'comparison', 'variableA': 'var1'};
-            let condition2 = {'id': 'comparison2', 'name': 'comparison2', 'type': 'comparison', 'variableB': 'var2'};
-            let condition3 = {'id': 'check1', 'name': 'check1', 'type': 'check', 'variableId': 'var3'};
-            let condition4 = {'id': 'check2', 'name': 'check2', 'type': 'check', 'variableId': 'var4'};
-            let condition5 = {'id': 'comparison3', 'name': 'comparison3', 'type': 'comparison', 'variableB': 'var4'};
+            let condition1 = {'id': 'condition1', 'name': 'comparison1', 'type': 'comparison', 'variableA': 'var1'};
+            let condition2 = {'id': 'condition2', 'name': 'comparison2', 'type': 'comparison', 'variableB': 'var2'};
+            let condition3 = {'id': 'condition3', 'name': 'check1', 'type': 'check', 'variableId': 'var3'};
+            let condition4 = {'id': 'condition4', 'name': 'check2', 'type': 'check', 'variableId': 'var4'};
+            let condition5 = {'id': 'condition5', 'name': 'comparison3', 'type': 'comparison', 'variableB': 'var4'};
+            let condition6 = {'id': 'condition6', 'name': 'logical1', 'type':'logical', 'conditionIds': ['condition5']};
+            let condition7 = {'id': 'condition7', 'name': 'locationCondition1', 'type': 'location', 'locationId': 'location1'};
+            let condition8 = {'id': 'condition8', 'name': 'locationCondition2', 'type': 'location', 'locationId': 'location2'};
+            let condition9 = {'id': 'condition9', 'name': 'locationCondition3', 'type': 'location', 'locationId': 'location2'};
 
             let function1 = {'id': 'function1', 'name': 'setFunction1', 'variableId': 'var5', 'conditionIds': ['condition1']};
             let function2 = {'id': 'function2', 'name': 'setFunction2', 'variableId': 'var4', 'conditionIds': ['condition3']};
             let function3 = {'id': 'function3', 'name': 'setFunction3', 'variableId': 'var6'};
             let function4 = {'id': 'function4', 'name': 'setFunction4', 'variableId': 'var6'};
             let function5 = {'id': 'function5', 'name': 'setFunction5', 'variableId': 'var6'};
-            let function6 = {'id': 'function6', 'name': 'setFunction6', 'chainFunctionIds': ['function5']};
+            let function6 = {'id': 'function6', 'name': 'chainFunction1', 'chainFunctionIds': ['function5']};
 
+            let location1 = {'id': 'location1', 'name': 'location1'};
+            let location2 = {'id': 'location2', 'name': 'location2'};
 
             let page1 = {'id': 'page1', 'name': 'Page1', 'advancedFunctionIds': ['function3', 'function4'], 'advancedConditionIds': ['condition2']};
             let page2 = {'id': 'page2', 'name': 'Page2', 'advancedFunctionIds': ['function4'], 'advancedConditionIds': ['condition3']};
@@ -350,8 +356,8 @@ describe("Authoring Story model", () => {
                 locations: [],
                 tags: ["tag"],
                 advancedFunctions: [function1, function2, function3, function4, function5, function6],
-                advancedConditions: [condition1, condition2, condition3, condition4, condition5],
-                advancedLocations: [],
+                advancedConditions: [condition1, condition2, condition3, condition4, condition5, condition6, condition7, condition8, condition9],
+                advancedLocations: [location1, location2],
                 advancedVariables: [variable1, variable2, variable3, variable4, variable5, variable6],
                 logLocations: true
             });
@@ -385,6 +391,15 @@ describe("Authoring Story model", () => {
                 expect(authoringStory.conditionInUse({'id': 'condition3'}).usedIn).toContain('Advanced Function: setFunction2');
             });
 
+            it("will return true when a condition is in use by a logical condition", () => {
+               expect(authoringStory.conditionInUse({'id':'condition5'}).inUse).toEqual(true);
+            });
+
+            it("will return a list of logical conditions which use the condition", () => {
+               expect(authoringStory.conditionInUse({'id':'condition5'}).usedIn.length).toEqual(1);
+               expect(authoringStory.conditionInUse({'id':'condition5'}).usedIn).toContain('Advanced Condition: logical1');
+            });
+
             it("will return false when a condition is not in use", () => {
                 expect(authoringStory.conditionInUse({'id': 'condition4'}).inUse).toEqual(false);
             });
@@ -408,7 +423,7 @@ describe("Authoring Story model", () => {
             });
 
             it("will return the functions a function in use on", () => {
-                expect(authoringStory.functionInUse({'id': 'function5'}).usedIn).toEqual(['Advanced Function: setFunction6']);
+                expect(authoringStory.functionInUse({'id': 'function5'}).usedIn).toEqual(['Advanced Function: chainFunction1']);
             });
 
             it("will return true for a function in use on multiple pages", () => {
@@ -427,6 +442,35 @@ describe("Authoring Story model", () => {
 
             it("will return an empty list when the function is not in use", () => {
                 expect(authoringStory.functionInUse({'id': 'not-a-function'}).usedIn.length).toEqual(0);
+            });
+        });
+
+        describe('location in use', () => {
+            it("will return true for a location in use in a condition", () => {
+                expect(authoringStory.locationInUse({'id': 'location1'}).inUse).toEqual(true);
+            });
+
+            it("will return the condition a location is used in", () => {
+                expect(authoringStory.locationInUse({'id': 'location1'}).usedIn.length).toEqual(1);
+                expect(authoringStory.locationInUse({'id': 'location1'}).usedIn).toEqual(['Advanced Condition: locationCondition1']);
+            });
+
+            it("will return true for a location in use in more than one condition", () => {
+                expect(authoringStory.locationInUse({'id': 'location2'}).inUse).toEqual(true);
+            });
+
+            it("will return the conditions a location is used in", () => {
+                expect(authoringStory.locationInUse({'id': 'location2'}).usedIn.length).toEqual(2);
+                expect(authoringStory.locationInUse({'id': 'location2'}).usedIn).toContain('Advanced Condition: locationCondition2');
+                expect(authoringStory.locationInUse({'id': 'location2'}).usedIn).toContain('Advanced Condition: locationCondition3');
+            });
+
+            it("will return false for a location not in use in a condition", () => {
+                expect(authoringStory.locationInUse({'id': 'not-a-location'}).inUse).toEqual(false);
+            });
+
+            it("will return the no conditions if a location is not in use", () => {
+                expect(authoringStory.locationInUse({'id': 'not-a-location'}).usedIn.length).toEqual(0);
             });
         });
 

@@ -104,10 +104,6 @@
                 </div>
 
                 <div if.bind="condition.type == 'timerange'">
-                    <list-picker name="variable" label="Variable"
-                                 placeholder="Pick a variable" items.bind="availableVariables"
-                                 value.bind="condition.variableId" error.bind="errors.variableId"></list-picker>
-
                     <text-input name="start" label="Start" value.bind="condition.start" placeholder="HH:MM"
                                 error.bind="errors.start"></text-input>
 

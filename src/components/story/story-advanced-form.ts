@@ -159,7 +159,7 @@ export class StoryAdvancedFormCustomElement {
         return this.editVariable(newVariable);
     }
 
-    editVariable(variable: Identifiable & HasName): Promise<Identifiable & HasName> {
+    editVariable(variable: AuthoringAdvancedVariable): Promise<Identifiable & HasName> {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedVariableEdit,
@@ -178,7 +178,7 @@ export class StoryAdvancedFormCustomElement {
             });
     }
 
-    okToDeleteVariable(variable: Identifiable & HasName): Promise<string> {
+    okToDeleteVariable(variable: AuthoringAdvancedVariable): Promise<string> {
         let inUse = this.story.variableInUse(variable);
 
         if (inUse.inUse) {
@@ -194,7 +194,7 @@ export class StoryAdvancedFormCustomElement {
         return this.editFunction(newFunc);
     }
 
-    editFunction(func: Identifiable & HasName): Promise<Identifiable & HasName> {
+    editFunction(func: AuthoringAdvancedFunction): Promise<AuthoringAdvancedFunction> {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedFunctionEdit,
@@ -216,7 +216,7 @@ export class StoryAdvancedFormCustomElement {
             });
     }
 
-    okToDeleteFunction(func: Identifiable & HasName): Promise<string> {
+    okToDeleteFunction(func: AuthoringAdvancedFunction): Promise<string> {
         let inUse = this.story.functionInUse(func);
 
         if (inUse.inUse) {
@@ -227,12 +227,23 @@ export class StoryAdvancedFormCustomElement {
         return this.showConfirmDeleteDialog(func, 'function');
     }
 
+    okToDeleteLocation(location: AuthoringAdvancedLocation): Promise<string> {
+        let inUse = this.story.locationInUse(location);
+
+        if (inUse.inUse) {
+            this.showInUseDialog(inUse, 'location');
+            return Promise.resolve(null);
+        }
+
+        return this.showConfirmDeleteDialog(location, 'location');
+    }
+
     createCondition(): Promise<Identifiable & HasName> {
         let newCondition = this.conditionFactory();
         return this.editCondition(newCondition)
     }
 
-    editCondition(condition: Identifiable & HasName): Promise<Identifiable & HasName> {
+    editCondition(condition: AuthoringAdvancedCondition): Promise<AuthoringAdvancedCondition> {
         return this.dialogService
             .open({
                 viewModel: AuthoringAdvancedConditionEdit,
@@ -255,7 +266,7 @@ export class StoryAdvancedFormCustomElement {
             });
     }
 
-    okToDeleteCondition(condition: Identifiable & HasName): Promise<string> {
+    okToDeleteCondition(condition: AuthoringAdvancedCondition): Promise<string> {
         let inUse = this.story.conditionInUse(condition);
         if (inUse.inUse) {
             this.showInUseDialog(inUse, 'condition');
@@ -272,10 +283,6 @@ export class StoryAdvancedFormCustomElement {
 
     editLocation(location: Identifiable & HasName): Promise<Identifiable & HasName> {
         return this.openLocationDialog(location);
-    }
-
-    okToDeleteLocation(location: Identifiable & HasName): Promise<string> {
-        return this.showConfirmDeleteDialog(location, 'location');
     }
 
     private showInUseDialog(inUse: ItemInUse, type: string) {

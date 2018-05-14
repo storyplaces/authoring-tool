@@ -49,6 +49,10 @@ import {AuthoringAdvancedLocationCollection} from "../collections/AuthoringAdvan
 import {Identifiable} from "../interfaces/Identifiable";
 import {HasName} from "../interfaces/HasName";
 import {ItemInUse} from "../types/ItemInUse";
+import {AuthoringAdvancedCondition} from "./AuthoringAdvancedCondition";
+import {AuthoringAdvancedFunction} from "./AuthoringAdvancedFunction";
+import {AuthoringAdvancedVariable} from "./AuthoringAdvancedVariable";
+import {AuthoringAdvancedLocation} from "./AuthoringAdvancedLocation";
 
 @inject(
     Factory.of(AuthoringChapterCollection),
@@ -322,7 +326,7 @@ export class AuthoringStory extends BaseModel {
         }
     }
 
-    variableInUse(variable: Identifiable & HasName): ItemInUse {
+    variableInUse(variable: AuthoringAdvancedVariable): ItemInUse {
         let usedInConditions = this.advancedConditions.all
             .filter(condition => {
                 let usedInVariableA = condition.variableA ? (condition.variableA == variable.id) : false;
@@ -344,7 +348,7 @@ export class AuthoringStory extends BaseModel {
         return {item: variable, inUse: inUse, usedIn: usedInConditions.concat(usedInFunctions)};
     }
 
-    functionInUse(func: Identifiable & HasName): ItemInUse {
+    functionInUse(func: AuthoringAdvancedFunction): ItemInUse {
         let usedInPages = this.pages.all
             .filter(page => {
                 return page.advancedFunctionIds.indexOf(func.id) !== -1;
@@ -366,10 +370,10 @@ export class AuthoringStory extends BaseModel {
         return {item: func, inUse: inUse, usedIn: usedInPages.concat(usedInFunctions)};
     }
 
-    conditionInUse(condition: Identifiable & HasName): ItemInUse {
+    conditionInUse(condition: AuthoringAdvancedCondition): ItemInUse {
         let usedInFunctions = this.advancedFunctions.all
             .filter(advancedFunction => {
-                return advancedFunction.conditionIds.indexOf(condition.id) != -1;
+                return advancedFunction.conditionIds.indexOf(condition.id) !== -1;
             })
             .map(advancedFunction => `Advanced Function: ${advancedFunction.name}`);
 
@@ -379,9 +383,23 @@ export class AuthoringStory extends BaseModel {
             })
             .map(page => `Page: ${page.name}`);
 
-        let inUse = usedInPages.length !== 0 || usedInFunctions.length !== 0;
+        let usedInConditions = this.advancedConditions.all
+            .filter(advancedCondition => {
+                return advancedCondition.conditionIds.indexOf(condition.id) !== -1;
+            })
+            .map(condition => `Advanced Condition: ${condition.name}`);
 
-        return {item: condition, inUse: inUse, usedIn: usedInPages.concat(usedInFunctions)};
+        let inUse = usedInPages.length !== 0 || usedInFunctions.length !== 0 || usedInConditions.length !== 0;
+
+        return {item: condition, inUse: inUse, usedIn: usedInPages.concat(usedInFunctions).concat(usedInConditions)};
+    }
+
+    locationInUse(location: AuthoringAdvancedLocation): ItemInUse {
+        let usedInConditions = this.advancedConditions.all
+            .filter(advancedCondition => advancedCondition.locationId && advancedCondition.locationId == location.id)
+            .map(advancedCondition => `Advanced Condition: ${advancedCondition.name}`);
+
+        return {item: location, inUse: usedInConditions.length !== 0, usedIn: usedInConditions};
     }
 
 }
