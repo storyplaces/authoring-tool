@@ -47,6 +47,7 @@ export class ImagePickerUploadCustomElement {
     @bindable camera: string;
     private fileButton: HTMLInputElement;
     private formElement: HTMLFormElement;
+    private Orientation_None = -1;
     private Orientation_Up = 1;
     private Orientation_Right = 8;
     private Orientation_Left = 6;
@@ -260,6 +261,7 @@ export class ImagePickerUploadCustomElement {
 
     private calculateRotation(orientation: number) {
         switch (orientation) {
+            case this.Orientation_None:
             case this.Orientation_Up:
                 return 0;
             case this.Orientation_Left:

@@ -36,48 +36,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {inject, Factory} from "aurelia-framework";
-import {AuthoringStory} from "../models/AuthoringStory";
-import {CurrentUser} from "../auth/CurrentUser";
+import {inject, NewInstance} from "aurelia-framework";
 
-@inject(Factory.of(AuthoringStory), CurrentUser)
-export class DefaultAuthoringStoryFactory {
+import {HttpClient} from "aurelia-fetch-client";
+import {Config} from "../../config/Config";
+import {FetchConfig} from "aurelia-authentication";
 
-    constructor(private authoringStoryFactory: (data?) => AuthoringStory, private currentUser: CurrentUser) {
+export interface audioUploadResponse {
+    message: string,
+    audioId: string
+}
+
+export interface audioDownloadResponse {
+    contentType: string,
+    content: string
+}
+
+@inject(NewInstance.of(HttpClient), Config, FetchConfig)
+export class AudioConnector {
+
+    private cache : Map<string, audioDownloadResponse> = new Map<string, audioDownloadResponse>()
+
+    constructor(protected client: HttpClient, protected config: Config, private fetchConfig: FetchConfig) {
+        this.configure();
     }
 
-    create(): AuthoringStory {
-        return this.authoringStoryFactory(this.defaultStory());
+    private configure() {
+        let headers = {};
+
+        headers['Accept'] = "application/json";
+
+        this.client.configure(config => {
+            config
+                .withBaseUrl(this.config.read('server'))
+                .withDefaults({
+                    headers: headers
+                })
+                .useStandardConfiguration();
+        });
+
+        this.fetchConfig.configure(this.client);
     }
 
-    private defaultStory(): Object {
-        let now = new Date().toISOString();
 
-        return {
-            title: "New Story",
-            description: "",
-            audience: "general",
-            createdDate: now,
-            modifiedDate: now,
-            authorIds: [this.currentUser.userId],
-            tags: [],
-            pages: [{
-                "name": "Start Page",
-                "content": "",
-                "pageHint": "",
-                "allowMultipleReadings": false,
-                "finishesStory": false,
-                "unlockedByPageIds": [],
-                "unlockedByPagesOperator": "and"
-            }],
-            chapters: [],
-            locations: [],
-            imageIds: [],
-            audioIds: [],
-            advancedFunctions: [],
-            advancedLocations: [],
-            advancedVariables: [],
-            advancedConditions: [],
-        }
+    upload(storyId: string, formData: FormData): Promise<audioUploadResponse> {
+        return this.client.fetch(`/authoring/story/${storyId}/audio`, {
+            method: 'post',
+            body: formData
+        }).then(response => response.json() as Promise<audioUploadResponse>);
     }
+
+    fetchFull(storyId: string, audioId: string) {
+        return this.client.fetch(this.makeFullUrl(storyId, audioId), {method: 'get'})
+            .then(response => response.json() as Promise<audioDownloadResponse>)
+            .then(audioDownload => {
+                return audioDownload;
+            })
+    }
+
+    private makeFullUrl(storyId: string, audioId: string) {
+        return `/authoring/story/${storyId}/audio/${audioId}`;
+    }
+
 }

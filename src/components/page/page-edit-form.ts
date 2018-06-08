@@ -314,4 +314,9 @@ export class PageEditFormCustomElement {
     private imageFailed() {
         this.page.imageId = "";
     }
+
+    /*** AUDIO ***/
+    private uploadAudio() {
+
+    }
 }

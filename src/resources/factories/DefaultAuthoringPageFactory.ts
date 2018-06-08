@@ -60,7 +60,8 @@ export class DefaultAuthoringPageFactory {
             unlockedByPageIds: [],
             unlockedByPagesOperator: "and",
             finishesStory: false,
-            imageId: ""
+            imageId: "",
+            audioId: ""
         }
     }
 }

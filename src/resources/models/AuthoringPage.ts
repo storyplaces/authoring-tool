@@ -54,6 +54,7 @@ export class AuthoringPage extends BaseModel {
     private _unlockedByPagesOperator: string;
     private _finishesStory: boolean;
     private _imageId: string;
+    private _audioId: string;
     private _advancedFunctionIds: Array<string>;
     private _advancedConditionIds: Array<string>;
 
@@ -166,6 +167,15 @@ export class AuthoringPage extends BaseModel {
         this._imageId = value;
     }
 
+    get audioId(): string {
+        return this._audioId;
+    }
+
+    set audioId(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('AudioId', value);
+        this._audioId = value;
+    }
+
     public fromObject(data = {
         id: undefined,
         name: undefined,
@@ -177,6 +187,7 @@ export class AuthoringPage extends BaseModel {
         unlockedByPagesOperator: undefined,
         finishesStory: undefined,
         imageId: undefined,
+        audioId: undefined,
         advancedConditionIds: undefined,
         advancedFunctionIds: undefined,
     }) {
@@ -191,6 +202,7 @@ export class AuthoringPage extends BaseModel {
         this.unlockedByPagesOperator = data.unlockedByPagesOperator;
         this.finishesStory = data.finishesStory;
         this.imageId = data.imageId;
+        this.audioId = data.audioId;
         this.advancedConditionIds = data.advancedConditionIds;
         this.advancedFunctionIds = data.advancedFunctionIds;
     }
@@ -207,6 +219,7 @@ export class AuthoringPage extends BaseModel {
             unlockedByPagesOperator: this.unlockedByPagesOperator,
             finishesStory: this.finishesStory,
             imageId: this.imageId,
+            audioId: this.audioId,
             advancedConditionIds: this.advancedConditionIds,
             advancedFunctionIds: this.advancedFunctionIds
         }
